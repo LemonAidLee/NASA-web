@@ -1,0 +1,186 @@
+{
+  "_note": "Bahasa Melayu text for focus_areas.json, laid over the English by id and list position (src/config.ts applyMalay). ai_draft and ai_focus are written by pipeline/11_ai_analysis.py, which checks their numbers.",
+  "areas": {
+    "kel-pasir-mas": {
+      "title": "Paling ramai dipindahkan",
+      "tagline": "Dataran banjir sungai di hulu delta",
+      "facts": [
+        "Pada 29 Nov 2024 Pasir Mas mempunyai mangsa pemindahan paling ramai di Kelantan: 22,486."
+      ],
+      "drivers": [
+        "Hujan ialah pencetusnya: luruan monsun memenuhi Sungai Kelantan, yang mengalirkan air dari sebahagian besar negeri.",
+        "Guna tanah di hulu menambah air larian, tetapi dalam pemodelan sungai, perubahan hujan memberi kesan kira-kira 3–4 kali ganda berbanding perubahan guna tanah. Jadi kami tidak pernah mengatakan kehilangan hutan menyebabkan banjir."
+      ],
+      "events": [
+        "22,486 mangsa dipindahkan (berita)"
+      ],
+      "ai_draft": "Peta radar kami menunjukkan kira-kira 4,680 ha air banjir baharu di Pasir Mas pada 29 Nov 2024 (julat 4,137–4,680 ha), kira-kira 8% daripada daerah. Ia muncul sejurus selepas tiga hari paling basah, 26–28 Nov, apabila kira-kira 127, 132 dan 120 mm hujan turun sehari. Menjelang 5 Dis hanya 786 ha tinggal, dan menjelang 17 Dis 235 ha, jadi kebanyakan air surut dalam seminggu.",
+      "ai_focus": "Kiraan 5 Dis datang daripada trek radar yang lain, yang melihat tanah dari sudut berbeza. Bandingkan 29 Nov dengan 11 Dis (trek sama) sebelum menyatakan dengan tepat seberapa cepat air surut."
+    },
+    "kel-tumpat": {
+      "title": "Delta rendah di tepi laut",
+      "tagline": "Tempat air banjir bertemu air pasang",
+      "facts": [
+        "Pada 29 Nov 2024 Tumpat mempunyai 11,105 mangsa pemindahan, kedua tertinggi di Kelantan."
+      ],
+      "drivers": [
+        "Pantai ialah titik sempit: risiko banjir meningkat apabila hujan lebat bertembung dengan air pasang tinggi, yang melambatkan saliran delta yang rata."
+      ],
+      "events": [
+        "11,105 mangsa dipindahkan (berita)"
+      ],
+      "ai_draft": "Tumpat mempunyai bahagian tanah terbesar yang ditenggelami air banjir baharu antara semua daerah kajian: kira-kira 3,596 ha pada 29 Nov 2024, hampir 20% daripada daerah. Air juga lambat surut. Pada 5 Dis kira-kira 1,330 ha masih ada, 37% daripada puncak, sedangkan Pasir Mas di hulu hanya tinggal 17%. Ini sepadan dengan delta rendah tempat sungai bertemu air pasang.",
+      "ai_focus": "Semak sama ada air yang kekal selepas 5 Dis berada di sawah rendah yang sama setiap kali. Jika ya, sawah itu paling lambat kering dan wajar diperhatikan pada monsun akan datang."
+    },
+    "kel-kota-bharu": {
+      "title": "Tempat sungai bertemu laut",
+      "tagline": "Ibu negeri di muara sungai",
+      "facts": [
+        "Lembangan Sungai Kelantan meliputi kira-kira 12,000–13,000 km², lebih 85% daripada negeri, dan kerap melimpah dari November hingga Februari.",
+        "Pada 1 Dis 2024, 97,128 orang di Kelantan terjejas, daripada 30,017 keluarga."
+      ],
+      "drivers": [
+        "Bandar sukar bagi radar: jalan yang banjir boleh nampak terang, bukan gelap, jadi piksel bandar ditanda tidak boleh dipercayai."
+      ],
+      "events": [
+        "97,128 terjejas di seluruh negeri (berita)"
+      ],
+      "ai_draft": "Kota Bharu menunjukkan kira-kira 2,404 ha air banjir baharu pada 29 Nov 2024 (julat 1,949–2,404 ha), kira-kira 6% daripada daerah, semuanya di luar pusat bandar. Di dalam bandar radar tidak dapat menilai banjir, jadi kawasan bina dikelabukan, bukan dikira kering. Kiraan turun kepada 37 ha pada 5 Dis, kemudian naik kepada 692 ha pada 11 Dis.",
+      "ai_focus": "Kenaikan pada 11 Dis itu mungkin bukan banjir kedua. 5 Dis dan 11 Dis datang daripada dua trek radar berbeza dengan sudut pandangan berbeza. Semak dengan peta air NASA bagi tarikh yang sama sebelum menganggapnya air baharu."
+    },
+    "ked-kota-setar": {
+      "title": "Jantung jelapang padi",
+      "tagline": "Sawah padat di sekitar Alor Setar",
+      "facts": [
+        "Jelapang MADA menghasilkan kira-kira 37% beras Malaysia.",
+        "Musim 2/2026 meliputi 99,489 ha dalam tiga fasa, bermula 23 Sep, 3 Okt dan 13 Okt."
+      ],
+      "drivers": [
+        "Petani membanjiri sawah mengikut jadual yang ditentukan oleh air empangan dan hujan, sebelum menabur benih."
+      ],
+      "events": [
+        "Fasa I bermula",
+        "Fasa II bermula",
+        "Fasa III bermula"
+      ],
+      "ai_draft": "Hanya kira-kira 1% tanah sawah Kota Setar menunjukkan air pada 23–25 Sep 2026, walaupun Fasa I MADA bermula pada 23 Sep. Air di sawah meningkat kepada kira-kira 5% menjelang 5–7 Okt, 17–20% menjelang 17–19 Okt dan 46.7% menjelang 31 Okt. Kebanyakan sawah mula mendapat air selepas Fasa III bermula pada 13 Okt, yang menunjukkan penanaman lewat pada tahun kemarau ini. Lonjakan terbesar berlaku selepas hari paling basah musim ini, 25 Okt, dengan kira-kira 114 mm hujan.",
+      "ai_focus": "Kira-kira 7,259 ha hanya mula menunjukkan air pada 31 Okt. Lihat sama ada sawah itu terletak jauh dari terusan utama, yang menunjukkan air sampai ke sana paling akhir."
+    },
+    "ked-kubang-pasu": {
+      "title": "Jalur sawah utara",
+      "tagline": "Kira-kira satu pertiga kawasan radar Kedah kami",
+      "facts": [
+        "Kubang Pasu meliputi kira-kira 31% kawasan radar Kedah kami, bahagian terbesar antara semua daerah (ukuran kami daripada sempadan DOSM).",
+        "Kami tidak menemui peta MADA yang menunjukkan blok mana milik fasa mana, jadi masa disemak berbanding keseluruhan jadual."
+      ],
+      "drivers": [
+        "Pengairan musim ini bergantung pada hujan: empangan berada pada 35.76% pada 17 Sep 2026."
+      ],
+      "events": [
+        "Empangan 35.76% (berita)"
+      ],
+      "ai_draft": "Kubang Pasu, yang terbesar antara tiga daerah fokus kami dari segi tanah sawah, mendapat air lebih awal daripada Kota Setar: 8.7% tanah sawahnya menjelang 5 Okt 2026 berbanding 5.1%. Menjelang 31 Okt ia mencapai 55.1%, tertinggi antara tiga daerah. Dua trek NISAR sepakat tentang arah aliran tetapi berbeza beberapa mata pada tarikh berdekatan (32.6% pada 17 Okt, 28% pada 19 Okt), yang menunjukkan betapa pentingnya sudut pandangan.",
+      "ai_focus": "Kira-kira 8,696 ha mula menunjukkan air pada 17–19 Okt. Bandingkan sawah itu dengan kawasan Fasa II dan III MADA untuk melihat sama ada air sampai tepat pada masanya."
+    },
+    "ked-pendang": {
+      "title": "Pinggir pedalaman jelapang",
+      "tagline": "Hanya sebahagian di dalam kawasan radar kami",
+      "facts": [
+        "Kira-kira 63% Pendang terletak di dalam kawasan radar kami; selebihnya tiada data radar dalam prototaip ini (ukuran kami).",
+        "Menjelang 13 Okt 2026 simpanan empangan MADA meningkat kepada 40.13%."
+      ],
+      "drivers": [
+        "Tanah kering yang licin boleh nampak seperti air kepada radar, jadi tahun kemarau meningkatkan risiko amaran palsu."
+      ],
+      "events": [
+        "Empangan 40.13% (berita)"
+      ],
+      "ai_draft": "Pendang nampak berbeza daripada dua daerah lain. Kira-kira 6.8% tanah sawahnya sudah nampak basah pada 23 Sep 2026, hari Fasa I MADA bermula, namun ia hanya mencapai 20.9% menjelang 31 Okt. Hanya 63% daerah ini berada di dalam kawasan radar kami.",
+      "ai_focus": "Tompok 'basah' awal itu mungkin tanah kering yang licin, yang boleh nampak seperti air kepada radar, bukan air sawah sebenar. Semak sama ada tompok yang sama kekal gelap pada setiap laluan: banjir sebenar datang dan pergi mengikut penanaman."
+    }
+  },
+  "methods": {
+    "kelantan": [
+      {
+        "group": "Kesan",
+        "items": [
+          {
+            "name": "Pengesanan perubahan",
+            "text": "Sebelum dan selepas pada trek yang sama: lebih gelap lebih 3 dB sejak 17 Nov (rancangan 04 §4.4)."
+          },
+          {
+            "name": "Ujian air satu tarikh",
+            "text": "Had Otsu pada VV, dihadkan pada −15.5 dB (HydroSAR)."
+          }
+        ]
+      },
+      {
+        "group": "Topeng",
+        "items": [
+          {
+            "name": "Topeng bandar",
+            "text": "Piksel kawasan bina yang tidak dikesan sebagai banjir ditanda tidak boleh dipercayai (ESA WorldCover)."
+          },
+          {
+            "name": "Topeng cerun",
+            "text": "Tanah yang lebih curam daripada 5% tidak pernah dikira banjir (Copernicus DEM)."
+          },
+          {
+            "name": "Air biasa",
+            "text": "Air yang ada sekurang-kurangnya 80% masa pada 1984–2021 bukan banjir baharu (EC JRC)."
+          }
+        ]
+      },
+      {
+        "group": "Semak",
+        "items": [
+          {
+            "name": "Pendapat kedua AI",
+            "text": "Model yang dilatih dengan label JRC sebelum peristiwa, ditunjukkan hanya di tempat ia tidak sepakat dengan peta fizik."
+          },
+          {
+            "name": "Peta air NASA",
+            "text": "Semakan konsistensi dengan OPERA DSWx-S1, dibina daripada radar yang sama."
+          }
+        ]
+      }
+    ],
+    "kedah": [
+      {
+        "group": "Kesan",
+        "items": [
+          {
+            "name": "Ujian air gelap HH",
+            "text": "Air licin di sawah memantulkan gema rata menjauhi satelit: HH menjadi gelap (rancangan 04 §4.5)."
+          },
+          {
+            "name": "Ujian air gelap HV",
+            "text": "HV juga mesti gelap, yang membezakan air daripada tumbuhan muda."
+          }
+        ]
+      },
+      {
+        "group": "Kumpulkan",
+        "items": [
+          {
+            "name": "Pengumpulan sawah oleh AI",
+            "text": "k-means pada enam tarikh HH dan HV, tanpa label; kumpulan dinamakan berdasarkan fizik radar."
+          }
+        ]
+      },
+      {
+        "group": "Semak",
+        "items": [
+          {
+            "name": "Peta air NASA",
+            "text": "Perbandingan bebas dengan Sentinel-1 DSWx-S1, radar yang berbeza."
+          },
+          {
+            "name": "Jadual MADA",
+            "text": "Tarikh mula dibanjiri dibandingkan dengan tiga tarikh permulaan fasa."
+          }
+        ]
+      }
+    ]
+  }
+}

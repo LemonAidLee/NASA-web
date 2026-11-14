@@ -125,7 +125,7 @@ function methodNote(text: string): HTMLElement {
   return h('p', { class: 'method-note small' }, text);
 }
 
-const FIRST_LABEL: Record<number, string> = { 11: '23–25 Sep', 12: '5–7 Oct', 13: '17–19 Oct', 14: '31 Oct' };
+const FIRST_LABEL: Record<number, string> = { 11: t('when.t1'), 12: t('when.t2'), 13: t('when.t3'), 14: t('when.t4') };
 
 /** New flood water in the study districts, per radar pass (one series, ±1 dB band); click a point to go to that pass. */
 function kelTrend(s: S.State): HTMLElement | null {
@@ -275,7 +275,7 @@ function phaseChart(s: S.State): HTMLElement {
   for (const p of a.phases ?? []) {
     const endClip = p.end > end ? end : p.end;
     chart.append(h('div', { class: 'phase-row' },
-      h('span', { class: 'phase-name' }, `Phase ${p.id}`),
+      h('span', { class: 'phase-name' }, t('phase.n', { id: p.id })),
       h('span', { class: 'phase-track' }, h('span', { class: 'phase-bar', style: `left:${pos(p.start)};width:calc(${pos(endClip)} - ${pos(p.start)})` }, p.end > end ? '→' : '')),
     ));
   }
@@ -307,7 +307,7 @@ function numbersKedah(s: S.State): HTMLElement[] {
     ? timeChart({
         title: t('num.ked.pct'), explain: t('num.ked.chart.explain'), subtitle: t('num.ked.chart.sub'), unit: '%',
         start: a.strip[0], end: a.strip[1], series,
-        rules: (a.phases ?? []).map((p) => ({ date: p.start, label: `Phase ${p.id}` })),
+        rules: (a.phases ?? []).map((p) => ({ date: p.start, label: t('phase.n', { id: p.id }) })),
         current: s.date, onPick: (d) => S.set({ date: d }),
         note: t('num.ked.chart.note'),
       })
@@ -325,7 +325,7 @@ function numbersKedah(s: S.State): HTMLElement[] {
   const seasonHa = 99489; // MADA notice, 14 Sep 2026 (plan 08 §4.7)
   const phaseBars = h('div', { class: 'stat-list' },
     h('h3', { class: 'legend-title' }, t('num.ked.phases')),
-    ...season.map((p) => statRow(`Phase ${p.id}`, segBar({ value: p.ha, max: seasonHa, basis: t('num.ked.phase.basis') }), `${fmtNum(p.ha)} ha`)),
+    ...season.map((p) => statRow(t('phase.n', { id: p.id }), segBar({ value: p.ha, max: seasonHa, basis: t('num.ked.phase.basis') }), `${fmtNum(p.ha)} ha`)),
     h('h3', { class: 'legend-title' }, t('num.ked.dams')),
     statRow(t('num.ked.dams.row'), segBar({ value: 35.76, delta: 40.13 - 35.76, max: 100, basis: t('num.ked.dams.basis') }), '35.76 → 40.13%',
       h('span', { class: 'delta' }, ' +4.37')),

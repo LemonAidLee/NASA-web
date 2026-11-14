@@ -101,6 +101,10 @@ async function boot(): Promise<void> {
   initTracker();
   initWindows();
   initRails();
+  // index.html is English; name the page and the skip link in the chosen language.
+  document.title = t('app.title');
+  const skip = document.querySelector('.skip-link');
+  if (skip) skip.textContent = t('a11y.skip');
   initShortcuts();
   map.once('load', () => {
     announce(t('a11y.loaded', { date: fmtDate(S.get().date) }));

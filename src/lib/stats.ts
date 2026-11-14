@@ -1,6 +1,7 @@
 // Numbers from our radar maps (public/data/stats.json, written by pipeline/08_stats.py).
 // Every accessor returns null when the pipeline has not produced the number, so the UI can fall back to "—".
 import { layer, resolveDate } from '../config';
+import { locale } from '../i18n';
 
 export interface KelDistrict {
   district: string;
@@ -145,7 +146,7 @@ export function kedDateByUtc(utc: string): KedDate | null {
   return stats?.kedah.dates[utc] ?? null;
 }
 
-const nf = new Intl.NumberFormat('en-MY');
+const nf = new Intl.NumberFormat(locale);
 export const ha = (n: number): string => `${nf.format(Math.round(n))} ha`;
 export const haRange = (lo: number, hi: number): string => `${nf.format(Math.round(lo))}–${nf.format(Math.round(hi))} ha`;
 

@@ -16,6 +16,7 @@ What the map does beyond showing pictures:
 - **People near the water.** WorldPop 2024 population within 250 m of new flood water, per district and pass, next to the evacuee counts from the news.
 - **AI analysis with checked numbers.** Short notes per focus district written by AI from our results; `pipeline/11_ai_analysis.py` fails if any number does not match the results files.
 - **Save a picture of this view.** A PNG of the map with a caption, the colour key and the data credits.
+- **English and Bahasa Melayu.** The BM / EN button in the top bar switches the whole app, including the AI analysis (checked in both languages); links can carry `?lang=ms`.
 
 It is a student prototype. It is not a warning service and has not been reviewed by NASA. For live river levels see [Public InfoBanjir (JPS)](https://publicinfobanjir.water.gov.my/); follow [NADMA](https://www.nadma.gov.my/) for evacuation.
 

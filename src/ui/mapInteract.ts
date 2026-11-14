@@ -33,7 +33,7 @@ interface Reading {
   why: string;
 }
 
-const FIRST_LABEL: Record<number, string> = { 11: '23–25 Sep', 12: '5–7 Oct', 13: '17–19 Oct', 14: '31 Oct' };
+const FIRST_LABEL: Record<number, string> = { 11: t('when.t1'), 12: t('when.t2'), 13: t('when.t3'), 14: t('when.t4') };
 const db1 = (v: number | null) => (v === null ? '—' : `${v.toFixed(1)} dB`);
 
 /** Kedah: the pipeline's own water verdict on each NISAR pass at this spot (bits in kedah_wetbits.webp), so the

@@ -110,8 +110,8 @@ const EXTRA: Item[] = [
   },
 ];
 
-const leftRail = h('nav', { class: 'rail rail-left', 'aria-label': 'Left panels' });
-const rightRail = h('nav', { class: 'rail rail-right', 'aria-label': 'Side panel and tools' });
+const leftRail = h('nav', { class: 'rail rail-left', 'aria-label': t('rail.left') });
+const rightRail = h('nav', { class: 'rail rail-right', 'aria-label': t('rail.right') });
 
 function button(it: Item, s: S.State, side: 'left' | 'right'): HTMLElement {
   const on = it.on(s);

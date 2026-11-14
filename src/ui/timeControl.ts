@@ -79,7 +79,11 @@ function noPassBox(s: S.State): HTMLElement | null {
   if (imageryOnly(a) || list.some((p) => p.date_myt === s.date)) return null;
   const before = [...list].reverse().find((p) => p.date_myt < s.date);
   const after = list.find((p) => p.date_myt > s.date);
-  const desc = (p?: Pass) => (p ? `${fmtDay(p.date_myt)} (${Math.abs(diffDays(p.date_myt, s.date))} days ${p.date_myt < s.date ? 'before' : 'after'})` : '—');
+  const desc = (p?: Pass) => {
+    if (!p) return '—';
+    const n = Math.abs(diffDays(p.date_myt, s.date));
+    return t(`time.near.${p.date_myt < s.date ? 'before' : 'after'}${n === 1 ? '.1' : ''}`, { date: fmtDay(p.date_myt), n });
+  };
   const box = h('div', { class: 'nopass', role: 'status' },
     h('p', {}, t('time.nopass', { date: fmtDay(s.date), area: t(a.short), n: a.revisit_days ?? 6, before: desc(before), after: desc(after) })),
     h('div', { class: 'nopass-actions' },

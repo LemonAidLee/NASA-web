@@ -1,6 +1,6 @@
 // F20 HUD status bar (expert), plain top bar (simple / mobile), menu, theme switch (F19), live catalogue check (F27).
 import { area, imageryOnly, fmtDate, primaryPasses, provenance } from '../config';
-import { t } from '../i18n';
+import { lang, setLang, t } from '../i18n';
 import { $, clear, h, storage } from '../lib/dom';
 import { latestTime } from '../lib/catalog';
 import * as S from '../state';
@@ -69,6 +69,7 @@ function render(): void {
     ),
     h('button', { class: 'pill pill-sm', 'aria-label': `${t('hud.theme')}: ${t(`theme.${s.theme}`)}`, title: t(`theme.${s.theme}`), onclick: nextTheme }, '◐'),
     h('button', { class: 'pill pill-sm', 'aria-label': t('hud.help'), onclick: () => document.dispatchEvent(new CustomEvent('help')) }, '?'),
+    langPill(),
     surePill(),
     menuButton(),
   );
@@ -84,6 +85,7 @@ function render(): void {
     a.kind !== 'explore'
       ? h('button', { class: 'pill pill-sm desktop-only', 'aria-pressed': String(s.base === 'sat'), onclick: () => S.set({ base: s.base === 'sat' ? 'map' : 'sat' }) }, t('hud.satbtn'))
       : null,
+    langPill(),
     surePill(),
     menuButton(),
   );
@@ -91,8 +93,16 @@ function render(): void {
   tick();
 }
 
+/** BM / EN switch: shows the other language's short name, so a Malay speaker sees "BM" on the English page. */
+function langPill(): HTMLElement {
+  const other = lang === 'ms' ? 'en' : 'ms';
+  return h('button', { class: 'pill pill-sm pill-lang', lang: other, 'aria-label': t('lang.switch'), title: t('lang.switch'), onclick: () => setLang(other) }, other === 'ms' ? 'BM' : 'EN');
+}
+
 function surePill(): HTMLElement {
-  return h('button', { class: 'pill pill-sure', onclick: openSure }, h('span', { 'aria-hidden': 'true' }, 'ⓘ'), ' ', t('sure.pill'));
+  // The full question on wide screens; a short form on phones, where the Malay wording would push the menu off screen.
+  return h('button', { class: 'pill pill-sure', 'aria-label': t('sure.pill'), onclick: openSure }, h('span', { 'aria-hidden': 'true' }, 'ⓘ'), ' ',
+    h('span', { class: 'sure-long', 'aria-hidden': 'true' }, t('sure.pill')), h('span', { class: 'sure-short', 'aria-hidden': 'true' }, t('sure.pill.short')));
 }
 
 function menuButton(): HTMLElement {
@@ -117,6 +127,7 @@ function openMenu(): void {
       item(s.mode === 'expert' ? t('menu.expert.off') : t('menu.expert.on'), toggleMode),
       item(t('menu.story'), () => S.set({ step: 0 })),
       item(t('menu.theme', { name: t(`theme.${s.theme}`) }), nextTheme),
+      item(t('lang.switch'), () => setLang(lang === 'ms' ? 'en' : 'ms')),
       !imageryOnly(area(s.area)) ? item(t('compare.open'), () => S.set(compareDefault())) : null,
       item(t('snap.menu'), () => void savePicture()),
       item(t('menu.copy'), () => {

@@ -125,7 +125,7 @@ function statsFor(f: FocusArea, s: S.State): Stat[] {
     const ff = stats?.kedah.districts[f.code];
     const firstKey = ff ? (['11', '12', '13', '14'] as const).find((k) => (ff.first_flooded_ha[k] ?? 0) > 0) : undefined;
     const peakKey = ff ? (['11', '12', '13', '14'] as const).reduce((a, k) => ((ff.first_flooded_ha[k] ?? 0) > (ff.first_flooded_ha[a] ?? 0) ? k : a), '11') : undefined;
-    const label: Record<string, string> = { '11': '23–25 Sep', '12': '5–7 Oct', '13': '17–19 Oct', '14': '31 Oct' };
+    const label: Record<string, string> = { '11': t('when.t1'), '12': t('when.t2'), '13': t('when.t3'), '14': t('when.t4') };
     radar = r && p
       ? [
           { label: t('focus.kpi.ked.pct', { date: fmtDay(p.date_myt) }), value: r.pct_field_water, max: 100, shown: `${r.pct_field_water}%`, basis: t('insp.basis.pct') },
@@ -167,7 +167,7 @@ function timeline(f: FocusArea, s: S.State): HTMLElement {
   const track = h('div', { class: 'tl-track' });
   for (const p of a.phases ?? []) {
     const e2 = p.end > end ? end : p.end;
-    track.append(h('span', { class: 'tl-phase', style: `left:${pos(p.start)};width:calc(${pos(e2)} - ${pos(p.start)})`, title: `MADA Phase ${p.id}` }));
+    track.append(h('span', { class: 'tl-phase', style: `left:${pos(p.start)};width:calc(${pos(e2)} - ${pos(p.start)})`, title: t('time.cell.phase', { id: p.id }) }));
   }
   for (const p of primaryPasses(s.area)) {
     track.append(h('button', {

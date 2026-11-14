@@ -1,3 +1,4 @@
+import { lang, locale } from './i18n';
 // Types and helpers for the layers.json / passes.json contract (plan 06 §4, 04 §4.1).
 import { gibsTileTemplate } from './lib/gibs';
 import type { CollectionKey } from './lib/catalog';
@@ -238,6 +239,7 @@ export async function loadConfig(): Promise<void> {
     getJson<{ meta: typeof focusMeta; areas: Record<string, FocusArea[]>; methods: Record<string, MethodGroup[]> }>('data/focus_areas.json'),
   ]);
   studyOutlines = so.features;
+  if (lang === 'ms') await applyMalay(fo);
   focusAreas = fo.areas;
   focusMeta = fo.meta;
   methods = fo.methods ?? {};
@@ -248,6 +250,41 @@ export async function loadConfig(): Promise<void> {
   passes = p.passes.slice().sort((a, b) => (a.date_myt < b.date_myt ? -1 : a.date_myt > b.date_myt ? 1 : 0));
   story = s;
   provenance = pr;
+}
+
+interface FocusMs {
+  areas: Record<string, { title?: string; tagline?: string; facts?: string[]; drivers?: string[]; events?: string[]; ai_draft?: string; ai_focus?: string }>;
+  methods?: Record<string, { group: string; items: { name: string; text: string }[] }[]>;
+}
+
+/** Bahasa Melayu text for the focus districts and methods (public/data/focus_areas.ms.json), laid over the English
+ *  by id and position; anything missing stays in English. Sources stay as cited. */
+async function applyMalay(fo: { areas: Record<string, FocusArea[]>; methods: Record<string, MethodGroup[]> }): Promise<void> {
+  let m: FocusMs;
+  try {
+    m = await getJson<FocusMs>('data/focus_areas.ms.json');
+  } catch {
+    return;
+  }
+  for (const f of Object.values(fo.areas).flat()) {
+    const x = m.areas[f.id];
+    if (!x) continue;
+    if (x.title) f.title = x.title;
+    if (x.tagline) f.tagline = x.tagline;
+    if (x.ai_draft) f.ai_draft = x.ai_draft;
+    if (x.ai_focus) f.ai_focus = x.ai_focus;
+    x.facts?.forEach((txt, i) => f.facts[i] && (f.facts[i].text = txt));
+    x.drivers?.forEach((txt, i) => f.drivers[i] && (f.drivers[i].text = txt));
+    x.events?.forEach((txt, i) => f.events[i] && (f.events[i].label = txt));
+  }
+  for (const [areaId, groups] of Object.entries(m.methods ?? {})) {
+    groups.forEach((g, gi) => {
+      const target = fo.methods?.[areaId]?.[gi];
+      if (!target) return;
+      target.group = g.group;
+      g.items.forEach((it, ii) => target.items[ii] && Object.assign(target.items[ii], it));
+    });
+  }
 }
 
 export function area(id: string): Area {
@@ -291,13 +328,13 @@ export function daysBetween(start: string, end: string): string[] {
   return out;
 }
 
-const fmtLong = new Intl.DateTimeFormat('en-MY', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-const fmtShort = new Intl.DateTimeFormat('en-MY', { day: 'numeric', month: 'short', timeZone: 'UTC' });
-const fmtFull = new Intl.DateTimeFormat('en-MY', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const fmtLong = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const fmtShort = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const fmtFull = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 export const fmtDate = (d: string): string => fmtLong.format(new Date(toMs(d)));
 export const fmtDay = (d: string): string => fmtShort.format(new Date(toMs(d)));
 export const fmtDateFull = (d: string): string => fmtFull.format(new Date(toMs(d)));
-export const fmtNum = (n: number): string => new Intl.NumberFormat('en-MY').format(n);
+export const fmtNum = (n: number): string => new Intl.NumberFormat(locale).format(n);
 
 /** Nearest item by date; ties go to the earlier one. */
 export function nearest<T>(items: T[], date: string, key: (t: T) => string): T | undefined {

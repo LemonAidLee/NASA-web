@@ -1380,3 +1380,11 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
   height: 5px;
   border-radius: 1px;
 }
+
+/* "How sure are we?" pill: short label on phones (the Malay question is long) */
+.pill-sure .sure-short { display: none; }
+@media (max-width: 767px) {
+  .pill-sure .sure-long { display: none; }
+  .pill-sure .sure-short { display: inline; }
+  #topbar .top-where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}

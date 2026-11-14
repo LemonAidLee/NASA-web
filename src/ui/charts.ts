@@ -4,6 +4,7 @@
 // hover and keyboard focus, a legend for two or more series, and a table view for every chart.
 // Colours are CSS variables (styles/charts.css), validated per theme surface with the dataviz palette validator.
 import { h } from '../lib/dom';
+import { locale, t } from '../i18n';
 
 const NS = 'http://www.w3.org/2000/svg';
 const W = 320; // viewBox width; the SVG scales to the panel width
@@ -17,9 +18,9 @@ function s<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, s
 
 const DAY = 86_400_000;
 const ms = (d: string) => Date.parse(`${d}T00:00:00Z`);
-const fmtDay = new Intl.DateTimeFormat('en-MY', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const fmtDay = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC' });
 export const dayLabel = (d: string): string => fmtDay.format(new Date(ms(d)));
-const nf = new Intl.NumberFormat('en-MY', { maximumFractionDigits: 1 });
+const nf = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
 export const num = (v: number): string => nf.format(v);
 
 /** Clean axis ticks: 0, then 1/2/2.5/5 × 10^k steps up to the max. */
@@ -49,7 +50,7 @@ function frame(title: string, subtitle: string, height: number, ariaLabel: strin
   const root = h('figure', { class: 'viz' },
     h('figcaption', {},
       h('span', { class: 'viz-title' }, title),
-      explain ? h('span', { class: 'viz-explain' }, h('strong', {}, 'What it shows: '), explain) : null,
+      explain ? h('span', { class: 'viz-explain' }, h('strong', {}, `${t('viz.what')} `), explain) : null,
       subtitle ? h('span', { class: 'viz-sub' }, subtitle) : null),
     h('div', { class: 'viz-plot' }, svg, tip),
   );
@@ -58,7 +59,7 @@ function frame(title: string, subtitle: string, height: number, ariaLabel: strin
 
 /** "How to read it": one or two plain sentences under every chart. */
 function howTo(text: string): HTMLElement {
-  return h('p', { class: 'viz-note' }, h('strong', {}, 'How to read it: '), text);
+  return h('p', { class: 'viz-note' }, h('strong', {}, `${t('viz.how')} `), text);
 }
 
 /** Tooltip rows: value strong first, label after, keyed by a short line in the series colour (never a box). */
@@ -92,7 +93,7 @@ function legend(items: { color: string; label: string; kind: 'line' | 'rect' }[]
 /** "Show as table": the WCAG-clean twin of every chart, so no value is reachable by hover only. */
 function tableView(head: string[], rows: (string | number)[][]): HTMLElement {
   return h('details', { class: 'viz-table' },
-    h('summary', {}, 'Show as table'),
+    h('summary', {}, t('viz.table')),
     h('div', { class: 'table-wrap' }, h('table', { class: 'table' },
       h('thead', {}, h('tr', {}, head.map((c) => h('th', { scope: 'col' }, c)))),
       h('tbody', {}, rows.map((r) => h('tr', {}, r.map((c, i) => (i === 0 ? h('th', { scope: 'row' }, String(c)) : h('td', { class: 'num' }, String(c))))))),
@@ -253,7 +254,7 @@ export function timeChart(o: TimeChartOpts): HTMLElement {
   if (o.note) f.root.append(howTo(o.note));
   const hasRange = o.series.some((se) => se.points.some((p) => p.lo !== undefined));
   f.root.append(tableView(
-    ['Date', ...o.series.flatMap((se) => [`${se.name} (${o.unit})`, ...(hasRange ? ['Range'] : [])])],
+    [t('viz.col.date'), ...o.series.flatMap((se) => [`${se.name} (${o.unit})`, ...(hasRange ? [t('viz.col.range')] : [])])],
     dates.map((d) => [dayLabel(d), ...o.series.flatMap((se) => {
       const p = se.points.find((q) => q.date === d);
       return [p ? num(p.y) : '—', ...(hasRange ? [p && p.lo !== undefined ? `${num(p.lo)}–${num(p.hi ?? p.y)}` : '—'] : [])];
@@ -341,7 +342,7 @@ export function dailyChart(o: DailyOpts): HTMLElement {
     cross.setAttribute('visibility', 'visible');
     const pass = (o.marks ?? []).find((mk) => mk.date === d);
     showTip(f, X(i), Y(o.daily[d] ?? 0), dayLabel(d), [
-      { color: o.color, value: o.daily[d] === undefined ? 'no data' : `${num(o.daily[d])} ${o.unit}`, label: 'rain' },
+      { color: o.color, value: o.daily[d] === undefined ? t('viz.nodata') : `${num(o.daily[d])} ${o.unit}`, label: t('viz.rain') },
       ...(pass ? [{ value: '▲', label: pass.label }] : []),
     ]);
   };
@@ -368,11 +369,11 @@ export function dailyChart(o: DailyOpts): HTMLElement {
     hideTip(f);
   });
   f.root.append(h('ul', { class: 'viz-legend' },
-    h('li', {}, h('span', { class: 'viz-key viz-key-rect', style: `background:${o.color}`, 'aria-hidden': 'true' }), `Daily ${o.unit === 'mm' ? 'rainfall' : 'value'}`),
-    o.marks?.length ? h('li', {}, h('span', { class: 'viz-key viz-key-pass', 'aria-hidden': 'true' }), 'Radar pass') : null,
+    h('li', {}, h('span', { class: 'viz-key viz-key-rect', style: `background:${o.color}`, 'aria-hidden': 'true' }), t(o.unit === 'mm' ? 'viz.daily.rain' : 'viz.daily.value')),
+    o.marks?.length ? h('li', {}, h('span', { class: 'viz-key viz-key-pass', 'aria-hidden': 'true' }), t('viz.pass')) : null,
   ));
   if (o.note) f.root.append(howTo(o.note));
-  f.root.append(tableView(['Date', `Rain (${o.unit})`, 'Radar pass'],
+  f.root.append(tableView([t('viz.col.date'), `${t('viz.rain')} (${o.unit})`, t('viz.pass')],
     days.map((d) => [dayLabel(d), o.daily[d] === undefined ? '—' : num(o.daily[d]), (o.marks ?? []).find((mk) => mk.date === d)?.label ?? ''])));
   return f.root;
 }
@@ -439,14 +440,14 @@ export function rankChart(o: RankOpts): HTMLElement {
       row.style.cursor = 'pointer';
     }
     row.addEventListener('pointermove', () => showTip(f, X(r.value), y, r.label, [
-      { color: o.color, value: `${num(r.value)} ${o.unit}`, label: r.lo !== undefined ? `range ${num(r.lo)}–${num(r.hi ?? r.value)}` : '' },
+      { color: o.color, value: `${num(r.value)} ${o.unit}`, label: r.lo !== undefined ? `${t('viz.range')} ${num(r.lo)}–${num(r.hi ?? r.value)}` : '' },
     ]));
     row.addEventListener('pointerleave', () => hideTip(f));
     g.append(row);
   });
   f.svg.append(g);
   if (o.note) f.root.append(howTo(o.note));
-  f.root.append(tableView(['Name', `Value (${o.unit})`, 'Range'], rows.map((r) => [r.label, num(r.value), r.lo !== undefined ? `${num(r.lo)}–${num(r.hi ?? r.value)}` : '—'])));
+  f.root.append(tableView([t('viz.col.name'), `${t('viz.col.value')} (${o.unit})`, t('viz.col.range')], rows.map((r) => [r.label, num(r.value), r.lo !== undefined ? `${num(r.lo)}–${num(r.hi ?? r.value)}` : '—'])));
   return f.root;
 }
 
@@ -524,7 +525,7 @@ export function distChart(o: DistOpts): HTMLElement {
     cross.setAttribute('x1', String(X(b + step / 2)));
     cross.setAttribute('x2', String(X(b + step / 2)));
     cross.setAttribute('visibility', 'visible');
-    showTip(f, X(b + step / 2), m.t + 10, `${num(b)} to ${num(b + step)} dB`, o.series.map((se) => {
+    showTip(f, X(b + step / 2), m.t + 10, `${num(b)} ${t('viz.to')} ${num(b + step)} dB`, o.series.map((se) => {
       const i = Math.round((b - se.lo) / se.step);
       return { color: se.color, value: `${num(se.pct[i] ?? 0)}%`, label: se.name };
     }));
@@ -541,7 +542,7 @@ export function distChart(o: DistOpts): HTMLElement {
   const rows: (string | number)[][] = [];
   if (se0) {
     for (let b = se0.lo; b < se0.lo + se0.step * se0.pct.length; b += 1) {
-      rows.push([`${num(b)} to ${num(b + 1)}`, ...o.series.map((se) => {
+      rows.push([`${num(b)} ${t('viz.to')} ${num(b + 1)}`, ...o.series.map((se) => {
         const i = Math.round((b - se.lo) / se.step);
         return num((se.pct[i] ?? 0) + (se.pct[i + 1] ?? 0));
       })]);
@@ -600,7 +601,7 @@ export function columnChart(o: ColumnOpts): HTMLElement {
   });
   f.svg.append(g);
   if (o.note) f.root.append(howTo(o.note));
-  f.root.append(tableView(['Group', `Value (${o.unit})`], o.cols.map((c) => [c.label, num(c.value)])));
+  f.root.append(tableView([t('viz.col.group'), `${t('viz.col.value')} (${o.unit})`], o.cols.map((c) => [c.label, num(c.value)])));
   return f.root;
 }
 
@@ -682,6 +683,6 @@ export function spotChart(o: SpotOpts): HTMLElement {
     { color: 'var(--viz-flood)', label: o.verdictLabels.wet, kind: 'rect' },
   ]));
   if (o.note) f.root.append(howTo(o.note));
-  f.root.append(tableView(['Pass', ...o.series.map((se) => `${se.name} (dB)`), 'Our map'], o.passes.map((p, i) => [p, ...o.series.map((se) => (se.values[i] === null ? '—' : num(se.values[i] as number))), o.verdict[i] === null ? '—' : o.verdict[i] ? o.verdictLabels.wet : o.verdictLabels.dry])));
+  f.root.append(tableView([t('viz.col.pass'), ...o.series.map((se) => `${se.name} (dB)`), t('viz.col.ourmap')], o.passes.map((p, i) => [p, ...o.series.map((se) => (se.values[i] === null ? '—' : num(se.values[i] as number))), o.verdict[i] === null ? '—' : o.verdict[i] ? o.verdictLabels.wet : o.verdictLabels.dry])));
   return f.root;
 }
