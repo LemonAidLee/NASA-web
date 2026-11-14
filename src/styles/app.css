@@ -417,23 +417,31 @@ kbd {
 
 /* ---------- left column ---------- */
 
+/* The column is only as tall as its cards (max-height, not top + bottom), so it can take pointer events itself:
+   the gaps between cards and its scrollbar scroll the column, and the map stays clickable below a short column.
+   (It used to be pointer-events: none with only the cards re-enabled, so the wheel over a gap zoomed the map
+   and the scrollbar could not be grabbed; fixed 14 Nov.) */
 .col-left {
   position: absolute;
   top: var(--s3);
   left: var(--s3);
-  bottom: 44px;
+  max-height: calc(100% - var(--s3) - 44px);
   width: var(--col-w);
   display: flex;
   flex-direction: column;
   gap: var(--s3);
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   z-index: 3;
   scrollbar-width: thin;
-  pointer-events: none;
+  scrollbar-gutter: stable;
   transition: opacity 250ms var(--ease);
 }
-.col-left > * { pointer-events: auto; flex: none; }
+.col-left > * { flex: none; }
+/* Frosted glass re-samples the WebGL map under every card on every frame of a scroll; drop the blur only while the
+   column is moving (ui/layout.ts sets .is-scrolling), so scrolling stays smooth. */
+.col-left.is-scrolling > .card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 .dock-closed .col-left .layers-card,
 .dock-closed .col-left .legend-card { display: none; }
 

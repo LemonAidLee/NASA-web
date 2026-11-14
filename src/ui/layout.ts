@@ -71,6 +71,19 @@ function peekLine(s: S.State): void {
   sheetPeekLine.textContent = imageryOnly(a) ? t('exp.badge') : areaHeadline(s.area, s.date, a.panel.headline, fmtDate, t);
 }
 
+/** Mark a scroll container with .is-scrolling while it moves (CSS drops the costly glass blur until it settles). */
+function watchScrolling(el: HTMLElement): void {
+  let timer = 0;
+  el.addEventListener('scroll', () => {
+    if (!timer) el.classList.add('is-scrolling');
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      el.classList.remove('is-scrolling');
+      timer = 0;
+    }, 160);
+  }, { passive: true });
+}
+
 export function initLayout(): void {
   buildSheet();
   placeNodes();
@@ -78,6 +91,7 @@ export function initLayout(): void {
     document.documentElement.style.setProperty('--peek-h', `${Math.round(e.contentRect.height)}px`);
   }).observe($('#sheet'));
   mq.addEventListener('change', placeNodes);
+  watchScrolling($('#leftcol'));
   const s = S.get();
   applySheet(s);
   peekLine(s);

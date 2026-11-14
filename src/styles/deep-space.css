@@ -119,6 +119,10 @@
   border-bottom: 1.5px solid var(--hud-label);
   border-right: 1.5px solid var(--hud-label);
 }
+/* Docked left-column cards are their own (resizable) scroll boxes. A bracket 1 px past the bottom edge made every
+   card scrollable by 1 px, so a wheel gesture latched onto the card and stalled instead of scrolling the column.
+   Keep the bracket inside the edge there. */
+[data-theme='deep-space'] .col-left > .card::after { bottom: 0; right: 0; }
 
 [data-theme='deep-space'] .app-popup .maplibregl-popup-content {
   background: var(--glass);
