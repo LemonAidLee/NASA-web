@@ -1,5 +1,5 @@
 // F20 HUD status bar (expert), plain top bar (simple / mobile), menu, theme switch (F19), live catalogue check (F27).
-import { area, imageryOnly, fmtDate, layersFor, passesFor, primaryPasses, provenance, resolveDate } from '../config';
+import { area, imageryOnly, fmtDate, primaryPasses, provenance } from '../config';
 import { t } from '../i18n';
 import { $, clear, h, storage } from '../lib/dom';
 import { latestTime } from '../lib/catalog';
@@ -40,13 +40,6 @@ function seg(label: string, value: string, cls = ''): HTMLElement {
   return h('span', { class: `hud-seg ${cls}` }, h('span', { class: 'hud-label' }, label), ' ', h('span', { class: 'hud-value' }, value));
 }
 
-function radarAge(s: S.State): number | null {
-  const main = layersFor(s.area).find((l) => l.dates === 'passes');
-  if (!main) return null;
-  const r = resolveDate(main, s.area, s.date);
-  return r ? Math.abs(r.age) : null;
-}
-
 function render(): void {
   const s = S.get();
   const a = area(s.area);
@@ -55,26 +48,19 @@ function render(): void {
   const pass = primaryPasses(s.area).find((p) => p.date_myt === s.date);
   const dateLabel = `${fmtDate(s.date)}${pass ? ` ${pass.time_myt}` : ''}`;
 
-  // ---- expert HUD ----
-  const visible = layersFor(s.area).filter((l) => !l.expert_only || s.mode === 'expert');
-  const onCount = visible.filter((l) => (l.base ? s.base === 'sat' || s.layers[l.id]?.on : s.layers[l.id]?.on)).length;
-  const scenes = passesFor(s.area).length;
-  const age = radarAge(s);
+  // ---- desktop bar: only what a reader needs at a glance (14 Nov declutter) ----
+  // Clocks, layer and scene counts, radar age and the data status moved out: the time bar, the rails and
+  // "How sure are we?" carry them.
   const expert = h(
     'div',
     { class: 'hud-row x-only' },
-    h('span', { class: 'hud-path' }, t('app.path')),
-    h('span', { class: 'hud-seg hud-clock' }, h('span', { class: 'hud-label' }, t('hud.myt')), ' ', h('span', { class: 'hud-value', id: 'clock-myt' }, '--:--:--'),
-      ' · ', h('span', { class: 'hud-label' }, t('hud.utc')), ' ', h('span', { class: 'hud-value', id: 'clock-utc' }, '--:--:--'), h('span', { class: 'hud-value' }, 'Z')),
-    seg(t('hud.area'), t(a.short).toUpperCase()),
-    seg(t('hud.date'), dateLabel.toUpperCase()),
-    !imageryOnly(a) && age !== null ? seg(t('hud.age'), `${age} D`, age > 6 ? 'hud-muted' : '') : null,
-    seg(t('hud.layers'), `${onCount}/${visible.length}`),
-    !imageryOnly(a) ? seg(t('hud.scenes'), String(scenes)) : null,
-    h('button', { class: 'hud-seg hud-btn', onclick: openSure, 'aria-label': t('sure.pill') },
-      h('span', { class: 'hud-label' }, t('hud.data')), ' ', h('span', { class: 'hud-value' }, `● ${t('hud.provisional').toUpperCase()}`)),
-    seg(t('hud.mode'), liveOk ? t('hud.livecheck').toUpperCase() : t('hud.archive').toUpperCase()),
-    latestPass ? seg(t('hud.latest'), fmtDate(latestPass).toUpperCase()) : null,
+    h('span', { class: 'hud-path' }, t('app.title')),
+    seg(t('hud.area'), t(a.short)),
+    seg(t('hud.date'), dateLabel),
+    latestPass
+      ? h('span', { class: `hud-seg hud-live${liveOk ? ' is-live' : ''}`, title: t(liveOk ? 'hud.live.tip' : 'hud.archive.tip') },
+          h('span', { class: 'hud-dot', 'aria-hidden': 'true' }), ' ', t(liveOk ? 'hud.latest.live' : 'hud.latest.saved', { date: fmtDate(latestPass) }))
+      : null,
     h('span', { class: 'hud-spacer' }),
     h('div', { class: 'segmented', role: 'group', 'aria-label': `${t('hud.map')} / ${t('hud.sat')}` },
       h('button', { class: 'pill pill-sm', 'aria-pressed': String(s.base === 'map'), onclick: () => S.set({ base: 'map' }) }, t('hud.map').toUpperCase()),

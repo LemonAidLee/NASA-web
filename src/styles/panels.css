@@ -291,7 +291,7 @@ button.sock:focus-visible,
 .tracker {
   position: absolute;
   top: 60px;
-  right: calc(var(--panel-w) + 2 * var(--s3));
+  right: var(--right-occ);
   width: 270px;
   z-index: 4;
   display: flex;

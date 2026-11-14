@@ -1,8 +1,10 @@
 {
   "_note": "Focus areas for the AI-analysis dashboard. The 'analysis' text is an AI draft (Claude) from the plan's sourced facts, NOT reviewed and NOT computed from radar data. In the refined version this file is generated at build time from the pipeline outputs (AI writes text, code fills every number, a person reviews it; reports/AI integration in SAR prototype.md). scripts/make-focus-areas.mjs adds 'code' and 'center' from the DOSM districts.",
   "meta": {
-    "generated_by": "Claude (draft text, not yet reviewed)",
-    "reviewed": false
+    "generated_by": "Claude (Anthropic) via Claude Code, 14 Nov 2026, written from our radar results (stats.json, rain.json)",
+    "kind": "ai-from-results",
+    "reviewed": false,
+    "checked": "pipeline/11_ai_analysis.py checks every number against stats.json and rain.json"
   },
   "areas": {
     "kelantan": [
@@ -30,8 +32,8 @@
             "url": "https://opus.lib.uts.edu.au/handle/10453/130821"
           }
         ],
-        "ai_focus": "Measure where new water spread between the 17 Nov and 29 Nov passes, rank the villages it reached, and flag fields where the physics map and the AI second opinion disagree.",
-        "ai_draft": "Pasir Mas is the first place to check. It had the most evacuees on 29 Nov, and it sits on low land along the river. The radar map for this district is made at the event. Then this summary will say where new water spread, and how sure we are.",
+        "ai_focus": "The 5 Dec count comes from the other radar track, which sees the land from a different angle. Compare 29 Nov with 11 Dec (same track) before saying exactly how fast the water went down.",
+        "ai_draft": "Our radar map shows about 4,680 ha of new flood water in Pasir Mas on 29 Nov 2024 (range 4,137–4,680 ha), about 8% of the district. It arrived right after the three wettest days, 26–28 Nov, when about 127, 132 and 120 mm of rain fell per day. By 5 Dec only 786 ha was left, and by 17 Dec 235 ha, so most of the water drained within a week.",
         "events": [
           {
             "date": "2024-11-29",
@@ -65,8 +67,8 @@
             "url": "https://www.thestar.com.my/news/nation/2026/10/24/northeast-monsoon-set-to-bring-flood-risks"
           }
         ],
-        "ai_focus": "Track how long water stayed in the delta across all six passes, and compare it with Pasir Mas upstream to see whether the coast held the water back.",
-        "ai_draft": "Tumpat is where the river reaches the sea. Water here can stay longer when tides are high. The AI summary will compare the six radar passes to show if the delta drained more slowly than the land upstream.",
+        "ai_focus": "Check whether the water that stayed after 5 Dec sits in the same low fields each time. If it does, those fields are the slowest to drain and worth watching in the next monsoon.",
+        "ai_draft": "Tumpat had the largest share of its land under new flood water of any study district: about 3,596 ha on 29 Nov 2024, close to 20% of the district. The water also lingered. On 5 Dec about 1,330 ha remained, 37% of the peak, while upstream Pasir Mas kept only 17%. That fits a low delta where the river meets the tide.",
         "events": [
           {
             "date": "2024-11-29",
@@ -105,8 +107,8 @@
             "url": ""
           }
         ],
-        "ai_focus": "Separate open floodwater around the town from built-up areas, where radar is unreliable, so the summary never claims a street was dry or wet without evidence.",
-        "ai_draft": "Kota Bharu is a city at the river mouth. Radar sees floods in open fields well but struggles between buildings. The AI summary will report water around the town and mark the town centre as uncertain.",
+        "ai_focus": "That rise on 11 Dec is probably not a second flood. 5 Dec and 11 Dec come from two different radar tracks with different viewing angles. Check it against NASA's water map for the same dates before reading it as new water.",
+        "ai_draft": "Kota Bharu shows about 2,404 ha of new flood water on 29 Nov 2024 (range 1,949–2,404 ha), about 6% of the district, all of it outside the built-up centre. Inside the town the radar cannot judge flooding, so built-up areas are greyed out, not counted as dry. The count drops to 37 ha on 5 Dec, then rises to 692 ha on 11 Dec.",
         "events": [
           {
             "date": "2024-12-01",
@@ -147,8 +149,8 @@
             "url": ""
           }
         ],
-        "ai_focus": "Group every paddy field by how its HH and HV echoes change over the six NISAR dates (k-means, no labels), then report the share of fields in each stage: flooded, growing, or not rice.",
-        "ai_draft": "Kota Setar has the most continuous paddy in our area. The AI will group fields by how their radar echo changed from 23 Sep to 19 Oct. Then this summary will say which fields filled first and how that fits MADA's three phases.",
+        "ai_focus": "About 7,259 ha first showed water only on 31 Oct. Look at whether those fields lie far from the main canals, which would point to water reaching them last.",
+        "ai_draft": "Only about 1% of Kota Setar's rice land showed water in the fields on 23–25 Sep 2026, even though MADA's Phase I began on 23 Sep. Field water grew to about 5% by 5–7 Oct, 17–20% by 17–19 Oct and 46.7% by 31 Oct. Most fields first got water after Phase III began on 13 Oct, which suggests planting ran late in this drought year. The biggest jump came after the wettest day of the season, 25 Oct, with about 114 mm of rain.",
         "events": [
           {
             "date": "2026-09-23",
@@ -195,8 +197,8 @@
             "url": "https://www.thestar.com.my/news/nation/2026/09/17/water-levels-limited-at-three-mada-dams-in-kedah"
           }
         ],
-        "ai_focus": "Compare the date each field first turned dark with the three MADA phase windows, and list fields still dry after the last phase began.",
-        "ai_draft": "Kubang Pasu is the biggest part of our Kedah view. The AI summary will compare when fields first held water with MADA's three start dates, and point out areas that were still dry after the last phase began.",
+        "ai_focus": "About 8,696 ha first showed water on 17–19 Oct. Compare those fields with MADA's Phase II and III areas to see whether water reached them on time.",
+        "ai_draft": "Kubang Pasu, the biggest of our three focus districts by rice land, got water earlier than Kota Setar: 8.7% of its rice land by 5 Oct 2026 against 5.1%. By 31 Oct it reached 55.1%, the highest of the three districts. The two NISAR tracks agree on the trend but differ by a few points on nearby dates (32.6% on 17 Oct, 28% on 19 Oct), which shows how much the viewing angle matters.",
         "events": [
           {
             "date": "2026-09-17",
@@ -235,8 +237,8 @@
             "url": ""
           }
         ],
-        "ai_focus": "Check fields that look wet on only one date against neighbouring dates, to separate real field water from smooth dry soil.",
-        "ai_draft": "Pendang sits at the inland edge of the rice bowl, and part of it falls outside our radar view. The AI summary will check if fields that look wet stay wet on the next pass, to avoid mistaking dry soil for water.",
+        "ai_focus": "The early 'wet' patches may be smooth, dry soil, which can look like water to radar, rather than real field water. Check whether the same patches stay dark on every pass: real flooding comes and goes with planting.",
+        "ai_draft": "Pendang looks different from the other two districts. About 6.8% of its rice land already looked wet on 23 Sep 2026, the day MADA's Phase I began, yet it only reached 20.9% by 31 Oct. Only 63% of the district lies inside our radar area.",
         "events": [
           {
             "date": "2026-10-13",

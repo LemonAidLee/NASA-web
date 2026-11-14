@@ -33,7 +33,15 @@ export interface State {
   /** Selected focus area (focus_areas.json id) and the AI-analysis dashboard state. */
   focus: string | null;
   dash: 'closed' | 'open' | 'max';
+  /** Desktop rails: left panels shown (others minimised to their icon), right panel shown, objectives list shown. */
+  leftPanels: string[];
+  panelOpen: boolean;
+  trackerOpen: boolean;
 }
+
+/** Left-rail panels, in rail order. */
+export const LEFT_PANELS = ['place', 'layers', 'legend'] as const;
+const DEFAULT_LEFT = ['place', 'legend'];
 
 type Listener = (s: State, changed: Set<keyof State>) => void;
 
@@ -107,6 +115,9 @@ interface SavedView {
   focus: string | null;
   dash: 'closed' | 'open' | 'max';
   camera: string;
+  leftPanels: string[];
+  panelOpen: boolean;
+  trackerOpen: boolean;
 }
 
 /** True when this page load restored a saved view (the story does not auto-start then). */
@@ -129,6 +140,7 @@ function saveView(): void {
     area: state.area, date: state.date, layers: state.layers, base: state.base,
     compare: state.compare, cmpA: state.cmpA, cmpB: state.cmpB, step: state.step,
     tab: state.tab, sureOpen: state.sureOpen, dockOpen: state.dockOpen,
+    leftPanels: state.leftPanels, panelOpen: state.panelOpen, trackerOpen: state.trackerOpen,
     focus: state.focus, dash: state.dash, camera: location.hash,
   };
   storage.set(VIEW_KEY, JSON.stringify(v));
@@ -234,6 +246,9 @@ export function initState(): State {
     district: null,
     sureOpen: saved?.sureOpen === true,
     dockOpen: saved?.dockOpen !== false,
+    leftPanels: Array.isArray(saved?.leftPanels) ? saved.leftPanels.filter((x): x is string => (LEFT_PANELS as readonly string[]).includes(x as string)) : [...DEFAULT_LEFT],
+    panelOpen: saved?.panelOpen !== false,
+    trackerOpen: saved?.trackerOpen === true,
     focus: focusParam,
     dash: focusParam ? (fromSaved && saved?.dash === 'max' && !p.get('focus') ? 'max' : 'open') : 'closed',
   };

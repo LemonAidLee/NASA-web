@@ -145,15 +145,16 @@ function statsFor(f: FocusArea, s: S.State): Stat[] {
   ];
 }
 
-/** C: stat tiles with segmented bars (docked dashboard). */
+/** C: stat tiles with segmented bars (docked dashboard). Only the three radar results here (14 Nov declutter);
+ *  district area and radar coverage stay in the expanded view's stats list. */
 function kpis(f: FocusArea, s: S.State): HTMLElement {
-  return h('div', { class: 'kpis' }, statsFor(f, s).map((st) => {
+  return h('div', { class: 'kpis kpis-3' }, statsFor(f, s).slice(0, 3).map((st) => {
     const pending = st.shown.startsWith('—');
     return h('div', { class: `kpi${pending ? ' is-pending' : ''}` },
       h('p', { class: 'kpi-label' }, st.label),
       h('p', { class: 'kpi-value num' }, st.shown),
       st.value !== null || pending ? segBar({ value: st.value, max: st.max, basis: st.basis }) : null,
-      h('p', { class: 'kpi-note' }, pending ? t('focus.kpi.pending') : t('focus.kpi.measured')),
+      h('p', { class: 'kpi-note' }, pending ? t('focus.kpi.pending') : st.basis),
     );
   }));
 }
@@ -244,7 +245,7 @@ function inspectScreen(f: FocusArea, s: S.State, i: number): HTMLElement {
     h('div', { class: 'dash-grid' },
       block(t('focus.timeline'), t('focus.timeline.tag'), timeline(f, s)),
       block(t('focus.drivers'), t('focus.drivers.tag'), h('ul', { class: 'dash-list' }, f.drivers.map((l) => h('li', {}, l.text, ' ', source(l))))),
-      block(t('focus.ai'), t('focus.ai.tag'), h('p', {}, f.ai_focus), h('p', { class: 'dash-lookcloser' }, h('strong', {}, `${t('focus.lookcloser')}: `), t('focus.lookcloser.body'))),
+      block(t('focus.ai'), t('focus.ai.tag'), h('p', {}, f.ai_focus), h('p', { class: 'dash-lookcloser' }, t('focus.lookcloser.body'))),
     ),
     actions(f),
   );
@@ -256,11 +257,12 @@ function dockedBody(f: FocusArea, s: S.State): HTMLElement {
   return h('div', { class: 'dash-body' },
     kpis(f, s),
     h('div', { class: 'dash-grid' },
+      // Calmer docked view (14 Nov): the AI analysis and its suggestion first; causes and methods live in the
+      // expanded view (⤢), so the docked panel is not a wall of text.
       block(t('focus.what'), t('focus.what.tag'), h('p', { class: 'dash-summary' }, f.ai_draft), h('p', { class: 'dash-rule' }, t('focus.rule'))),
+      block(t('focus.ai'), t('focus.ai.tag'), h('p', {}, f.ai_focus), h('p', { class: 'dash-lookcloser' }, t('focus.lookcloser.body'))),
       block(t('focus.timeline'), t('focus.timeline.tag'), timeline(f, s)),
       block(t('focus.facts'), t('focus.facts.tag'), h('ul', { class: 'dash-list' }, f.facts.map((l) => h('li', {}, l.text, ' ', source(l))))),
-      block(t('focus.drivers'), t('focus.drivers.tag'), h('ul', { class: 'dash-list' }, f.drivers.map((l) => h('li', {}, l.text, ' ', source(l))))),
-      block(t('focus.methods'), t('focus.ai.tag'), perks(s.area), h('p', {}, f.ai_focus)),
     ),
     actions(f),
   );

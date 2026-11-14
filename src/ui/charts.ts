@@ -43,14 +43,22 @@ interface Frame {
   tip: HTMLElement;
 }
 
-function frame(title: string, subtitle: string, height: number, ariaLabel: string): Frame {
+function frame(title: string, subtitle: string, height: number, ariaLabel: string, explain?: string): Frame {
   const svg = s('svg', { viewBox: `0 0 ${W} ${height}`, class: 'viz-svg', role: 'img', 'aria-label': ariaLabel });
   const tip = h('div', { class: 'viz-tip', role: 'status', hidden: true });
   const root = h('figure', { class: 'viz' },
-    h('figcaption', {}, h('span', { class: 'viz-title' }, title), subtitle ? h('span', { class: 'viz-sub' }, subtitle) : null),
+    h('figcaption', {},
+      h('span', { class: 'viz-title' }, title),
+      explain ? h('span', { class: 'viz-explain' }, h('strong', {}, 'What it shows: '), explain) : null,
+      subtitle ? h('span', { class: 'viz-sub' }, subtitle) : null),
     h('div', { class: 'viz-plot' }, svg, tip),
   );
   return { root, svg, tip };
+}
+
+/** "How to read it": one or two plain sentences under every chart. */
+function howTo(text: string): HTMLElement {
+  return h('p', { class: 'viz-note' }, h('strong', {}, 'How to read it: '), text);
 }
 
 /** Tooltip rows: value strong first, label after, keyed by a short line in the series colour (never a box). */
@@ -110,6 +118,8 @@ export interface TimeSeries {
 }
 export interface TimeChartOpts {
   title: string;
+  /** One plain sentence: what the chart shows. */
+  explain?: string;
   subtitle?: string;
   unit: string; // shown in tooltips, e.g. "ha" or "%"
   start: string;
@@ -134,7 +144,7 @@ export function timeChart(o: TimeChartOpts): HTMLElement {
   const ticks = niceTicks(o.yMax ?? Math.max(1, ...all));
   const yTop = ticks[ticks.length - 1];
   const Y = (v: number) => m.t + ph - (v / yTop) * ph;
-  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.series.map((se) => `${se.name}: ${se.points.map((p) => `${dayLabel(p.date)} ${num(p.y)} ${o.unit}`).join(', ')}`).join('. ')}`);
+  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.series.map((se) => `${se.name}: ${se.points.map((p) => `${dayLabel(p.date)} ${num(p.y)} ${o.unit}`).join(', ')}`).join('. ')}`, o.explain);
   const g = s('g');
   // grid + y ticks
   for (const v of ticks) {
@@ -240,7 +250,7 @@ export function timeChart(o: TimeChartOpts): HTMLElement {
     hideTip(f);
   });
   if (o.series.length > 1) f.root.append(legend(o.series.map((se) => ({ color: se.color, label: se.name, kind: 'line' }))));
-  if (o.note) f.root.append(h('p', { class: 'viz-note' }, o.note));
+  if (o.note) f.root.append(howTo(o.note));
   const hasRange = o.series.some((se) => se.points.some((p) => p.lo !== undefined));
   f.root.append(tableView(
     ['Date', ...o.series.flatMap((se) => [`${se.name} (${o.unit})`, ...(hasRange ? ['Range'] : [])])],
@@ -256,6 +266,8 @@ export function timeChart(o: TimeChartOpts): HTMLElement {
 
 export interface DailyOpts {
   title: string;
+  /** One plain sentence: what the chart shows. */
+  explain?: string;
   subtitle?: string;
   unit: string;
   daily: Record<string, number>;
@@ -281,7 +293,7 @@ export function dailyChart(o: DailyOpts): HTMLElement {
   const yTop = ticks[ticks.length - 1];
   const Y = (v: number) => m.t + ph - (v / yTop) * ph;
   const X = (i: number) => m.l + i * slot + slot / 2;
-  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}, ${days.length} days, wettest ${(() => { const p = days.reduce((a, d) => ((o.daily[d] ?? 0) > (o.daily[a] ?? 0) ? d : a), days[0]); return `${dayLabel(p)} ${num(o.daily[p] ?? 0)} ${o.unit}`; })()}`);
+  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}, ${days.length} days, wettest ${(() => { const p = days.reduce((a, d) => ((o.daily[d] ?? 0) > (o.daily[a] ?? 0) ? d : a), days[0]); return `${dayLabel(p)} ${num(o.daily[p] ?? 0)} ${o.unit}`; })()}`, o.explain);
   const g = s('g');
   for (const v of ticks) {
     g.append(s('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: v === 0 ? 'viz-base' : 'viz-grid' }));
@@ -359,7 +371,7 @@ export function dailyChart(o: DailyOpts): HTMLElement {
     h('li', {}, h('span', { class: 'viz-key viz-key-rect', style: `background:${o.color}`, 'aria-hidden': 'true' }), `Daily ${o.unit === 'mm' ? 'rainfall' : 'value'}`),
     o.marks?.length ? h('li', {}, h('span', { class: 'viz-key viz-key-pass', 'aria-hidden': 'true' }), 'Radar pass') : null,
   ));
-  if (o.note) f.root.append(h('p', { class: 'viz-note' }, o.note));
+  if (o.note) f.root.append(howTo(o.note));
   f.root.append(tableView(['Date', `Rain (${o.unit})`, 'Radar pass'],
     days.map((d) => [dayLabel(d), o.daily[d] === undefined ? '—' : num(o.daily[d]), (o.marks ?? []).find((mk) => mk.date === d)?.label ?? ''])));
   return f.root;
@@ -377,6 +389,8 @@ export interface RankRow {
 }
 export interface RankOpts {
   title: string;
+  /** One plain sentence: what the chart shows. */
+  explain?: string;
   subtitle?: string;
   unit: string;
   rows: RankRow[];
@@ -394,7 +408,7 @@ export function rankChart(o: RankOpts): HTMLElement {
   const pw = W - m.l - m.r;
   const max = Math.max(1, ...rows.map((r) => r.hi ?? r.value));
   const X = (v: number) => m.l + (v / max) * pw;
-  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${rows.map((r) => `${r.label} ${num(r.value)} ${o.unit}`).join(', ')}`);
+  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${rows.map((r) => `${r.label} ${num(r.value)} ${o.unit}`).join(', ')}`, o.explain);
   const g = s('g');
   g.append(s('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, class: 'viz-base' }));
   rows.forEach((r, i) => {
@@ -424,14 +438,14 @@ export function rankChart(o: RankOpts): HTMLElement {
       row.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), pick()));
       row.style.cursor = 'pointer';
     }
-    row.addEventListener('pointerenter', () => showTip(f, X(r.value), y, r.label, [
+    row.addEventListener('pointermove', () => showTip(f, X(r.value), y, r.label, [
       { color: o.color, value: `${num(r.value)} ${o.unit}`, label: r.lo !== undefined ? `range ${num(r.lo)}–${num(r.hi ?? r.value)}` : '' },
     ]));
     row.addEventListener('pointerleave', () => hideTip(f));
     g.append(row);
   });
   f.svg.append(g);
-  if (o.note) f.root.append(h('p', { class: 'viz-note' }, o.note));
+  if (o.note) f.root.append(howTo(o.note));
   f.root.append(tableView(['Name', `Value (${o.unit})`, 'Range'], rows.map((r) => [r.label, num(r.value), r.lo !== undefined ? `${num(r.lo)}–${num(r.hi ?? r.value)}` : '—'])));
   return f.root;
 }
@@ -448,6 +462,8 @@ export interface DistSeries {
 }
 export interface DistOpts {
   title: string;
+  /** One plain sentence: what the chart shows. */
+  explain?: string;
   subtitle?: string;
   xLabel: string;
   series: DistSeries[];
@@ -467,7 +483,7 @@ export function distChart(o: DistOpts): HTMLElement {
   const ticks = niceTicks(Math.max(1, ...o.series.flatMap((se) => se.pct)));
   const yTop = ticks[ticks.length - 1];
   const Y = (v: number) => m.t + ph - (v / yTop) * ph;
-  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.threshold ? o.threshold.label : ''}`);
+  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.threshold ? o.threshold.label : ''}`, o.explain);
   const g = s('g');
   for (const v of ticks) {
     g.append(s('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: v === 0 ? 'viz-base' : 'viz-grid' }));
@@ -519,7 +535,7 @@ export function distChart(o: DistOpts): HTMLElement {
     hideTip(f);
   });
   f.root.append(legend(o.series.map((se) => ({ color: se.color, label: se.name, kind: 'line' }))));
-  if (o.note) f.root.append(h('p', { class: 'viz-note' }, o.note));
+  if (o.note) f.root.append(howTo(o.note));
   // table: 1 dB bins keep it readable
   const se0 = o.series[0];
   const rows: (string | number)[][] = [];
@@ -539,6 +555,8 @@ export function distChart(o: DistOpts): HTMLElement {
 
 export interface ColumnOpts {
   title: string;
+  /** One plain sentence: what the chart shows. */
+  explain?: string;
   subtitle?: string;
   unit: string;
   cols: { label: string; value: number; color: string }[];
@@ -555,7 +573,7 @@ export function columnChart(o: ColumnOpts): HTMLElement {
   const ticks = niceTicks(Math.max(1, ...o.cols.map((c) => c.value)));
   const yTop = ticks[ticks.length - 1];
   const Y = (v: number) => m.t + ph - (v / yTop) * ph;
-  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.cols.map((c) => `${c.label} ${num(c.value)} ${o.unit}`).join(', ')}`);
+  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.cols.map((c) => `${c.label} ${num(c.value)} ${o.unit}`).join(', ')}`, o.explain);
   const g = s('g');
   for (const v of ticks) {
     g.append(s('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: v === 0 ? 'viz-base' : 'viz-grid' }));
@@ -576,12 +594,12 @@ export function columnChart(o: ColumnOpts): HTMLElement {
     const lab = s('text', { x: cx, y: H - 6, class: 'viz-tick', 'text-anchor': 'middle' });
     lab.textContent = c.label;
     col.append(val, lab, s('rect', { x: cx - slot / 2, y: 0, width: slot, height: H, class: 'viz-hit' }));
-    col.addEventListener('pointerenter', () => showTip(f, cx, y, c.label, [{ color: c.color, value: `${num(c.value)} ${o.unit}`, label: '' }]));
+    col.addEventListener('pointermove', () => showTip(f, cx, y, c.label, [{ color: c.color, value: `${num(c.value)} ${o.unit}`, label: '' }]));
     col.addEventListener('pointerleave', () => hideTip(f));
     g.append(col);
   });
   f.svg.append(g);
-  if (o.note) f.root.append(h('p', { class: 'viz-note' }, o.note));
+  if (o.note) f.root.append(howTo(o.note));
   f.root.append(tableView(['Group', `Value (${o.unit})`], o.cols.map((c) => [c.label, num(c.value)])));
   return f.root;
 }

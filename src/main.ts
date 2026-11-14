@@ -9,6 +9,7 @@ import './styles/focus.css';
 import './styles/panels.css';
 import './styles/deep-space.css';
 import './styles/charts.css';
+import './styles/rails.css';
 
 import { addProtocol, setWorkerUrl } from 'maplibre-gl';
 // MapLibre v6 under Vite: worker via ?worker&url, set once before the first map (plan 06 §1.3 item 1).
@@ -35,6 +36,7 @@ import { initLayout } from './ui/layout';
 import { initFocus } from './ui/focus';
 import { initTracker } from './ui/tracker';
 import { initWindows } from './ui/windows';
+import { initRails } from './ui/rails';
 
 setWorkerUrl(workerUrl);
 // Registered once at startup (plan 06 §6.3 rule 6). No COG layers exist yet: our baked COGs arrive at the event.
@@ -98,6 +100,7 @@ async function boot(): Promise<void> {
   initFocus();
   initTracker();
   initWindows();
+  initRails();
   initShortcuts();
   map.once('load', () => {
     announce(t('a11y.loaded', { date: fmtDate(S.get().date) }));

@@ -10,6 +10,7 @@ import { segBar, statRow } from './kit';
 import { earthdataSearchUrl, latestTime, vertexUrl, type Bbox } from '../lib/catalog';
 import { ha as haFmt, haRange, kedDateByUtc, kedPass, kelPass, rain as rainData, stats } from '../lib/stats';
 import { columnChart, dailyChart, distChart, num, rankChart, timeChart } from './charts';
+import { deskTabs, minimiseButton } from './rails';
 
 export const panelRoot = h('div', { class: 'panel-inner' });
 let mobile = false;
@@ -38,6 +39,10 @@ function tabs(s: S.State): Tab[] {
       { id: 'about', label: t('tab.about') },
     ];
   }
+  if (!mobile) {
+    // Desktop: the right rail picks the section (ui/rails.ts); the same list drives Q / E and the panel header.
+    return deskTabs(s).map((id) => ({ id, label: sectionLabel(s, id) }));
+  }
   if (expert) {
     const list: Tab[] = [
       { id: 'numbers', label: numbersLabel.toUpperCase(), badge: s.area === 'kedah' ? String(primaryPasses('kedah').length) : s.area === 'kelantan' ? '—' : undefined },
@@ -56,6 +61,12 @@ function tabs(s: S.State): Tab[] {
     { id: 'sure', label: t('sure.pill') },
     { id: 'about', label: t('tab.about') },
   ];
+}
+
+function sectionLabel(s: S.State, id: string): string {
+  const a = area(s.area);
+  if (id === 'numbers') return t(a.kind === 'live' ? 'rail.numbers.live' : imageryOnly(a) ? 'rail.numbers.exp' : 'rail.numbers');
+  return t(`rail.${id}`);
 }
 
 function activeTab(s: S.State, list: Tab[]): string {
@@ -123,7 +134,7 @@ function kelTrend(s: S.State): HTMLElement | null {
   if (!dates || !a.strip) return null;
   const points = Object.values(dates).map((d) => ({ date: d.date_myt, y: d.flood_ha, lo: d.flood_ha_low, hi: d.flood_ha_high, key: d.date_myt }));
   return timeChart({
-    title: t('num.kel.chart.title'), subtitle: t('num.kel.chart.sub'), unit: 'ha',
+    title: t('num.kel.chart.title'), explain: t('num.kel.chart.explain'), subtitle: t('num.kel.chart.sub'), unit: 'ha',
     start: a.strip[0], end: a.strip[1],
     series: [{ name: t('num.kel.chart.series'), color: 'var(--viz-flood)', points }],
     current: s.date, onPick: (d) => S.set({ date: d }),
@@ -139,7 +150,7 @@ function kelRank(s: S.State): HTMLElement | null {
     .filter(([, r]) => r.study)
     .map(([code, r]) => ({ label: r.district, value: r.flood_ha, lo: r.flood_ha_low, hi: r.flood_ha_high, key: code }));
   return rankChart({
-    title: t('num.kel.rank.title', { date: fmtDay(pass.date_myt) }), subtitle: t('num.kel.rank.sub'),
+    title: t('num.kel.rank.title', { date: fmtDay(pass.date_myt) }), explain: t('num.kel.rank.explain'), subtitle: t('num.kel.rank.sub'), note: t('num.kel.rank.note'),
     unit: 'ha', rows, color: 'var(--viz-flood)', selected: s.district, onPick: selectDistrict,
   });
 }
@@ -153,7 +164,7 @@ function brightnessChart(s: S.State): HTMLElement | null {
     const flood = k.dates['2024-11-29'];
     if (!before || !flood) return null;
     return distChart({
-      title: t('sure.hist.kel.title'), subtitle: t('sure.hist.kel.sub'), xLabel: t('sure.hist.x', { band: k.band }),
+      title: t('sure.hist.kel.title'), explain: t('sure.hist.kel.explain'), subtitle: t('sure.hist.kel.sub'), xLabel: t('sure.hist.x', { band: k.band }),
       series: [
         { name: t('sure.hist.kel.before'), color: 'var(--viz-context)', ...before },
         { name: t('sure.hist.kel.flood'), color: 'var(--viz-flood)', emphasis: true, ...flood },
@@ -168,7 +179,7 @@ function brightnessChart(s: S.State): HTMLElement | null {
     const late = k.dates.HH['2026-10-31'];
     if (!early || !late) return null;
     return distChart({
-      title: t('sure.hist.ked.title'), subtitle: t('sure.hist.ked.sub'), xLabel: t('sure.hist.x', { band: 'HH' }),
+      title: t('sure.hist.ked.title'), explain: t('sure.hist.ked.explain'), subtitle: t('sure.hist.ked.sub'), xLabel: t('sure.hist.x', { band: 'HH' }),
       series: [
         { name: t('sure.hist.ked.early'), color: 'var(--viz-context)', ...early },
         { name: t('sure.hist.ked.late'), color: 'var(--viz-s1)', emphasis: true, ...late },
@@ -264,7 +275,7 @@ function numbersKedah(s: S.State): HTMLElement[] {
   const series = [stackSeries('076_D_085', t('num.ked.stack076'), 'var(--viz-s1)'), stackSeries('112_A_005', t('num.ked.stack112'), 'var(--viz-s2)')].filter((se) => se.points.length);
   const bars = series.length && a.strip
     ? timeChart({
-        title: t('num.ked.pct'), subtitle: t('num.ked.chart.sub'), unit: '%',
+        title: t('num.ked.pct'), explain: t('num.ked.chart.explain'), subtitle: t('num.ked.chart.sub'), unit: '%',
         start: a.strip[0], end: a.strip[1], series,
         rules: (a.phases ?? []).map((p) => ({ date: p.start, label: `Phase ${p.id}` })),
         current: s.date, onPick: (d) => S.set({ date: d }),
@@ -274,7 +285,7 @@ function numbersKedah(s: S.State): HTMLElement[] {
   const ff = stats?.kedah.first_flooded_ha;
   const firstCols = ff
     ? columnChart({
-        title: t('num.ked.first.title'), subtitle: t('num.ked.first.sub'), unit: 'ha',
+        title: t('num.ked.first.title'), explain: t('num.ked.first.explain'), subtitle: t('num.ked.first.sub'), unit: 'ha',
         cols: (layer('ked_first_flooded')?.classes ?? []).filter((c) => c.code >= 11 && c.color).map((c) => ({ label: FIRST_LABEL[c.code] ?? String(c.code), value: ff[String(c.code)] ?? 0, color: c.color as string })),
         note: t('num.ked.first.note', { notyet: fmtNum(ff['1'] ?? 0) }),
       })
@@ -351,7 +362,7 @@ function numbers(s: S.State): (HTMLElement | null)[] {
   if (imageryOnly(a)) return [card(t('num.exp.title'), t('exp.badge'), h('p', {}, t('num.exp.body')))];
   const out: (HTMLElement | null)[] = [districtCard(s), ...(s.area === 'kelantan' ? numbersKelantan(s) : numbersKedah(s))];
   // Simple mode and phones have no Rain tab: the rainfall chart joins the numbers there.
-  if (!(s.mode === 'expert' && !mobile)) out.push(...rain(s));
+  if (mobile) out.push(...rain(s));
   return out;
 }
 
@@ -390,7 +401,9 @@ function rainChart(s: S.State): HTMLElement | null {
   return h('div', {},
     dailyChart({
       title: t('rain.chart.title'),
+      explain: t('rain.chart.explain'),
       subtitle: t('rain.chart.sub', { source: r.source.short }),
+      note: t('rain.chart.note'),
       unit: 'mm', daily, start, end, color: 'var(--viz-rain)',
       marks: primaryPasses(s.area).map((p) => ({ date: p.date_myt, label: t('rain.chart.pass', { sensor: p.sensor, time: p.time_myt }) })),
       current: s.date,
@@ -631,7 +644,10 @@ function render(): void {
     h('button', { class: 'tab-key', 'aria-label': t('tabs.next'), title: t('tabs.next'), onclick: () => cycleTab(1) }, 'E'),
   );
   const dots = h('div', { class: 'tab-dots', 'aria-hidden': 'true' }, list.map((_, k) => h('i', { class: k === idx ? 'on' : '' })));
-  panelRoot.append(bar, dots, content);
+  // Desktop header: the open section's name and the minimise button (the tab bar is hidden there; the rail replaces it).
+  const head = h('header', { class: 'panel-head' }, h('h2', { id: 'panel-title' }, list[idx]?.label ?? ''), minimiseButton('panel'));
+  if (!mobile) content.setAttribute('aria-labelledby', 'panel-title');
+  panelRoot.append(head, bar, dots, content);
 }
 
 /** Q / E: previous / next panel tab (F25 shortcuts, E · tab bar). */

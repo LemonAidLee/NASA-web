@@ -3,29 +3,24 @@
 // story itself, in compare mode and behind the expanded dashboard.
 import { area, imageryOnly, focusFor, story } from '../config';
 import { t } from '../i18n';
-import { $, clear, h, storage } from '../lib/dom';
+import { $, clear, h } from '../lib/dom';
 import * as S from '../state';
 import { openFocus } from './focus';
 import { visited } from './kit';
 
 const el = h('aside', { class: 'tracker', 'aria-label': t('trk.title') });
 
-function collapsed(): boolean {
-  return storage.get('tracker-collapsed') === '1';
-}
-
 function render(): void {
   const s = S.get();
   const list = focusFor(s.area);
   clear(el);
-  el.hidden = s.step !== null || s.compare !== 'off' || s.dash === 'max' || imageryOnly(area(s.area));
+  // Opened and closed from the right rail ("Objectives"); hidden during the story, compare and the full dashboard.
+  el.hidden = !s.trackerOpen || s.step !== null || s.compare !== 'off' || s.dash === 'max' || imageryOnly(area(s.area));
   if (el.hidden) return;
-  const isCollapsed = collapsed();
-  el.append(h('button', {
-    class: 'trk-toggle', 'aria-expanded': String(!isCollapsed), title: t(isCollapsed ? 'trk.show' : 'trk.hide'),
-    onclick: () => { storage.set('tracker-collapsed', isCollapsed ? '0' : '1'); render(); },
-  }, h('span', { class: 'hud-label' }, t('trk.title')), h('span', { class: 'trk-caret', 'aria-hidden': 'true' }, isCollapsed ? '▸' : '▾')));
-  if (isCollapsed) return;
+  el.append(h('div', { class: 'trk-head' },
+    h('span', { class: 'hud-label' }, t('trk.title')),
+    h('button', { class: 'trk-close', type: 'button', 'aria-label': t('trk.hide'), title: t('trk.hide'), onclick: () => S.set({ trackerOpen: false }) }, '–'),
+  ));
 
   // Story
   const seen = visited.steps();
@@ -62,6 +57,6 @@ export function initTracker(): void {
   render();
   document.addEventListener('visited', render);
   S.subscribe((_s, ch) => {
-    if (['area', 'step', 'compare', 'dash', 'focus'].some((k) => ch.has(k as keyof S.State))) render();
+    if (['area', 'step', 'compare', 'dash', 'focus', 'trackerOpen'].some((k) => ch.has(k as keyof S.State))) render();
   });
 }

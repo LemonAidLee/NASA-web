@@ -113,10 +113,12 @@ export function fitPadding(): { top: number; bottom: number; left: number; right
   }
   const left = document.getElementById('leftcol')?.getBoundingClientRect();
   const right = document.getElementById('panel')?.getBoundingClientRect();
-  // Panels the user moved (ui/windows.ts) no longer block the edges, so they are left out of the framing.
-  const leftDocked = !!document.getElementById('leftcol')?.children.length;
-  const leftPad = leftDocked && left && left.width && !document.body.classList.contains('story-on') ? left.right - stage.left + 24 : 40;
-  const rightPad = !isMoved('panel') && right && right.width && !document.body.classList.contains('story-on') ? stage.right - right.left + 24 : 40;
+  // Rails (ui/rails.ts) always take their strip; minimised panels take nothing; moved panels (ui/windows.ts) no
+  // longer block the edges, so they are left out of the framing.
+  const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail-w')) || 0;
+  const leftDocked = [...(document.getElementById('leftcol')?.children ?? [])].some((c) => (c as HTMLElement).offsetParent !== null);
+  const leftPad = leftDocked && left && left.width && !document.body.classList.contains('story-on') ? left.right - stage.left + 24 : rail + 40;
+  const rightPad = !isMoved('panel') && right && right.width && !document.body.classList.contains('story-on') ? stage.right - right.left + 24 : rail + 40;
   // Never squeeze the map below a third of the width.
   const room = stage.width - leftPad - rightPad;
   if (room < stage.width / 3) return { top: 32, bottom: 32, left: 40, right: 40 };

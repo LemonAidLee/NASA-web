@@ -5,8 +5,8 @@
 .focus-launcher {
   position: absolute;
   top: var(--s3);
-  left: calc(var(--col-w) + 2 * var(--s3));
-  right: calc(var(--panel-w) + 2 * var(--s3));
+  left: var(--left-occ);
+  right: var(--right-occ);
   z-index: 4;
   display: flex;
   flex-wrap: wrap;
@@ -110,8 +110,8 @@
 
 .dash {
   position: absolute;
-  left: calc(var(--col-w) + 2 * var(--s3));
-  right: calc(var(--panel-w) + 2 * var(--s3));
+  left: var(--left-occ);
+  right: var(--right-occ);
   bottom: var(--s3);
   height: min(48%, 440px);
   z-index: 6;

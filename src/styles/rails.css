@@ -1,0 +1,174 @@
+/* Desktop icon rails (ui/rails.ts) and the calmer 1920 × 1080 layout (14 Nov):
+   slim bars on both map edges, panels that minimise to their icon, and offsets that follow what is open. */
+
+:root {
+  --rail-w: 0px;
+  --left-occ: var(--s3);
+  --right-occ: var(--s3);
+}
+[data-layout='desktop'] {
+  --rail-w: 52px;
+  --left-occ: calc(var(--rail-w) + var(--col-w) + 2 * var(--s3));
+  --right-occ: calc(var(--rail-w) + var(--panel-w) + 2 * var(--s3));
+}
+[data-layout='desktop'][data-left='closed'] { --left-occ: calc(var(--rail-w) + var(--s3)); }
+[data-layout='desktop'][data-right='closed'] { --right-occ: calc(var(--rail-w) + var(--s3)); }
+/* A little more room for reading on large screens. */
+@media (min-width: 1600px) {
+  [data-layout='desktop'] { --col-w: 320px; --panel-w: 400px; }
+}
+
+/* ---------- the rails ---------- */
+
+.rail { display: none; }
+[data-layout='desktop'] .rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--rail-w);
+  z-index: 30; /* above the panels, so hover descriptions are never hidden behind them */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--s3) 0;
+  background: var(--bar-bg);
+  backdrop-filter: blur(8px);
+}
+.rail-left { left: 0; border-right: 1px solid var(--border-subtle); }
+.rail-right { right: 0; border-left: 1px solid var(--border-subtle); }
+.story-on .rail { opacity: 0.35; }
+.rail-sep { width: 24px; height: 1px; margin: 6px 0; background: var(--border-strong); }
+
+.rail-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 150ms var(--ease), color 150ms var(--ease);
+}
+.rail-btn:hover { background: var(--surface-2); color: var(--text); }
+.rail-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.rail-btn.is-on { color: var(--text); background: var(--surface-2); }
+/* the open marker: a short bar on the side facing the panel */
+.rail-btn.is-on::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--brand);
+}
+.rail-left .rail-btn.is-on::after { right: -6px; }
+.rail-right .rail-btn.is-on::after { left: -6px; }
+.rail-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* hover / focus description, opening toward the map */
+.rail-tip {
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  width: max-content;
+  max-width: 240px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  box-shadow: var(--ring), 0 6px 20px #0007;
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  line-height: 1.4;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-50%);
+  transition: opacity 120ms var(--ease);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rail-tip strong { color: var(--text); font-size: var(--fs-body); font-weight: 600; }
+.rail-tip em { font-style: normal; color: var(--text-muted); font-size: var(--fs-hud); }
+.rail-left .rail-tip { left: calc(100% + 12px); }
+.rail-right .rail-tip { right: calc(100% + 12px); }
+.rail-btn:hover .rail-tip,
+.rail-btn:focus-visible .rail-tip { opacity: 1; visibility: visible; }
+
+/* ---------- panels beside the rails ---------- */
+
+[data-layout='desktop'] .col-left { left: calc(var(--rail-w) + var(--s3)); }
+[data-layout='desktop'] .col-right { right: calc(var(--rail-w) + var(--s3)); bottom: var(--s3); }
+[data-layout='desktop'] .col-left > .card.is-minimised,
+[data-layout='desktop'] .card.win.is-floating.is-minimised { display: none !important; }
+[data-layout='desktop'] #panel.is-minimised { display: none; }
+
+/* the "–" minimise button in each panel's corner */
+.card-min { display: none; }
+[data-layout='desktop'] .card-min {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+[data-layout='desktop'] .card-min:hover { background: var(--surface-2); color: var(--text); }
+[data-layout='desktop'] .card-min:focus-visible { outline: 2px solid var(--brand); }
+.card-min .rail-icon { width: 18px; height: 18px; }
+[data-layout='desktop'] .col-left > .card { position: relative; }
+
+/* side panel: the rail replaces the tab bar on desktop; a plain header names the open section */
+.panel-head { display: none; }
+[data-layout='desktop'] .panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3) 44px var(--s2) var(--s4);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  flex: none;
+}
+[data-layout='desktop'] .panel-head h2 { font-size: var(--fs-body); font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
+[data-layout='desktop'] .panel-inner .tabbar,
+[data-layout='desktop'] .panel-inner .tab-dots { display: none; }
+
+/* calmer chrome: the cursor readout bar is gone on desktop (the map popup gives the same detail on click) */
+[data-layout='desktop'] #cursorbar { display: none; }
+
+/* objectives list (opened from the right rail) */
+.trk-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: var(--bar-bg); box-shadow: var(--ring); }
+.trk-close { width: 24px; height: 24px; border: 0; border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; line-height: 1; }
+.trk-close:hover { background: var(--surface-2); color: var(--text); }
+[data-layout='desktop'] .tracker { top: var(--s3); right: var(--right-occ); }
+/* the "Focus areas" strip over the map is replaced by the AI-analysis rail icon on desktop */
+[data-layout='desktop'] .focus-launcher { display: none; }
+
+/* slim top bar: one row, title + place + date + NISAR status */
+[data-layout='desktop'] #topbar .hud-path { font-weight: 600; color: var(--text); letter-spacing: 0.04em; }
+.hud-live { display: inline-flex; align-items: center; gap: 4px; color: var(--text-muted); }
+.hud-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); }
+.hud-live.is-live { color: var(--text-secondary); }
+.hud-live.is-live .hud-dot { background: var(--brand); box-shadow: 0 0 6px var(--brand); }
+
+/* compact Place card at desktop sizes, so Place + Legend fit a 1080 px screen without scrolling */
+[data-layout='desktop'] .title-card { gap: var(--s2); }
+[data-layout='desktop'] .title-card .dest-stage { max-width: 220px; margin: 0 auto; }
+[data-layout='desktop'] .title-card .dest-title { margin-bottom: 0; }
+[data-layout='desktop'] .title-card .question { font-size: var(--fs-body); line-height: 1.4; }
+[data-layout='desktop'] .title-card .card-tagline { margin-top: -4px; }

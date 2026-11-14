@@ -82,3 +82,6 @@
 .viz-note { font-size: var(--fs-hud); color: var(--text-muted); }
 .viz-table summary { cursor: pointer; font-size: var(--fs-hud); color: var(--hud-label); }
 .viz-table .table { margin-top: var(--s1); font-size: var(--fs-hud); }
+.viz-explain { font-size: var(--fs-caption); color: var(--text-secondary); line-height: 1.45; }
+.viz-explain strong, .viz-note strong { color: var(--text); font-weight: 600; }
+.viz-note { line-height: 1.45; }

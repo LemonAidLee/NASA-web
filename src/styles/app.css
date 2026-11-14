@@ -1034,8 +1034,8 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
 .cmp-label em { color: var(--text-muted); }
 .cmp-label-a { left: var(--s3); }
 .cmp-label-b { right: var(--s3); text-align: right; }
-[data-layout='desktop'] .cmp-label-a { left: calc(var(--col-w) + 2 * var(--s3)); }
-[data-layout='desktop'] .cmp-label-b { right: calc(var(--panel-w) + 2 * var(--s3)); }
+[data-layout='desktop'] .cmp-label-a { left: var(--left-occ); }
+[data-layout='desktop'] .cmp-label-b { right: var(--right-occ); }
 [data-layout='desktop'][data-compare='dates'] .col-left,
 [data-layout='desktop'][data-compare='pol'] .col-left { z-index: 7; }
 [data-layout='desktop'][data-compare='dates'] .col-right,
@@ -1090,7 +1090,7 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
   font-size: 0.625rem;
 }
 .maplibregl-ctrl-attrib a { color: var(--text-secondary); }
-[data-layout='desktop'] .maplibregl-ctrl-bottom-left { left: calc(var(--col-w) + 2 * var(--s3)); }
+[data-layout='desktop'] .maplibregl-ctrl-bottom-left { left: var(--left-occ); }
 
 /* ---------- story (F8) ---------- */
 
@@ -1101,7 +1101,7 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
   left: 50%;
   bottom: var(--s4);
   transform: translateX(-50%);
-  width: min(520px, calc(100% - var(--col-w) - var(--panel-w) - 4 * var(--s3)));
+  width: min(520px, calc(100% - var(--left-occ) - var(--right-occ)));
   min-width: 300px;
   padding: var(--s6);
   gap: var(--s3);

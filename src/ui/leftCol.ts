@@ -8,6 +8,7 @@ import { compareDefault } from '../map/compare';
 import { flyTo, map } from '../map/mainMap';
 import { acquisitionDays, earthdataSearchUrl, vertexUrl, worldviewUrl, type Bbox } from '../lib/catalog';
 import { latestInfo } from '../map/latestNisar';
+import { minimiseButton } from './rails';
 import { areaHeadline } from '../lib/stats';
 
 export const titleCard = h('section', { class: 'card title-card', id: 'titlecard' });
@@ -55,6 +56,7 @@ function renderTitle(): void {
   }
   pills.classList.add('dest-fallback'); // phones keep the plain buttons; desktop shows the destination picker (G)
   titleCard.append(
+    minimiseButton('place'),
     h('h1', { class: 'card-title app-name' }, t('app.title')),
     h('p', { class: 'card-tagline' }, t('app.subtitle')),
     h('p', { class: 'chip chip-proto', title: t('app.prototype.long') }, t('app.prototype')),
@@ -149,30 +151,6 @@ function destPicker(s: S.State): HTMLElement {
     h('p', { class: 'hud-label dest-title' }, t('dest.title')),
     stage,
     caption,
-  );
-}
-
-// ---------- D · quick-toggle sockets above the layer rows (names stay in the rows below) ----------
-
-function socketStrip(list: LayerDef[]): HTMLElement | null {
-  const s = S.get();
-  const items = list.filter((l) => l.abbr);
-  if (!items.length) return null;
-  return h('div', { class: 'sock-strip' },
-    h('span', { class: 'hud-label' }, t('sock.title')),
-    h('div', { class: 'sock-row' }, items.map((l) => {
-      const on = l.base ? s.base === 'sat' || s.layers[l.id]?.on : s.layers[l.id]?.on;
-      const pending = l.status === 'placeholder';
-      return h('button', {
-        class: `sock${on ? ' on' : ''}${pending ? ' pend' : ''}`, 'aria-pressed': String(!!on),
-        'aria-label': pending ? `${t(l.name)} (${t('sock.pending')})` : t(l.name), title: pending ? `${t(l.name)} · ${t('sock.pending')}` : t(l.name),
-        onclick: () => {
-          if (l.base) S.set({ base: on ? 'map' : 'sat', layers: { ...S.get().layers, [l.id]: { ...S.get().layers[l.id], on: !on } } });
-          else S.setLayer(l.id, { on: !on });
-        },
-      }, l.abbr as string);
-    })),
-    h('span', { class: 'sock-legend' }, t('sock.legend')),
   );
 }
 
@@ -346,11 +324,10 @@ function renderLayers(): void {
   const expert = s.mode === 'expert';
   clear(layersCard);
   layersCard.append(
+    minimiseButton('layers'),
     h('h2', { class: 'card-title' }, t(expert ? 'layers.title.expert' : 'layers.title')),
     h('p', { class: 'card-tagline' }, t('layers.tagline')),
   );
-  const strip = socketStrip(layersFor(s.area).filter((l) => (expert ? !l.expert_only || expert : l.simple)));
-  if (strip) layersCard.append(strip);
   const list = layersFor(s.area).filter((l) => (expert ? !l.expert_only || expert : l.simple));
   const groups = new Map<string, LayerDef[]>();
   for (const l of list) groups.set(l.group, [...(groups.get(l.group) ?? []), l]);
@@ -382,7 +359,7 @@ function renderLegend(): void {
   const s = S.get();
   const a = area(s.area);
   clear(legendCard);
-  legendCard.append(h('h2', { class: 'card-title' }, t('legend.title')), h('p', { class: 'card-tagline' }, t('legend.tagline')));
+  legendCard.append(minimiseButton('legend'), h('h2', { class: 'card-title' }, t('legend.title')), h('p', { class: 'card-tagline' }, t('legend.tagline')));
   legendCard.append(h('div', { class: 'legend-block' },
     h('ul', { class: 'legend-list' }, h('li', {},
       h('span', {
