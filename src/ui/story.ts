@@ -98,7 +98,8 @@ function render(): void {
 
 export function initStory(): void {
   const s = S.get();
-  if (s.step === null && !location.search && !storage.get('story-seen')) S.set({ step: 0 });
+  // First visit only: not when the address carries a view, the story was seen, or a saved view was restored.
+  if (s.step === null && !location.search && !S.restoredView && !storage.get('story-seen')) S.set({ step: 0 });
   render();
   S.subscribe((st, ch) => {
     if (ch.has('step')) {

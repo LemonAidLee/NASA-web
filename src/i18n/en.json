@@ -671,5 +671,6 @@
   "focus.kpi.ked.peak": "Most fields first flooded",
   "ked.class.flooded.t4": "Field water first seen 31 Oct",
   "ked.dis.nisar": "NISAR sees water, Sentinel-1 does not",
-  "ked.dis.dswx": "Sentinel-1 sees water, NISAR does not"
+  "ked.dis.dswx": "Sentinel-1 sees water, NISAR does not",
+  "menu.resetview": "Reset to defaults (forget my settings)"
 }

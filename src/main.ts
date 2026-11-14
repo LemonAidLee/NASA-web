@@ -67,8 +67,8 @@ async function boot(): Promise<void> {
     $('#map').append(h('p', { class: 'map-error' }, t('err.data', { file: String((e as Error).message) })));
     return;
   }
-  const hadCamera = location.hash.includes('map='); // a shared link with a saved camera keeps it
-  const s = S.initState();
+  const s = S.initState(); // may put the saved camera into the address
+  const hadCamera = location.hash.includes('map='); // a shared link or saved view with a camera keeps it
   applyRoot(s);
   mapLabel(s);
   S.subscribe((st, ch) => {

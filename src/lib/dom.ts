@@ -66,4 +66,11 @@ export const storage = {
       /* storage blocked: ignore */
     }
   },
+  remove(key: string): void {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      /* storage blocked: ignore */
+    }
+  },
 };
