@@ -1,9 +1,10 @@
 // F5 pixel popup (plain sentence first, numbers under "More") and F21 cursor readout bar.
 import { Popup, type MapMouseEvent } from 'maplibre-gl';
-import { area, imageryOnly, fmtDate, fmtNum, focusFor, layer, layersFor, resolveDate, type Area } from '../config';
-import { classAt, dbAt } from '../lib/pixels';
+import { area, imageryOnly, fmtDate, fmtNum, focusFor, layer, layersFor, resolveDate, type Area, type LayerDef } from '../config';
+import { classAt, dbAt, rgbaAt } from '../lib/pixels';
 import { stats } from '../lib/stats';
 import { inspectCard, keyHint, segBar, statRow } from './kit';
+import { dayLabel, spotChart } from './charts';
 import { openFocus } from './focus';
 import { t } from '../i18n';
 import { $, clear, h, storage } from '../lib/dom';
@@ -35,6 +36,16 @@ interface Reading {
 const FIRST_LABEL: Record<number, string> = { 11: '23–25 Sep', 12: '5–7 Oct', 13: '17–19 Oct', 14: '31 Oct' };
 const db1 = (v: number | null) => (v === null ? '—' : `${v.toFixed(1)} dB`);
 
+/** Kedah: the pipeline's own water verdict on each NISAR pass at this spot (bits in kedah_wetbits.webp), so the
+ *  popup and its chart agree exactly with the maps. Index i of the result = stats.kedah.wetbits.dates[i]. */
+async function kedVerdicts(lng: number, lat: number): Promise<{ dates: string[]; wet: (boolean | null)[] } | null> {
+  const wb = stats?.kedah.wetbits;
+  if (!wb) return null;
+  const px = await rgbaAt({ kind: 'image', corners: wb.corners, url: wb.url } as unknown as LayerDef, 'static', lng, lat);
+  if (!px || px[3] === 0) return { dates: wb.dates, wet: wb.dates.map(() => null) };
+  return { dates: wb.dates, wet: wb.dates.map((_, i) => ((px[1] >> i) & 1 ? ((px[0] >> i) & 1) === 1 : null)) };
+}
+
 /** What our baked maps hold at this spot, in plain words (null when the pipeline has not made them). */
 async function ourReading(a: Area, date: string, lng: number, lat: number): Promise<Reading | null> {
   try {
@@ -63,7 +74,9 @@ async function ourReading(a: Area, date: string, lng: number, lat: number): Prom
       ]);
       const track = r ? stats?.kedah.dates[r.utc]?.track : undefined;
       const st = track ? stats?.kedah.stacks[track] : undefined;
-      const wet = hh !== null && hv !== null && st ? hh < st.HH.threshold_db && hv < st.HV.threshold_db : null;
+      const kv = r ? await kedVerdicts(lng, lat) : null;
+      const vi = r && kv ? kv.dates.indexOf(r.utc) : -1;
+      const wet = vi >= 0 && kv ? kv.wet[vi] : hh !== null && hv !== null && st ? hh < st.HH.threshold_db && hv < st.HV.threshold_db : null;
       const first = code !== null && FIRST_LABEL[code] ? t('ked.popup.first', { when: FIRST_LABEL[code] }) : code === 1 ? t('ked.popup.notyet') : code === 2 ? t('ked.popup.permanent') : t('ked.popup.notcrop');
       const now = r && wet !== null && code !== null && code !== 2 ? ` ${t(wet ? 'ked.popup.now.wet' : 'ked.popup.now.dry', { date: fmtDate(r.myt) })}` : '';
       return {
@@ -77,7 +90,61 @@ async function ourReading(a: Area, date: string, lng: number, lat: number): Prom
   return null;
 }
 
-function popupContent(lng: number, lat: number, reading: Reading | null = null): HTMLElement {
+// ---------- spot history: what the radar saw at this spot on every pass ----------
+
+/** Reads this spot from every baked pass picture (cached after the first click) and draws it as a small chart:
+ *  the SAR time series behind our map's verdicts. Kelantan: VV and our flood class. Kedah: HH and HV and the
+ *  per-stack water limits. Null when no picture covers the spot. */
+async function spotHistory(a: Area, lng: number, lat: number): Promise<HTMLElement | null> {
+  const s = S.get();
+  if (a.id === 'kelantan') {
+    const fl = layer('kel_flood');
+    const vvL = layer('kel_vv');
+    const dates = vvL?.baked_dates ?? [];
+    if (!fl || !vvL || !dates.length) return null;
+    const rows = await Promise.all(dates.map((d) => Promise.all([dbAt(vvL, d, lng, lat), classAt(fl, d, lng, lat)])));
+    if (rows.every(([vv]) => vv === null)) return null;
+    const ths = [...new Set(dates.map((d) => stats?.kelantan.dates[d]?.threshold_db).filter((v): v is number => v !== undefined))];
+    const cur = resolveDate(fl, 'kelantan', s.date)?.utc;
+    return spotChart({
+      title: t('spot.title'), explain: t('spot.explain.kel'),
+      passes: dates.map((d) => dayLabel(stats?.kelantan.dates[d]?.date_myt ?? d)),
+      series: [{ name: 'VV', color: 'var(--viz-s1)', values: rows.map(([vv]) => vv) }],
+      verdict: rows.map(([vv, c]) => (vv === null || c === 5 || c === 6 || c === 4 ? null : c === 3)),
+      verdictLabels: { wet: t('spot.wet.kel'), dry: t('spot.dry.kel') },
+      thresholds: ths.length === 1 ? [{ value: ths[0], label: t('spot.limit', { t: ths[0] }) }] : [],
+      current: cur ? dates.indexOf(cur) : undefined,
+      note: t('spot.note.kel'),
+    });
+  }
+  if (a.id === 'kedah') {
+    const hhL = layer('ked_hh');
+    const hvL = layer('ked_hv');
+    const dates = hhL?.baked_dates ?? [];
+    if (!hhL || !hvL || !dates.length) return null;
+    const [rows, kv] = await Promise.all([Promise.all(dates.map((d) => Promise.all([dbAt(hhL, d, lng, lat), dbAt(hvL, d, lng, lat)]))), kedVerdicts(lng, lat)]);
+    if (rows.every(([hh]) => hh === null)) return null;
+    const cur = resolveDate(hhL, 'kedah', s.date)?.utc;
+    return spotChart({
+      title: t('spot.title'), explain: t('spot.explain.ked'),
+      passes: dates.map((d) => dayLabel(stats?.kedah.dates[d]?.date_myt ?? d)),
+      series: [
+        { name: t('spot.hh'), color: 'var(--viz-s1)', values: rows.map(([hh]) => hh) },
+        { name: t('spot.hv'), color: 'var(--viz-s2)', values: rows.map(([, hv]) => hv) },
+      ],
+      verdict: dates.map((d) => {
+        const vi = kv ? kv.dates.indexOf(d) : -1;
+        return vi >= 0 && kv ? kv.wet[vi] : null;
+      }),
+      verdictLabels: { wet: t('spot.wet.ked'), dry: t('spot.dry.ked') },
+      current: cur ? dates.indexOf(cur) : undefined,
+      note: t('spot.note.ked'),
+    });
+  }
+  return null;
+}
+
+function popupContent(lng: number, lat: number, reading: Reading | null = null, extra: HTMLElement | null = null): HTMLElement {
   const s = S.get();
   const a = area(s.area);
   const d = districtAt(lng, lat);
@@ -127,6 +194,7 @@ function popupContent(lng: number, lat: number, reading: Reading | null = null):
     typeLeft: d ? t('insp.type.district', { state: d.state }) : fmtCoord(lat, lng),
     typeRight: f ? t('insp.focus', { n: fi + 1 }) : undefined,
     lore: sentence,
+    extra,
     stats,
     sockets,
     more: h('div', { class: 'insp-more' },
@@ -143,7 +211,14 @@ async function onClick(e: MapMouseEvent): Promise<void> {
   const a0 = area(s0.area);
   const reading = imageryOnly(a0) ? null : await ourReading(a0, s0.date, lng, lat);
   if (S.get().area !== s0.area || S.get().date !== s0.date) return; // the view changed while reading
-  const content = popupContent(lng, lat, reading);
+  // The spot history fills in after the popup opens (it reads one picture per pass; later clicks are instant).
+  const dAt = districtAt(lng, lat);
+  const wantHist = !imageryOnly(a0) && inStudy(a0, lng, lat, dAt?.district);
+  const histBox = wantHist ? h('div', { class: 'spot-hist' }, h('p', { class: 'spot-hist-wait' }, t('spot.wait'))) : null;
+  const content = popupContent(lng, lat, reading, histBox);
+  if (histBox) {
+    void spotHistory(a0, lng, lat).then((el) => (el ? histBox.replaceChildren(el) : histBox.remove())).catch(() => histBox.remove());
+  }
   if (isMobile()) {
     popup?.remove();
     clear(sheetPopup);

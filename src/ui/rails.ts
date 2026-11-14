@@ -8,6 +8,7 @@ import { t } from '../i18n';
 import { $, clear, h } from '../lib/dom';
 import * as S from '../state';
 import { openFocus } from './focus';
+import { savePicture } from './snapshot';
 
 // ---------- icons: simple 24 px stroke drawings (own artwork, static markup) ----------
 
@@ -22,6 +23,7 @@ const ICONS: Record<string, string> = {
   about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><path d="M12 7.6v.4"/>',
   ai: '<path d="M12 3c.6 4.2 2.3 5.9 6.5 6.5-4.2.6-5.9 2.3-6.5 6.5-.6-4.2-2.3-5.9-6.5-6.5C9.7 8.9 11.4 7.2 12 3z"/><path d="M18 15.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z"/>',
   objectives: '<path d="M5 21V4"/><path d="M5 4h11l-2 3.5L16 11H5"/>',
+  camera: '<path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/>',
   minimise: '<path d="M6 12h12"/>',
 };
 
@@ -44,6 +46,8 @@ interface Item {
   on: (s: S.State) => boolean;
   toggle: (s: S.State) => void;
   show?: (s: S.State) => boolean;
+  /** Hint line under the description for one-shot actions (default: open / minimise). */
+  hint?: () => string;
 }
 
 const toggleLeft = (id: string) => (s: S.State) =>
@@ -100,6 +104,10 @@ const EXTRA: Item[] = [
     on: (s) => s.trackerOpen, toggle: (s) => S.set({ trackerOpen: !s.trackerOpen }),
     show: (s) => !imageryOnly(area(s.area)),
   },
+  {
+    id: 'snapshot', icon: 'camera', label: () => t('snap.menu'), desc: () => t('snap.desc'),
+    on: () => false, toggle: () => void savePicture(), hint: () => t('snap.hint'),
+  },
 ];
 
 const leftRail = h('nav', { class: 'rail rail-left', 'aria-label': 'Left panels' });
@@ -114,7 +122,7 @@ function button(it: Item, s: S.State, side: 'left' | 'right'): HTMLElement {
     'data-side': side,
     onclick: () => it.toggle(S.get()),
   }, icon(it.icon),
-  h('span', { class: 'rail-tip', id: tipId, role: 'tooltip' }, h('strong', {}, it.label(s)), h('span', {}, it.desc(s)), h('em', {}, t(on ? 'rail.hide' : 'rail.show'))));
+  h('span', { class: 'rail-tip', id: tipId, role: 'tooltip' }, h('strong', {}, it.label(s)), h('span', {}, it.desc(s)), h('em', {}, it.hint ? it.hint() : t(on ? 'rail.hide' : 'rail.show'))));
 }
 
 function render(): void {

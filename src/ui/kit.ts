@@ -40,6 +40,8 @@ export interface InspectOpts {
   stats?: HTMLElement[];
   sockets?: { abbr: string; name: string; on: boolean; pending: boolean }[];
   more?: HTMLElement | null;
+  /** Shown right under the plain sentence (e.g. the spot history chart). */
+  extra?: HTMLElement | null;
   actions?: HTMLElement[];
   compact?: boolean;
 }
@@ -52,6 +54,7 @@ export function inspectCard(o: InspectOpts): HTMLElement {
     ),
     h('div', { class: 'insp-body' },
       h('p', { class: 'insp-lore' }, o.lore),
+      o.extra ?? null,
       o.stats?.length ? h('div', { class: 'insp-stats' }, o.stats) : null,
       o.sockets?.length
         ? h('div', { class: 'insp-sockets', 'aria-label': t('insp.layers') },

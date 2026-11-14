@@ -191,6 +191,35 @@ function brightnessChart(s: S.State): HTMLElement | null {
   return null;
 }
 
+/** People near the water and where it stayed (pipeline/12_impact.py). Uses the pass on screen, or the peak pass
+ *  when the pass on screen is a "before" picture. */
+function kelImpact(s: S.State): HTMLElement | null {
+  const im = stats?.kelantan.impact;
+  const dates = stats?.kelantan.dates;
+  if (!im || !dates) return null;
+  const onScreen = kelPass(s.date);
+  const peak = Object.entries(dates).reduce((a, b) => (b[1].flood_ha > a[1].flood_ha ? b : a));
+  const key = onScreen && onScreen.reference && im.dates[onScreen.utc]?.people_near ? onScreen.utc : peak[0];
+  const p = im.dates[key];
+  const myt = dates[key].date_myt;
+  const rows = Object.entries(im.duration.districts)
+    .filter(([, r]) => r.study)
+    .map(([code, r]) => ({ label: r.district, value: r.ha_2 + r.ha_3, key: code }));
+  const lasting = rows.reduce((a, r) => a + r.value, 0);
+  const showLayer = () => S.setLayer('kel_duration', { on: true });
+  return card(t('impact.title'), t('impact.tagline'),
+    h('p', { class: 'headline-num' }, t('impact.people', { n: fmtNum(Math.round(p.people_near / 100) * 100), m: im.near_m, date: fmtDay(myt) })),
+    h('p', { class: 'small' }, t('impact.people.in', { n: fmtNum(Math.round(p.people_in / 100) * 100) })),
+    myt === '2024-11-29' ? h('p', { class: 'small muted' }, t('impact.people.compare')) : null,
+    rankChart({
+      title: t('impact.dur.title'), explain: t('impact.dur.explain', { days: im.pass_gap_days }), subtitle: t('impact.dur.sub', { ha: haFmt(lasting) }),
+      unit: 'ha', rows, color: 'var(--viz-flood)', selected: s.district, onPick: selectDistrict, note: t('impact.dur.note'),
+    }),
+    h('button', { class: 'pill pill-sm', onclick: showLayer }, t('impact.dur.show')),
+    methodNote(t('impact.method', { m: im.near_m, src: im.population })),
+  );
+}
+
 function numbersKelantan(s: S.State): HTMLElement[] {
   const pass = kelPass(s.date);
   const rows = districtsOf(['Kelantan'])
@@ -225,6 +254,7 @@ function numbersKelantan(s: S.State): HTMLElement[] {
       h('div', { class: 'table-wrap' }, table),
       pass ? h('p', { class: 'muted small' }, t('num.kel.outside')) : null,
     ),
+    ...[kelImpact(s)].filter((x): x is HTMLElement => !!x),
     card(t('num.context.title'), t('num.context.tagline'),
       h('ul', { class: 'facts' },
         h('li', {}, t('num.context.4'), ' ', src(t('num.context.4.src'), 'https://thestartv.com/v/floods-in-kelantan-the-worst-in-history-says-state-police-chief')),
@@ -583,7 +613,7 @@ function learnMore(): HTMLElement {
 }
 
 function about(s: S.State): (HTMLElement | null)[] {
-  const credits = ['credit.nisar', 'credit.rtc', 'credit.dswx', 'credit.gibs', 'credit.asf', 'credit.jrc', 'credit.dosm', 'credit.osm', 'credit.imerg', 'credit.worldcover', 'credit.dem', 'credit.news', 'credit.themes', 'credit.fonts', 'credit.libs', 'credit.noendorse'];
+  const credits = ['credit.nisar', 'credit.rtc', 'credit.dswx', 'credit.gibs', 'credit.asf', 'credit.jrc', 'credit.dosm', 'credit.osm', 'credit.imerg', 'credit.worldcover', 'credit.worldpop', 'credit.dem', 'credit.news', 'credit.themes', 'credit.fonts', 'credit.libs', 'credit.noendorse'];
   const qa = (q: string, a2: string) => h('div', { class: 'qa' }, h('h3', { class: 'legend-title' }, t(q)), h('p', {}, t(a2)));
   return [
     mobile ? sureCard(s) : null,

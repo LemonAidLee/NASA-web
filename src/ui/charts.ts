@@ -603,3 +603,85 @@ export function columnChart(o: ColumnOpts): HTMLElement {
   f.root.append(tableView(['Group', `Value (${o.unit})`], o.cols.map((c) => [c.label, num(c.value)])));
   return f.root;
 }
+
+// ---------- 6 · spot history: one spot's radar brightness on every pass (ordinal x, dB y, water threshold) ----------
+
+export interface SpotSeries {
+  name: string;
+  color: string;
+  values: (number | null)[]; // one per pass, null where the picture has no data here
+}
+export interface SpotOpts {
+  title: string;
+  explain?: string;
+  subtitle?: string;
+  passes: string[]; // short date labels, one per pass
+  series: SpotSeries[];
+  /** Verdict per pass from our map: true = water, false = dry, null = no reading. */
+  verdict: (boolean | null)[];
+  verdictLabels: { wet: string; dry: string };
+  thresholds?: { value: number; label: string; color?: string }[];
+  current?: number; // index of the pass on screen
+  note?: string;
+}
+
+export function spotChart(o: SpotOpts): HTMLElement {
+  const H = 150;
+  const m = { l: 34, r: 12, t: 10, b: 36 };
+  const pw = W - m.l - m.r;
+  const ph = H - m.t - m.b;
+  const all = [...o.series.flatMap((se) => se.values), ...(o.thresholds ?? []).map((t) => t.value)].filter((v): v is number => v !== null && Number.isFinite(v));
+  const lo = Math.floor((Math.min(...all, -20) - 1) / 5) * 5;
+  const hi = Math.ceil((Math.max(...all, -5) + 1) / 5) * 5;
+  const Y = (v: number) => m.t + ((hi - v) / (hi - lo)) * ph;
+  const n = o.passes.length;
+  const X = (i: number) => m.l + (n === 1 ? pw / 2 : (i / (n - 1)) * pw);
+  const f = frame(o.title, o.subtitle ?? '', H, `${o.title}. ${o.passes.map((p, i) => `${p}: ${o.series.map((se) => `${se.name} ${se.values[i] === null ? 'no data' : `${num(se.values[i] as number)} dB`}`).join(', ')}, ${o.verdict[i] === null ? 'no reading' : o.verdict[i] ? o.verdictLabels.wet : o.verdictLabels.dry}`).join('; ')}`, o.explain);
+  const g = s('g');
+  for (let v = lo; v <= hi; v += 5) {
+    g.append(s('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: 'viz-grid' }));
+    const tl = s('text', { x: m.l - 5, y: Y(v) + 3.5, class: 'viz-tick', 'text-anchor': 'end' });
+    tl.textContent = String(v);
+    g.append(tl);
+  }
+  if (o.current !== undefined && o.current >= 0) g.append(s('line', { x1: X(o.current), x2: X(o.current), y1: m.t, y2: m.t + ph, class: 'viz-now' }));
+  for (const th of o.thresholds ?? []) {
+    g.append(s('line', { x1: m.l, x2: W - m.r, y1: Y(th.value), y2: Y(th.value), class: 'viz-rule viz-threshold', 'stroke-dasharray': '4 3', ...(th.color ? { style: `stroke:${th.color}` } : {}) }));
+    const tl = s('text', { x: W - m.r, y: Y(th.value) - 3, class: 'viz-tick', 'text-anchor': 'end' });
+    tl.textContent = th.label;
+    g.append(tl);
+  }
+  for (const se of o.series) {
+    const pts = se.values.map((v, i) => (v === null ? null : [X(i), Y(v)] as const));
+    let d = '';
+    pts.forEach((p, i) => { if (p) d += `${d && pts[i - 1] ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)} `; });
+    if (d) g.append(s('path', { d, fill: 'none', stroke: se.color, 'stroke-width': 2, 'stroke-linejoin': 'round' }));
+    pts.forEach((p) => p && g.append(s('circle', { cx: p[0], cy: p[1], r: 4, fill: se.color, class: 'viz-dot' })));
+  }
+  o.passes.forEach((p, i) => {
+    const lab = s('text', { x: X(i), y: H - 20, class: 'viz-tick', 'text-anchor': 'middle' });
+    lab.textContent = p;
+    g.append(lab);
+    const v = o.verdict[i];
+    if (v === true) g.append(s('rect', { x: X(i) - 5, y: H - 12, width: 10, height: 8, rx: 2, fill: 'var(--viz-flood)' }));
+    else if (v === false) g.append(s('rect', { x: X(i) - 5, y: H - 12, width: 10, height: 8, rx: 2, class: 'viz-dry' }));
+    const hit = s('rect', { x: X(i) - pw / Math.max(1, n - 1) / 2, y: 0, width: pw / Math.max(1, n - 1), height: H, class: 'viz-hit', tabindex: 0 });
+    const show = () => showTip(f, X(i), m.t + 8, p, [
+      ...o.series.map((se) => ({ color: se.color, value: se.values[i] === null ? '—' : `${num(se.values[i] as number)} dB`, label: se.name })),
+      { value: v === null ? '—' : v ? o.verdictLabels.wet : o.verdictLabels.dry, label: '' },
+    ]);
+    hit.addEventListener('pointermove', show);
+    hit.addEventListener('focus', show);
+    hit.addEventListener('pointerleave', () => hideTip(f));
+    hit.addEventListener('blur', () => hideTip(f));
+    g.append(hit);
+  });
+  f.svg.append(g);
+  f.root.append(legend([
+    ...(o.series.length > 1 ? o.series.map((se) => ({ color: se.color, label: se.name, kind: 'line' as const })) : []),
+    { color: 'var(--viz-flood)', label: o.verdictLabels.wet, kind: 'rect' },
+  ]));
+  if (o.note) f.root.append(howTo(o.note));
+  f.root.append(tableView(['Pass', ...o.series.map((se) => `${se.name} (dB)`), 'Our map'], o.passes.map((p, i) => [p, ...o.series.map((se) => (se.values[i] === null ? '—' : num(se.values[i] as number))), o.verdict[i] === null ? '—' : o.verdict[i] ? o.verdictLabels.wet : o.verdictLabels.dry])));
+  return f.root;
+}

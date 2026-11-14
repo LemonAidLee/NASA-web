@@ -394,6 +394,74 @@
         "2024-12-05",
         "2024-12-11",
         "2024-12-17"
+      ],
+      "exclusive_with": [
+        "kel_duration"
+      ]
+    },
+    {
+      "id": "kel_duration",
+      "areas": [
+        "kelantan"
+      ],
+      "group": "group.flood",
+      "name": "layer.kel_duration",
+      "simple": true,
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kelantan_duration.webp",
+      "dates": "static",
+      "slot": "data",
+      "on": false,
+      "opacity": 0.9,
+      "info": "info.kel_duration",
+      "exclusive_with": [
+        "kel_flood"
+      ],
+      "classes": [
+        {
+          "code": 21,
+          "name": "kel.class.dur1",
+          "color": "#F6C77A",
+          "confidence": "medium"
+        },
+        {
+          "code": 22,
+          "name": "kel.class.dur2",
+          "color": "#D97A0B",
+          "confidence": "medium"
+        },
+        {
+          "code": 23,
+          "name": "kel.class.dur3",
+          "color": "#8C2D04",
+          "confidence": "medium"
+        }
+      ],
+      "swatch": [
+        "#F6C77A",
+        "#D97A0B",
+        "#8C2D04"
+      ],
+      "abbr": "DU",
+      "collection": "opera_rtc",
+      "corners": [
+        [
+          101.795799,
+          6.304448
+        ],
+        [
+          102.603205,
+          6.304448
+        ],
+        [
+          102.603205,
+          5.596016
+        ],
+        [
+          101.795799,
+          5.596016
+        ]
       ]
     },
     {

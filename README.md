@@ -9,6 +9,14 @@ An open-source web map that turns radar satellite data into numbers about water 
 - **Kelantan now (live).** NASA's newest water maps and NISAR pictures for this monsoon, read live from NASA. Imagery only.
 - **Anywhere.** NASA's NISAR and OPERA pictures for any place and day, plus the newest NISAR pass in view.
 
+What the map does beyond showing pictures:
+
+- **This spot, pass by pass.** Click anywhere in a study district to see the radar brightness at that spot on every pass, with our map's verdict under each date. Kelantan: VV and the water limit. Kedah: HH (water) and HV (plants), so you can watch a field flood and then the rice grow.
+- **How long the water stayed.** A Kelantan layer counting the passes (6 days apart) on which each spot held new flood water, with hectares per district.
+- **People near the water.** WorldPop 2024 population within 250 m of new flood water, per district and pass, next to the evacuee counts from the news.
+- **AI analysis with checked numbers.** Short notes per focus district written by AI from our results; `pipeline/11_ai_analysis.py` fails if any number does not match the results files.
+- **Save a picture of this view.** A PNG of the map with a caption, the colour key and the data credits.
+
 It is a student prototype. It is not a warning service and has not been reviewed by NASA. For live river levels see [Public InfoBanjir (JPS)](https://publicinfobanjir.water.gov.my/); follow [NADMA](https://www.nadma.gov.my/) for evacuation.
 
 ## Headline results (from our pipeline, 14 Nov 2026)
@@ -18,6 +26,8 @@ It is a student prototype. It is not a warning service and has not been reviewed
 | Kelantan, 29 Nov 2024 | about 20,300 ha of new flood water in the seven study districts; most in Pasir Puteh and Pasir Mas | 17,200–20,300 ha (threshold ±1 dB) |
 | Kelantan, agreement with DSWx-S1 at the flood peak | F1 0.75, IoU 0.60 (land only, same radar: a consistency check) | F1 0.07–0.75 over six passes |
 | Kedah, share of cropland with field water | 2% (23–25 Sep) → 7% (5–7 Oct) → 22% (17–19 Oct) → 45% (31 Oct) | ±1 dB on both thresholds |
+| Kelantan, people within 250 m of new flood water, 29 Nov 2024 | about 244,000 (about 15,000 inside it), WorldPop 2024 | an exposure estimate, not a count of victims |
+| Kelantan, land flooded on 2 or more passes | about 4,100 ha, most in Tumpat (1,377 ha) and Pasir Mas (1,231 ha) | passes 6 days apart |
 | Kedah, agreement with DSWx-S1 | NISAR finds far more field water than Sentinel-1; almost all of Sentinel-1's water is inside ours | see "How sure are we?" in the app |
 
 The two NISAR stacks (076 descending, 112 ascending) give nearly the same share on neighbouring dates (7.5% vs 6.1%, 22.4% vs 22.0%), although they look from opposite sides.
@@ -48,6 +58,8 @@ python pipeline/07_validate.py
 python pipeline/08_stats.py          # → public/data/stats.json
 python pipeline/09_bake_web.py       # → public/data/baked/*.webp, updates layers.json
 python pipeline/10_rainfall.py       # → public/data/rain.json (NASA IMERG if GES DISC is approved, else NASA POWER)
+python pipeline/11_ai_analysis.py    # AI analysis text → focus_areas.json, with the number check
+python pipeline/12_impact.py         # how long the water stayed, people near it (WorldPop), Kedah per-pass verdicts
 ```
 
 Downloads and intermediate rasters go to `data/` (git-ignored). Each script prints a short check (thresholds, bimodality, hectares, % valid).

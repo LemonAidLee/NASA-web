@@ -129,6 +129,8 @@ button.sock:focus-visible,
 .insp-popup .maplibregl-popup-content { padding: 0 !important; background: transparent !important; box-shadow: none !important; backdrop-filter: none !important; }
 .insp-popup .maplibregl-popup-close-button { color: var(--brand-ink) !important; z-index: 2; font-size: 20px; }
 .insp-popup .insp { width: 320px; }
+/* the spot history makes the card taller: keep it inside the window and let it scroll */
+.insp-popup .insp { max-height: calc(100vh - 160px); overflow-y: auto; overscroll-behavior: contain; }
 
 /* compact preview on focus-marker hover */
 .focus-marker .focus-tip.insp {

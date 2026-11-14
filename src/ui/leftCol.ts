@@ -384,6 +384,13 @@ function renderLegend(): void {
       ),
     );
   }
+  // Other class maps that are on (e.g. "How long the water stayed"): their classes, same as the main one.
+  for (const l of layersFor(s.area)) {
+    if (l.id === classLayer?.id || !on(l.id) || !l.classes?.length || l.kind !== 'image' || l.legend) continue;
+    legendCard.append(h('div', { class: 'legend-block' },
+      h('h3', { class: 'legend-title' }, t(l.name)),
+      h('ul', { class: 'legend-list' }, l.classes.filter((c) => c.style !== 'none').map((c) => classItem(c, false)))));
+  }
   for (const l of layersFor(s.area)) {
     if (!on(l.id)) continue;
     if (l.legend === 'dswx') {

@@ -6,6 +6,7 @@ import { latestTime } from '../lib/catalog';
 import * as S from '../state';
 import { compareDefault } from '../map/compare';
 import { resetLayout } from './windows';
+import { savePicture } from './snapshot';
 
 let latestPass: string | null = null;
 let liveOk = false;
@@ -117,6 +118,7 @@ function openMenu(): void {
       item(t('menu.story'), () => S.set({ step: 0 })),
       item(t('menu.theme', { name: t(`theme.${s.theme}`) }), nextTheme),
       !imageryOnly(area(s.area)) ? item(t('compare.open'), () => S.set(compareDefault())) : null,
+      item(t('snap.menu'), () => void savePicture()),
       item(t('menu.copy'), () => {
         navigator.clipboard?.writeText(location.href).catch(() => undefined);
         document.dispatchEvent(new CustomEvent('toast', { detail: t('menu.copied') }));

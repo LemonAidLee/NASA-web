@@ -59,18 +59,33 @@ export interface Validation {
 }
 
 export interface Stats {
-  kelantan: { dates: Record<string, KelDate> };
+  kelantan: { dates: Record<string, KelDate>; impact?: KelImpact };
   kedah: {
     dates: Record<string, KedDate>;
     first_flooded_ha: Record<string, number>;
     stacks: Record<string, { HH: { threshold_db: number; method: string; ashman_d: number }; HV: { threshold_db: number; method: string; ashman_d: number }; dates: string[] }>;
     districts: Record<string, { district: string; study: boolean; cropland_ha: number; first_flooded_ha: Record<string, number> }>;
+    /** pipeline/12_impact.py: per-pass water verdicts as bits (red = water, green = data), for the spot history. */
+    wetbits?: { url: string; corners: [number, number][]; dates: string[] };
   };
   validation: { kelantan?: Validation; kedah?: Validation };
   histograms?: {
     kelantan?: { band: string; where: string; threshold_db: number; dates: Record<string, Hist> };
     kedah?: { stack: string; where: string; threshold_db: { HH: number; HV: number }; dates: { HH: Record<string, Hist>; HV: Record<string, Hist> } };
   };
+}
+
+/** pipeline/12_impact.py: people near new flood water (WorldPop 2024) and how many passes each spot stayed flooded. */
+export interface KelImpact {
+  population: string;
+  near_m: number;
+  pass_gap_days: number;
+  dates: Record<string, { people_in: number; people_near: number; districts: Record<string, { people_in: number; people_near: number }> }>;
+  duration: {
+    districts: Record<string, { district: string; study: boolean; ha_1: number; ha_2: number; ha_3: number; ha_12days: number }>;
+    total: { ha_1: number; ha_2: number; ha_3: number; ha_12days: number };
+  };
+  district_population: Record<string, number>;
 }
 
 export interface Hist {

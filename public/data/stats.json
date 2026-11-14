@@ -699,7 +699,359 @@
     }
    }
   },
-  "districts": {}
+  "districts": {},
+  "impact": {
+   "population": "WorldPop 2024 constrained, 100 m (R2025A), CC BY 4.0",
+   "near_m": 250,
+   "pass_gap_days": 6,
+   "dates": {
+    "2024-11-17": {
+     "people_in": 0,
+     "people_near": 0,
+     "districts": {
+      "3_1": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_2": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_3": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_4": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_5": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_6": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_7": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_9": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_10": {
+       "people_in": 0,
+       "people_near": 0
+      }
+     }
+    },
+    "2024-11-23": {
+     "people_in": 0,
+     "people_near": 0,
+     "districts": {
+      "3_1": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_2": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_3": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_4": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_5": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_6": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_7": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_9": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_10": {
+       "people_in": 0,
+       "people_near": 0
+      }
+     }
+    },
+    "2024-11-29": {
+     "people_in": 14942,
+     "people_near": 244427,
+     "districts": {
+      "3_1": {
+       "people_in": 2257,
+       "people_near": 36182
+      },
+      "3_2": {
+       "people_in": 2433,
+       "people_near": 55258
+      },
+      "3_3": {
+       "people_in": 404,
+       "people_near": 11548
+      },
+      "3_4": {
+       "people_in": 3665,
+       "people_near": 64190
+      },
+      "3_5": {
+       "people_in": 2017,
+       "people_near": 27219
+      },
+      "3_6": {
+       "people_in": 90,
+       "people_near": 3212
+      },
+      "3_7": {
+       "people_in": 4076,
+       "people_near": 46818
+      },
+      "3_9": {
+       "people_in": 9,
+       "people_near": 449
+      },
+      "3_10": {
+       "people_in": 0,
+       "people_near": 0
+      }
+     }
+    },
+    "2024-12-05": {
+     "people_in": 1654,
+     "people_near": 19023,
+     "districts": {
+      "3_1": {
+       "people_in": 0,
+       "people_near": 140
+      },
+      "3_2": {
+       "people_in": 29,
+       "people_near": 1164
+      },
+      "3_3": {
+       "people_in": 1,
+       "people_near": 72
+      },
+      "3_4": {
+       "people_in": 238,
+       "people_near": 3765
+      },
+      "3_5": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_6": {
+       "people_in": 0,
+       "people_near": 118
+      },
+      "3_7": {
+       "people_in": 1386,
+       "people_near": 13764
+      },
+      "3_9": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_10": {
+       "people_in": 0,
+       "people_near": 0
+      }
+     }
+    },
+    "2024-12-11": {
+     "people_in": 1272,
+     "people_near": 40216,
+     "districts": {
+      "3_1": {
+       "people_in": 126,
+       "people_near": 4607
+      },
+      "3_2": {
+       "people_in": 614,
+       "people_near": 17191
+      },
+      "3_3": {
+       "people_in": 38,
+       "people_near": 1244
+      },
+      "3_4": {
+       "people_in": 286,
+       "people_near": 8506
+      },
+      "3_5": {
+       "people_in": 58,
+       "people_near": 3397
+      },
+      "3_6": {
+       "people_in": 5,
+       "people_near": 692
+      },
+      "3_7": {
+       "people_in": 145,
+       "people_near": 4579
+      },
+      "3_9": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_10": {
+       "people_in": 0,
+       "people_near": 0
+      }
+     }
+    },
+    "2024-12-17": {
+     "people_in": 788,
+     "people_near": 27318,
+     "districts": {
+      "3_1": {
+       "people_in": 74,
+       "people_near": 2372
+      },
+      "3_2": {
+       "people_in": 370,
+       "people_near": 11927
+      },
+      "3_3": {
+       "people_in": 10,
+       "people_near": 432
+      },
+      "3_4": {
+       "people_in": 189,
+       "people_near": 6555
+      },
+      "3_5": {
+       "people_in": 53,
+       "people_near": 2726
+      },
+      "3_6": {
+       "people_in": 2,
+       "people_near": 159
+      },
+      "3_7": {
+       "people_in": 90,
+       "people_near": 3147
+      },
+      "3_9": {
+       "people_in": 0,
+       "people_near": 0
+      },
+      "3_10": {
+       "people_in": 0,
+       "people_near": 0
+      }
+     }
+    }
+   },
+   "duration": {
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "ha_1": 3347,
+      "ha_2": 207,
+      "ha_3": 36,
+      "ha_12days": 4
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "ha_1": 2174,
+      "ha_2": 505,
+      "ha_3": 116,
+      "ha_12days": 24
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "ha_1": 1009,
+      "ha_2": 65,
+      "ha_3": 18,
+      "ha_12days": 10
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "ha_1": 3602,
+      "ha_2": 957,
+      "ha_3": 274,
+      "ha_12days": 235
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "ha_1": 4400,
+      "ha_2": 426,
+      "ha_3": 69,
+      "ha_12days": 0
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "ha_1": 143,
+      "ha_2": 17,
+      "ha_3": 71,
+      "ha_12days": 70
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "ha_1": 2258,
+      "ha_2": 1131,
+      "ha_3": 246,
+      "ha_12days": 214
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "ha_1": 20,
+      "ha_2": 0,
+      "ha_3": 0,
+      "ha_12days": 0
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "ha_1": 0,
+      "ha_2": 0,
+      "ha_3": 0,
+      "ha_12days": 0
+     }
+    },
+    "total": {
+     "ha_1": 16933,
+     "ha_2": 3308,
+     "ha_3": 830,
+     "ha_12days": 557
+    }
+   },
+   "district_population": {
+    "3_1": 170358,
+    "3_2": 608073,
+    "3_3": 121999,
+    "3_4": 250636,
+    "3_5": 148829,
+    "3_6": 164436,
+    "3_7": 195776,
+    "3_9": 17512,
+    "3_10": 33607
+   }
+  }
  },
  "kedah": {
   "dates": {
@@ -1226,6 +1578,36 @@
      "14": 3503
     }
    }
+  },
+  "wetbits": {
+   "url": "data/baked/kedah_wetbits.webp",
+   "corners": [
+    [
+     100.198493,
+     6.501235
+    ],
+    [
+     100.601926,
+     6.501235
+    ],
+    [
+     100.601926,
+     5.898958
+    ],
+    [
+     100.198493,
+     5.898958
+    ]
+   ],
+   "dates": [
+    "2026-09-23",
+    "2026-09-25",
+    "2026-10-05",
+    "2026-10-07",
+    "2026-10-17",
+    "2026-10-19",
+    "2026-10-31"
+   ]
   }
  },
  "validation": {

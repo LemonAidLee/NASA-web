@@ -50,6 +50,12 @@
 .viz-cross-band { fill: var(--text); opacity: 0.08; pointer-events: none; }
 .viz-pass { fill: var(--text-secondary); }
 .viz-hit { fill: transparent; }
+.viz-hit:focus-visible { outline: none; fill: var(--text); fill-opacity: 0.06; }
+.viz-dry { fill: none; stroke: var(--text-muted); stroke-width: 1; }
+/* spot history inside the map popup */
+.spot-hist { margin-top: var(--s2); padding-top: var(--s2); border-top: 1px solid var(--border-subtle); }
+.spot-hist .viz { margin: 0; }
+.spot-hist-wait { font-size: var(--fs-hud); color: var(--text-muted); }
 .viz-rank.is-faded { opacity: 0.5; }
 .viz-rank.is-selected .viz-cat { fill: var(--text); font-weight: 600; }
 .viz-rank:hover .viz-bar, .viz-rank:focus-visible .viz-bar, .viz-col:hover .viz-bar, .viz-col:focus-visible .viz-bar { filter: brightness(1.15); }
