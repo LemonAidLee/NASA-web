@@ -47,6 +47,7 @@ python pipeline/06_kedah_paddy.py
 python pipeline/07_validate.py
 python pipeline/08_stats.py          # → public/data/stats.json
 python pipeline/09_bake_web.py       # → public/data/baked/*.webp, updates layers.json
+python pipeline/10_rainfall.py       # → public/data/rain.json (NASA IMERG if GES DISC is approved, else NASA POWER)
 ```
 
 Downloads and intermediate rasters go to `data/` (git-ignored). Each script prints a short check (thresholds, bimodality, hectares, % valid).

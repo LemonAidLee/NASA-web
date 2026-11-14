@@ -67,17 +67,44 @@ export interface Stats {
     districts: Record<string, { district: string; study: boolean; cropland_ha: number; first_flooded_ha: Record<string, number> }>;
   };
   validation: { kelantan?: Validation; kedah?: Validation };
+  histograms?: {
+    kelantan?: { band: string; where: string; threshold_db: number; dates: Record<string, Hist> };
+    kedah?: { stack: string; where: string; threshold_db: { HH: number; HV: number }; dates: { HH: Record<string, Hist>; HV: Record<string, Hist> } };
+  };
+}
+
+export interface Hist {
+  lo: number;
+  step: number;
+  pct: number[];
+  n: number;
+}
+
+export interface RainArea {
+  source: { name: string; short: string; kind: 'satellite' | 'reanalysis'; resolution: string; doi?: string; url?: string };
+  start: string;
+  end: string;
+  daily: Record<string, number>;
+  peak: { date: string | null; mm: number | null };
 }
 
 export let stats: Stats | null = null;
+/** Daily study-box rainfall (public/data/rain.json, written by pipeline/10_rainfall.py). */
+export let rain: Record<string, RainArea> | null = null;
+
+async function getJson<T>(path: string): Promise<T | null> {
+  try {
+    const res = await fetch(new URL(path, document.baseURI).href);
+    return res.ok ? ((await res.json()) as T) : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function loadStats(): Promise<void> {
-  try {
-    const res = await fetch(new URL('data/stats.json', document.baseURI).href);
-    if (res.ok) stats = (await res.json()) as Stats;
-  } catch {
-    stats = null;
-  }
+  const [st, rn] = await Promise.all([getJson<Stats>('data/stats.json'), getJson<Record<string, RainArea>>('data/rain.json')]);
+  stats = st;
+  rain = rn;
 }
 
 /** The radar pass (UTC date key) whose map is shown for a selected MYT date, via the area's main layer. */

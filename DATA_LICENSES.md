@@ -13,6 +13,8 @@ Every dataset the app shows or the pipeline reads, with its credit line. No agen
 | OPERA DSWx-S1 V1 | Agreement scores, disagreement map, NASA water-map layers | PO.DAAC, Earthdata Login; GIBS pictures | OPERA. 2024. OPERA Dynamic Surface Water Extent from Sentinel-1 product (Version 1). PO.DAAC, CA, USA. doi:10.5067/OPDSWS1-L3V1. Contains modified Copernicus Sentinel data 2024/2026 |
 | GIBS pictures (VIIRS true colour, NISAR GCOV, OPERA DSWx-S1, OPERA RTC-S1) | Picture layers | GIBS WMTS/WMS, public | We acknowledge the use of imagery provided by services from NASA's Global Imagery Browse Services (GIBS), part of NASA's Earth Science Data and Information System (ESDIS) |
 | CMR and ASF Search API | Pass dates and live checks | public | NASA Common Metadata Repository; Alaska Satellite Facility DAAC |
+| NASA POWER daily precipitation (PRECTOTCORR, MERRA-2 reanalysis, bias-corrected) | Rainfall chart (study-box average of 4 points) | power.larc.nasa.gov, public, no login | Data from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program |
+| NASA GPM IMERG daily V07 (planned) | Rainfall chart, when the pipeline can reach GES DISC | GES DISC, Earthdata Login + GES DISC app approval | Huffman, G.J., et al., GPM IMERG Final/Late Precipitation L3 1 day V07, GES DISC, doi:10.5067/GPM/IMERGDF/DAY/07 |
 
 NASA data are free to use with credit ([NASA Earthdata data use policy](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance)).
 

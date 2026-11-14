@@ -1,0 +1,84 @@
+/* Charts in the side panel (ui/charts.ts). Colours validated per theme surface with the dataviz palette validator
+   (14 Nov 2026): two-series slots blue/orange pass every check on all dark surfaces; on Flexoki Light orange is 2.96:1,
+   so every chart ships a table view (relief rule). Flood orange matches the map's class colour on dark themes; on the
+   light theme a darker step of the same orange is used (map orange is 2.1:1 there). */
+
+:root {
+  --viz-s1: #3987e5;      /* series 1 (blue)   */
+  --viz-s2: #d95926;      /* series 2 (orange) */
+  --viz-flood: #e69f00;   /* new flood water, as on the map */
+  --viz-rain: #3987e5;    /* rainfall, one hue */
+  --viz-context: #6b7194; /* de-emphasis gray for the "before" series */
+  --viz-grid: var(--border-subtle);
+  --viz-axis: var(--border-strong);
+  --viz-surface: var(--surface);
+}
+[data-theme='flexoki-light'] {
+  --viz-s1: #2a78d6;
+  --viz-s2: #eb6834;
+  --viz-flood: #b06d00;
+  --viz-rain: #2a78d6;
+  --viz-context: #9a978c;
+}
+[data-theme='deep-space'] { --viz-grid: #ffffff14; --viz-axis: #ffffff40; --viz-surface: #0d1022; }
+
+.viz { margin: var(--s2) 0 var(--s3); display: flex; flex-direction: column; gap: var(--s1); }
+.viz figcaption { display: flex; flex-direction: column; gap: 2px; }
+.viz-title { font-size: var(--fs-caption); font-weight: 600; color: var(--text); }
+.viz-sub { font-size: var(--fs-hud); color: var(--text-muted); }
+.viz-plot { position: relative; }
+.viz-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-sans); }
+.viz-svg:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 2px; }
+
+.viz-grid { stroke: var(--viz-grid); stroke-width: 1; shape-rendering: crispEdges; }
+.viz-base { stroke: var(--viz-axis); stroke-width: 1; shape-rendering: crispEdges; }
+.viz-tick { fill: var(--text-muted); font-size: 9px; font-variant-numeric: tabular-nums; }
+.viz-cat { fill: var(--text-secondary); font-size: 10px; }
+.viz-val { fill: var(--text-secondary); font-size: 9.5px; font-variant-numeric: tabular-nums; }
+.viz-end { fill: var(--text-secondary); font-size: 9px; }
+.viz-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.viz-step { stroke-linejoin: miter; stroke-linecap: butt; }
+.viz-band { opacity: 0.12; stroke: none; }
+.viz-dot { stroke: var(--viz-surface); stroke-width: 2; }
+.viz-bar { stroke: none; }
+.viz-whisker { stroke: var(--text-muted); stroke-width: 1.5; stroke-linecap: round; }
+.viz-rule { stroke: var(--text-muted); stroke-width: 1; opacity: 0.7; shape-rendering: crispEdges; }
+.viz-threshold { stroke: var(--text-secondary); opacity: 1; }
+.viz-rule-label { fill: var(--text-muted); font-size: 8.5px; }
+.viz-now { stroke: var(--text); stroke-width: 1; opacity: 0.55; shape-rendering: crispEdges; }
+.viz-cross { stroke: var(--text-secondary); stroke-width: 1; shape-rendering: crispEdges; pointer-events: none; }
+.viz-cross-band { fill: var(--text); opacity: 0.08; pointer-events: none; }
+.viz-pass { fill: var(--text-secondary); }
+.viz-hit { fill: transparent; }
+.viz-rank.is-faded { opacity: 0.5; }
+.viz-rank.is-selected .viz-cat { fill: var(--text); font-weight: 600; }
+.viz-rank:hover .viz-bar, .viz-rank:focus-visible .viz-bar, .viz-col:hover .viz-bar, .viz-col:focus-visible .viz-bar { filter: brightness(1.15); }
+.viz-rank:focus-visible, .viz-col:focus-visible { outline: none; }
+.viz-rank:focus-visible .viz-cat { text-decoration: underline; }
+
+.viz-tip {
+  position: absolute;
+  z-index: 4;
+  min-width: 120px;
+  max-width: 190px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  box-shadow: var(--ring), 0 4px 16px #0006;
+  pointer-events: none;
+  font-size: var(--fs-hud);
+  color: var(--text-secondary);
+}
+.viz-tip-head { color: var(--text-muted); margin-bottom: 2px; }
+.viz-tip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; }
+.viz-tip-row > span:last-child { flex-basis: 100%; padding-left: 16px; color: var(--text-muted); }
+.viz-tip-row > span:last-child:empty { display: none; }
+.viz-tip-row strong { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.viz-key { display: inline-block; width: 10px; height: 2px; border-radius: 1px; flex: none; }
+.viz-key-rect { height: 8px; width: 8px; border-radius: 2px; }
+.viz-key-pass { width: 0; height: 0; background: none !important; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 6px solid var(--text-secondary); border-radius: 0; }
+.viz-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: var(--fs-hud); color: var(--text-secondary); }
+.viz-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.viz-note { font-size: var(--fs-hud); color: var(--text-muted); }
+.viz-table summary { cursor: pointer; font-size: var(--fs-hud); color: var(--hud-label); }
+.viz-table .table { margin-top: var(--s1); font-size: var(--fs-hud); }

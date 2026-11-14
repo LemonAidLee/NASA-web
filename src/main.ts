@@ -8,6 +8,7 @@ import './styles/app.css';
 import './styles/focus.css';
 import './styles/panels.css';
 import './styles/deep-space.css';
+import './styles/charts.css';
 
 import { addProtocol, setWorkerUrl } from 'maplibre-gl';
 // MapLibre v6 under Vite: worker via ?worker&url, set once before the first map (plan 06 §1.3 item 1).

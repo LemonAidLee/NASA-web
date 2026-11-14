@@ -114,9 +114,42 @@ def kedah() -> dict:
     return out
 
 
+def hist(values: np.ndarray, lo: float, hi: float, step: float = 0.5) -> dict:
+    """Share of pixels (%) per brightness bin; the chart in "How sure are we?" draws these."""
+    v = values[np.isfinite(values)]
+    edges = np.arange(lo, hi + step / 2, step)
+    counts, _ = np.histogram(np.clip(v, lo, hi - 1e-6), bins=edges)
+    return {"lo": lo, "step": step, "pct": [round(float(c), 3) for c in 100 * counts / max(v.size, 1)], "n": int(v.size)}
+
+
+def histograms() -> dict:
+    out: dict = {}
+    kanc = load_tif(WORK / "kelantan_ancillary.tif")
+    land = ~(((kanc["jrc"] >= 80) & (kanc["jrc"] <= 100)) | (kanc["worldcover"] == 80))
+    thr = json.loads((WORK / "kelantan_thresholds.json").read_text(encoding="utf-8"))
+    kel = {}
+    for d in ("2024-11-17", "2024-11-29"):
+        vv = load_tif(WORK / f"kelantan_{d}_vv.tif")["VV_dB"]
+        cls = load_tif(WORK / f"kelantan_{d}_class.tif")["class"]
+        kel[d] = hist(vv[land & (cls != 6) & np.isfinite(vv)], -30.0, 0.0)
+    out["kelantan"] = {"band": "VV", "where": "land (normal water left out)", "threshold_db": thr["2024-11-29"]["threshold_db"], "dates": kel}
+    danc = load_tif(WORK / "kedah_ancillary.tif")
+    paddy = (danc["worldcover"] == 40) & ~(((danc["jrc"] >= 80) & (danc["jrc"] <= 100)) | (danc["worldcover"] == 80))
+    res = json.loads((WORK / "kedah_paddy.json").read_text(encoding="utf-8"))
+    st = res["stacks"]["112_A_005"]
+    ked = {"HH": {}, "HV": {}}
+    for d in ("2026-09-25", "2026-10-31"):
+        b = load_tif(WORK / f"kedah_{d}_db.tif")
+        ked["HH"][d] = hist(b["HH_dB"][paddy], -30.0, 0.0)
+        ked["HV"][d] = hist(b["HV_dB"][paddy], -40.0, -5.0)
+    out["kedah"] = {"stack": "112_A_005", "where": "cropland (ESA WorldCover)",
+                    "threshold_db": {"HH": st["HH"]["threshold_db"], "HV": st["HV"]["threshold_db"]}, "dates": ked}
+    return out
+
+
 if __name__ == "__main__":
     val = json.loads((WORK / "validation.json").read_text(encoding="utf-8")) if (WORK / "validation.json").exists() else {}
     stats = {"_note": "Made by pipeline/08_stats.py from our radar maps. Hectares are 30 m pixels × 0.09 ha; ranges come from moving the water threshold by ±1 dB.",
-             "kelantan": kelantan(), "kedah": kedah(), "validation": val}
+             "kelantan": kelantan(), "kedah": kedah(), "validation": val, "histograms": histograms()}
     (WEB / "stats.json").write_text(json.dumps(stats, indent=1, ensure_ascii=False), encoding="utf-8")
     log(f"wrote {WEB / 'stats.json'}")

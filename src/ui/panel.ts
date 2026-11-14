@@ -1,5 +1,5 @@
 // Right panel (desktop) / bottom-sheet tabs (mobile): Numbers (F7, F14), Rain (F13), How sure are we? (F9), Story, About + credits (F10).
-import { area, imageryOnly, daysBetween, diffDays, fmtDate, fmtDay, fmtNum, primaryPasses, provenance, story } from '../config';
+import { area, layer, imageryOnly, daysBetween, diffDays, fmtDate, fmtDay, fmtNum, primaryPasses, provenance, story } from '../config';
 import { t } from '../i18n';
 import { card, clear, h } from '../lib/dom';
 import * as S from '../state';
@@ -8,7 +8,8 @@ import { map } from '../map/mainMap';
 import { legendCard, layersCard, titleCard } from './leftCol';
 import { segBar, statRow } from './kit';
 import { earthdataSearchUrl, latestTime, vertexUrl, type Bbox } from '../lib/catalog';
-import { ha as haFmt, haRange, kedDateByUtc, kedPass, kelPass, stats } from '../lib/stats';
+import { ha as haFmt, haRange, kedDateByUtc, kedPass, kelPass, rain as rainData, stats } from '../lib/stats';
+import { columnChart, dailyChart, distChart, num, rankChart, timeChart } from './charts';
 
 export const panelRoot = h('div', { class: 'panel-inner' });
 let mobile = false;
@@ -113,6 +114,72 @@ function methodNote(text: string): HTMLElement {
   return h('p', { class: 'method-note small' }, text);
 }
 
+const FIRST_LABEL: Record<number, string> = { 11: '23–25 Sep', 12: '5–7 Oct', 13: '17–19 Oct', 14: '31 Oct' };
+
+/** New flood water in the study districts, per radar pass (one series, ±1 dB band); click a point to go to that pass. */
+function kelTrend(s: S.State): HTMLElement | null {
+  const a = area('kelantan');
+  const dates = stats?.kelantan.dates;
+  if (!dates || !a.strip) return null;
+  const points = Object.values(dates).map((d) => ({ date: d.date_myt, y: d.flood_ha, lo: d.flood_ha_low, hi: d.flood_ha_high, key: d.date_myt }));
+  return timeChart({
+    title: t('num.kel.chart.title'), subtitle: t('num.kel.chart.sub'), unit: 'ha',
+    start: a.strip[0], end: a.strip[1],
+    series: [{ name: t('num.kel.chart.series'), color: 'var(--viz-flood)', points }],
+    current: s.date, onPick: (d) => S.set({ date: d }),
+    note: t('num.kel.chart.note'),
+  });
+}
+
+/** Ranked districts for the pass on screen (one hue, range whiskers); click a district to zoom to it. */
+function kelRank(s: S.State): HTMLElement | null {
+  const pass = kelPass(s.date);
+  if (!pass || !pass.reference) return null;
+  const rows = Object.entries(pass.districts)
+    .filter(([, r]) => r.study)
+    .map(([code, r]) => ({ label: r.district, value: r.flood_ha, lo: r.flood_ha_low, hi: r.flood_ha_high, key: code }));
+  return rankChart({
+    title: t('num.kel.rank.title', { date: fmtDay(pass.date_myt) }), subtitle: t('num.kel.rank.sub'),
+    unit: 'ha', rows, color: 'var(--viz-flood)', selected: s.district, onPick: selectDistrict,
+  });
+}
+
+/** Radar brightness histograms with the water threshold: shows the two humps (water, land) the threshold splits. */
+function brightnessChart(s: S.State): HTMLElement | null {
+  const hs = stats?.histograms;
+  if (s.area === 'kelantan' && hs?.kelantan) {
+    const k = hs.kelantan;
+    const before = k.dates['2024-11-17'];
+    const flood = k.dates['2024-11-29'];
+    if (!before || !flood) return null;
+    return distChart({
+      title: t('sure.hist.kel.title'), subtitle: t('sure.hist.kel.sub'), xLabel: t('sure.hist.x', { band: k.band }),
+      series: [
+        { name: t('sure.hist.kel.before'), color: 'var(--viz-context)', ...before },
+        { name: t('sure.hist.kel.flood'), color: 'var(--viz-flood)', emphasis: true, ...flood },
+      ],
+      threshold: { value: k.threshold_db, label: t('sure.hist.threshold', { t: num(k.threshold_db) }) },
+      note: t('sure.hist.kel.note'),
+    });
+  }
+  if (s.area === 'kedah' && hs?.kedah) {
+    const k = hs.kedah;
+    const early = k.dates.HH['2026-09-25'];
+    const late = k.dates.HH['2026-10-31'];
+    if (!early || !late) return null;
+    return distChart({
+      title: t('sure.hist.ked.title'), subtitle: t('sure.hist.ked.sub'), xLabel: t('sure.hist.x', { band: 'HH' }),
+      series: [
+        { name: t('sure.hist.ked.early'), color: 'var(--viz-context)', ...early },
+        { name: t('sure.hist.ked.late'), color: 'var(--viz-s1)', emphasis: true, ...late },
+      ],
+      threshold: { value: k.threshold_db.HH, label: t('sure.hist.threshold', { t: num(k.threshold_db.HH) }) },
+      note: t('sure.hist.ked.note', { hv: num(k.threshold_db.HV) }),
+    });
+  }
+  return null;
+}
+
 function numbersKelantan(s: S.State): HTMLElement[] {
   const pass = kelPass(s.date);
   const rows = districtsOf(['Kelantan'])
@@ -142,6 +209,8 @@ function numbersKelantan(s: S.State): HTMLElement[] {
           ? t('num.method.kel', { date: fmtDate(pass.date_myt), track: pass.track, ref: fmtDate(pass.reference), t: pass.threshold_db })
           : t('num.method.kel.ref', { date: fmtDate(pass.date_myt), track: pass.track }))
         : pendingNote(),
+      kelTrend(s),
+      kelRank(s),
       h('div', { class: 'table-wrap' }, table),
       pass ? h('p', { class: 'muted small' }, t('num.kel.outside')) : null,
     ),
@@ -181,15 +250,35 @@ function phaseChart(s: S.State): HTMLElement {
 }
 
 function numbersKedah(s: S.State): HTMLElement[] {
-  // C · segmented bars: % of cropland with field water per NISAR pass, then MADA phase areas and dam storage.
-  const bars = h('ul', { class: 'pct-bars' }, primaryPasses('kedah').map((p) => {
-    const v = kedDateByUtc(p.date_utc);
-    return h('li', { class: p.date_myt === s.date ? 'is-selected' : '', title: v ? t('num.ked.range', { lo: v.pct_low, hi: v.pct_high }) : '' },
-      h('button', { class: 'link', onclick: () => S.set({ date: p.date_myt }) }, fmtDay(p.date_myt)),
-      segBar({ value: v ? v.pct_field_water : null, max: 100, basis: v ? t('num.ked.pct.basis') : t('seg.pending') }),
-      h('span', { class: 'num' }, v ? `${v.pct_field_water}%` : '—%'),
-    );
-  }));
+  // % of cropland with field water per NISAR pass: one line per stack (never mix stacks: different geometry),
+  // ±1 dB band, MADA phase starts as reference rules; the first-flooded areas as ordered columns (map greens).
+  const a = area('kedah');
+  const passes = primaryPasses('kedah');
+  const stackSeries = (track: string, name: string, color: string) => ({
+    name, color, short: track.slice(0, 3),
+    points: passes.filter((p) => p.track === track).flatMap((p) => {
+      const v = kedDateByUtc(p.date_utc);
+      return v ? [{ date: p.date_myt, y: v.pct_field_water, lo: v.pct_low, hi: v.pct_high, key: p.date_myt }] : [];
+    }),
+  });
+  const series = [stackSeries('076_D_085', t('num.ked.stack076'), 'var(--viz-s1)'), stackSeries('112_A_005', t('num.ked.stack112'), 'var(--viz-s2)')].filter((se) => se.points.length);
+  const bars = series.length && a.strip
+    ? timeChart({
+        title: t('num.ked.pct'), subtitle: t('num.ked.chart.sub'), unit: '%',
+        start: a.strip[0], end: a.strip[1], series,
+        rules: (a.phases ?? []).map((p) => ({ date: p.start, label: `Phase ${p.id}` })),
+        current: s.date, onPick: (d) => S.set({ date: d }),
+        note: t('num.ked.chart.note'),
+      })
+    : h('ul', { class: 'pct-bars' }, passes.map((p) => h('li', {}, h('span', {}, fmtDay(p.date_myt)), segBar({ value: null, max: 100, basis: t('seg.pending') }), h('span', { class: 'num' }, '—%'))));
+  const ff = stats?.kedah.first_flooded_ha;
+  const firstCols = ff
+    ? columnChart({
+        title: t('num.ked.first.title'), subtitle: t('num.ked.first.sub'), unit: 'ha',
+        cols: (layer('ked_first_flooded')?.classes ?? []).filter((c) => c.code >= 11 && c.color).map((c) => ({ label: FIRST_LABEL[c.code] ?? String(c.code), value: ff[String(c.code)] ?? 0, color: c.color as string })),
+        note: t('num.ked.first.note', { notyet: fmtNum(ff['1'] ?? 0) }),
+      })
+    : null;
   const kp = kedPass(s.date);
   const season = area('kedah').phases ?? [];
   const seasonHa = 99489; // MADA notice, 14 Sep 2026 (plan 08 §4.7)
@@ -209,8 +298,8 @@ function numbersKedah(s: S.State): HTMLElement[] {
         : t('ked.headline.placeholder', { date: fmtDay(s.date) })),
       badge(),
       kp ? methodNote(t('num.method.ked', { track: kp.track, ha: fmtNum(kp.paddy_ha_seen) })) : pendingNote(),
-      h('h3', { class: 'legend-title' }, t('num.ked.pct')),
       bars,
+      firstCols,
       phaseChart(s),
       phaseBars,
     ),
@@ -260,12 +349,61 @@ function numbers(s: S.State): (HTMLElement | null)[] {
   const a = area(s.area);
   if (a.kind === 'live') return liveNumbers(s);
   if (imageryOnly(a)) return [card(t('num.exp.title'), t('exp.badge'), h('p', {}, t('num.exp.body')))];
-  return [districtCard(s), ...(s.area === 'kelantan' ? numbersKelantan(s) : numbersKedah(s))];
+  const out: (HTMLElement | null)[] = [districtCard(s), ...(s.area === 'kelantan' ? numbersKelantan(s) : numbersKedah(s))];
+  // Simple mode and phones have no Rain tab: the rainfall chart joins the numbers there.
+  if (!(s.mode === 'expert' && !mobile)) out.push(...rain(s));
+  return out;
 }
 
 // ---------------- Rain (F13 placeholder) ----------------
 
+/** The radar pass nearest to a day, so a click on a rain bar moves the slider to a day that has a radar picture. */
+function nearestPass(areaId: string, day: string): string | null {
+  const list = primaryPasses(areaId);
+  if (!list.length) return null;
+  return list.reduce((a, p) => (Math.abs(diffDays(p.date_myt, day)) < Math.abs(diffDays(a.date_myt, day)) ? p : a), list[0]).date_myt;
+}
+
+/** "Heaviest rain … first radar picture after it …": the rain-to-radar link of plan 07 F13, always an estimate. */
+function rainLag(areaId: string, peak: string): string | null {
+  const after = primaryPasses(areaId).find((p) => p.date_myt >= peak);
+  if (!after) return null;
+  const n = diffDays(after.date_myt, peak);
+  if (areaId === 'kelantan') {
+    const v = kelPass(after.date_myt);
+    return t('rain.lag.kel', { date: fmtDay(after.date_myt), n, ha: v ? haFmt(v.flood_ha) : '—' });
+  }
+  const before = [...primaryPasses(areaId)].reverse().find((p) => p.date_myt < peak);
+  const v1 = kedDateByUtc(after.date_utc);
+  const v0 = before ? kedDateByUtc(before.date_utc) : null;
+  return t('rain.lag.ked', { date: fmtDay(after.date_myt), n, from: v0 ? `${v0.pct_field_water}%` : '—', to: v1 ? `${v1.pct_field_water}%` : '—' });
+}
+
+function rainChart(s: S.State): HTMLElement | null {
+  const a = area(s.area);
+  const r = rainData?.[s.area];
+  if (!r || !a.strip) return null;
+  const [start, end] = [a.strip[0] > r.start ? a.strip[0] : r.start, a.strip[1] < r.end ? a.strip[1] : r.end];
+  const daily = Object.fromEntries(Object.entries(r.daily).filter(([d]) => d >= start && d <= end));
+  const peak = Object.entries(daily).reduce((m, kv) => (kv[1] > m[1] ? kv : m), ['', -1] as [string, number]);
+  const lag = peak[0] ? rainLag(s.area, peak[0]) : null;
+  return h('div', {},
+    dailyChart({
+      title: t('rain.chart.title'),
+      subtitle: t('rain.chart.sub', { source: r.source.short }),
+      unit: 'mm', daily, start, end, color: 'var(--viz-rain)',
+      marks: primaryPasses(s.area).map((p) => ({ date: p.date_myt, label: t('rain.chart.pass', { sensor: p.sensor, time: p.time_myt }) })),
+      current: s.date,
+      onPick: (d) => { const p = nearestPass(s.area, d); if (p) S.set({ date: p }); },
+    }),
+    peak[0] ? h('p', { class: 'small' }, t('rain.peak', { date: fmtDay(peak[0]), mm: num(peak[1]) }), lag ? ` ${lag}` : '') : null,
+    h('p', { class: 'muted small' }, r.source.kind === 'reanalysis' ? t('rain.source.power') : t('rain.source.imerg', { name: r.source.name })),
+  );
+}
+
 function rain(s: S.State): HTMLElement[] {
+  const chart = rainChart(s);
+  if (chart) return [card(t('rain.title'), t('rain.tagline'), chart)];
   const a = area(s.area);
   const days = a.strip ? daysBetween(a.strip[0], a.strip[1]) : [];
   const skeleton = h('div', { class: 'rain-skeleton', 'aria-hidden': 'true' }, days.map((d) =>
@@ -323,6 +461,7 @@ function sureDetails(s: S.State): HTMLElement {
       h('tbody', {}, metric('sure.f1', 'sure.f1.gloss'), metric('sure.iou', 'sure.iou.gloss'), metric('sure.kappa', 'sure.kappa.gloss'), metric('sure.offset', 'sure.offset.gloss')),
     )),
     h('p', { class: 'small muted' }, t('sure.benchmark')),
+    ...([brightnessChart(s)].filter(Boolean) as HTMLElement[]),
     valuesTable(s),
   );
   return det;
