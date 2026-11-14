@@ -1,0 +1,159 @@
+/* Tokens from plan 14 §3.1 (UI colours), §4 (type), §5 (shapes). Data colours are NOT here: they live in layers.json. */
+
+:root,
+[data-theme='tokyo-night'] {
+  --bg-deep: #13141c;
+  --bg: #1a1b26;
+  --surface: #1f2230;
+  --surface-2: #24283b;
+  --border-subtle: #24283b;
+  --border-strong: #414868;
+  --text: #c0caf5;
+  --text-secondary: #a9b1d6;
+  --text-muted: #8b93b8;
+  --brand: #9ece6a;
+  --brand-ink: #0c0e10;
+  --hud-label: #7dcfff;
+  --hud-value: #c0caf5;
+  --alert: #ff9e64;
+  --ring: 0 0 0 1px #ffffff12;
+  --ring-hover: 0 0 0 1px #ffffff2a;
+  --scrim: #13141cd9;
+  --bar-bg: #1a1b26eb;
+  --hatch: #c0caf54d;
+  --swatch-ring: #c0caf566;
+  color-scheme: dark;
+}
+
+[data-theme='situation-room'] {
+  --bg-deep: #04040a;
+  --bg: #06060c;
+  --surface: #0c0e1a;
+  --surface-2: #121628;
+  --border-subtle: #d4af3726;
+  --border-strong: #d4af3766;
+  --text: #e8e6e0;
+  --text-secondary: #9b978e;
+  --text-muted: #8c877c;
+  --brand: #00e5ff;
+  --brand-ink: #04040a;
+  --hud-label: #d4af37;
+  --hud-value: #00e5ff;
+  --alert: #00e5ff;
+  --ring: 0 0 0 1px #d4af3726;
+  --ring-hover: 0 0 0 1px #d4af3755;
+  --scrim: #04040ad9;
+  --bar-bg: #06060ceb;
+  --hatch: #e8e6e04d;
+  --swatch-ring: #e8e6e066;
+  color-scheme: dark;
+}
+
+[data-theme='flexoki-light'] {
+  --bg-deep: #f2efe4;
+  --bg: #fffcf0;
+  --surface: #f9f6ea;
+  --surface-2: #f2efe4;
+  --border-subtle: #e5e2d8;
+  --border-strong: #b7b5ac;
+  --text: #100f0f;
+  --text-secondary: #454340;
+  --text-muted: #555450;
+  --brand: #205ea6;
+  --brand-ink: #fff;
+  --hud-label: #205ea6;
+  --hud-value: #100f0f;
+  --alert: #bc5215;
+  --ring: 0 0 0 1px #0000000f, 0 1px 3px #0000000d;
+  --ring-hover: 0 0 0 1px #00000026, 0 1px 3px #0000000d;
+  --scrim: #fffcf0e6;
+  --bar-bg: #fffcf0eb;
+  --hatch: #100f0f4d;
+  --swatch-ring: #100f0f66;
+  color-scheme: light;
+}
+
+/* Deep Space (default since 12 Nov): a dark star-map mood with a violet accent, inspired by sci-fi game menus.
+   Style only: no game names, logos, icons, artwork or fonts are used. Data colours (layers.json) are unchanged.
+   Contrast on --surface #0d1022 (computed): text 16.7:1, secondary 10.7:1, muted 6.3:1, hud-label 10.3:1, brand 7.0:1, brand-ink on brand 7.4:1. */
+:root[data-theme='deep-space'] {
+  --bg-deep: #05060e;
+  --bg: #080a16;
+  --surface: #0d1022;
+  --surface-2: #151a33;
+  --border-subtle: #ffffff14;
+  --border-strong: #ffffff66; /* 3.7:1 on surface, meets WCAG 1.4.11 for control outlines */
+  --text: #eef1ff;
+  --text-secondary: #bcc2e0;
+  --text-muted: #8c93b8;
+  --brand: #b386ff;
+  --brand-ink: #0b0618;
+  --hud-label: #c7b5ff;
+  --hud-value: #eef1ff;
+  --alert: #ff9e7a;
+  --ring: 0 0 0 1px #ffffff1c;
+  --ring-hover: 0 0 0 1px #b386ff99, 0 0 22px #8f5bff40;
+  --glow: 0 0 18px #9b6bff66;
+  --scrim: #05060ee0;
+  --bar-bg: #080a16e6;
+  --glass: #0d1022d9;
+  --hatch: #eef1ff40;
+  --swatch-ring: #eef1ff59;
+  --radius-card: 3px;
+  --radius-pill: 2px;
+  --font-display: 'Saira Variable', var(--font-sans);
+  --display-stretch: 88%;
+  /* basemap re-tint (map/rasters.ts tuneBasemap reads these; other themes leave the basemap as it is) */
+  --map-bg: #080b1a;
+  --map-water: #03040b;
+  --map-water-line: #1b2552;
+  --map-land: #0b1024;
+  --map-building: #10163a;
+  --map-road: #1d2548;
+  --map-road-casing: #2a3466;
+  --map-boundary: #3d4580;
+  color-scheme: dark;
+}
+
+:root {
+  --font-display: var(--font-mono);
+  --display-stretch: 100%;
+  --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* type scale (px → rem at 16 px root) */
+  --fs-hud: 0.6875rem;   /* 11 */
+  --fs-caption: 0.75rem; /* 12 */
+  --fs-body: 0.875rem;   /* 14 */
+  --fs-large: 1rem;      /* 16 */
+  --fs-card: 1.25rem;    /* 20 */
+  --fs-story: 1.75rem;   /* 28 */
+  --fs-hero: 2.5rem;     /* 40 */
+
+  /* 4 px grid */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s6: 24px;
+  --s8: 32px;
+
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --hud-h: 32px;
+  --tap: 44px;
+  --col-w: 300px;
+  --panel-w: 360px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,739 @@
+{
+  "_note": "Rehearsal contract (plan 06 §4). At the event 09_bake_web.py writes this file. status=real layers load login-free NASA/JRC tiles at runtime; status=placeholder layers wait for the event-day pipeline.",
+  "gibs_base": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best",
+  "areas": [
+    {
+      "id": "kelantan",
+      "kind": "disaster",
+      "name": "area.kelantan",
+      "short": "area.kelantan.short",
+      "bbox": [
+        101.8,
+        5.6,
+        102.6,
+        6.3
+      ],
+      "default_date": "2024-11-29",
+      "strip": [
+        "2024-11-15",
+        "2024-12-20"
+      ],
+      "revisit_days": 6,
+      "compare_default": [
+        "2024-11-17",
+        "2024-11-29"
+      ],
+      "states": [
+        "Kelantan"
+      ],
+      "panel": {
+        "question": "kel.question",
+        "sensor": "kel.sensor",
+        "headline": "kel.headline.placeholder",
+        "numbers_tab": "tab.numbers.kel",
+        "numbers_tab_expert": "tab.flood",
+        "validation": "kel.validation",
+        "official": "kel.official",
+        "official_links": [
+          {
+            "label": "link.infobanjir",
+            "url": "https://publicinfobanjir.water.gov.my/"
+          },
+          {
+            "label": "link.nadma",
+            "url": "https://www.nadma.gov.my/"
+          }
+        ],
+        "sure_first": [
+          "kel.sure.1",
+          "kel.sure.2",
+          "kel.sure.3"
+        ],
+        "sure_lines": [
+          "lim.revisit.kel",
+          "lim.nonisarflood",
+          "lim.blind.kel",
+          "lim.choices.kel",
+          "lim.notwarning",
+          "lim.notreviewed",
+          "lim.passdays",
+          "lim.falsealarm.kel"
+        ],
+        "legend_layer": "kel_flood",
+        "pulse_label": "kel.pulse"
+      },
+      "study_districts": [
+        "Tumpat",
+        "Kota Bharu",
+        "Pasir Mas",
+        "Bachok",
+        "Pasir Puteh",
+        "Machang",
+        "Tanah Merah"
+      ]
+    },
+    {
+      "id": "kedah",
+      "kind": "agri",
+      "name": "area.kedah",
+      "short": "area.kedah.short",
+      "bbox": [
+        100.2,
+        5.9,
+        100.6,
+        6.5
+      ],
+      "default_date": "2026-10-05",
+      "strip": [
+        "2026-09-15",
+        "2026-10-31"
+      ],
+      "revisit_days": 12,
+      "compare_default": [
+        "2026-09-23",
+        "2026-10-17"
+      ],
+      "states": [
+        "Kedah",
+        "Perlis"
+      ],
+      "phases": [
+        {
+          "id": "I",
+          "start": "2026-09-23",
+          "end": "2026-11-04",
+          "ha": 33237
+        },
+        {
+          "id": "II",
+          "start": "2026-10-03",
+          "end": "2026-11-14",
+          "ha": 32366
+        },
+        {
+          "id": "III",
+          "start": "2026-10-13",
+          "end": "2026-11-24",
+          "ha": 33886
+        }
+      ],
+      "panel": {
+        "question": "ked.question",
+        "sensor": "ked.sensor",
+        "headline": "ked.headline.placeholder",
+        "numbers_tab": "tab.numbers.ked",
+        "numbers_tab_expert": "tab.paddy",
+        "validation": "ked.validation",
+        "official": "ked.official",
+        "official_links": [
+          {
+            "label": "link.mada",
+            "url": "https://www.mada.gov.my/?q=2F02&id=228"
+          }
+        ],
+        "sure_first": [
+          "ked.sure.1",
+          "ked.sure.2",
+          "ked.sure.3"
+        ],
+        "sure_lines": [
+          "lim.provisional",
+          "lim.revisit.ked",
+          "lim.blind.ked",
+          "lim.schedule",
+          "lim.choices.ked",
+          "lim.notwarning.short",
+          "lim.notreviewed",
+          "lim.passdays",
+          "lim.falsealarm.ked"
+        ],
+        "legend_layer": "ked_first_flooded",
+        "pulse_label": "ked.pulse"
+      },
+      "study_districts": [
+        "Kota Setar",
+        "Kubang Pasu",
+        "Pokok Sena",
+        "Pendang"
+      ]
+    },
+    {
+      "id": "explore",
+      "kind": "explore",
+      "name": "area.explore",
+      "short": "area.explore.short",
+      "bbox": [
+        99.5,
+        0.8,
+        119.5,
+        7.5
+      ],
+      "default_date": "2026-10-05",
+      "date_range": [
+        "2025-10-29",
+        "2026-10-23"
+      ],
+      "presets": [
+        {
+          "label": "preset.kedah",
+          "center": [
+            100.4,
+            6.2
+          ],
+          "zoom": 9,
+          "date": "2026-10-05"
+        },
+        {
+          "label": "preset.kelantan",
+          "center": [
+            102.2,
+            6
+          ],
+          "zoom": 9,
+          "date": "2026-10-22"
+        },
+        {
+          "label": "preset.malaysia",
+          "center": [
+            104.5,
+            4
+          ],
+          "zoom": 5.2,
+          "date": "2026-10-05"
+        }
+      ],
+      "panel": {
+        "question": "exp.question",
+        "sensor": "exp.sensor",
+        "headline": "exp.badge",
+        "sure_first": [
+          "exp.sure.1",
+          "exp.sure.2",
+          "exp.sure.3"
+        ],
+        "sure_lines": [
+          "lim.imagery",
+          "lim.provisional",
+          "lim.notreviewed"
+        ],
+        "official_links": []
+      }
+    }
+  ],
+  "layers": [
+    {
+      "id": "kel_flood",
+      "areas": [
+        "kelantan"
+      ],
+      "group": "group.flood",
+      "name": "layer.kel_flood",
+      "simple": true,
+      "kind": "class",
+      "status": "placeholder",
+      "url": "data/kelantan_{date}_class_3857.tif",
+      "dates": "passes",
+      "slot": "data",
+      "on": true,
+      "opacity": 0.9,
+      "info": "info.kel_flood",
+      "classes": [
+        {
+          "code": 0,
+          "name": "class.nodata",
+          "style": "hatch",
+          "confidence": "none"
+        },
+        {
+          "code": 2,
+          "name": "kel.class.permanent",
+          "color": "#0072B2",
+          "confidence": "none"
+        },
+        {
+          "code": 3,
+          "name": "kel.class.flood",
+          "color": "#E69F00",
+          "confidence": "high"
+        },
+        {
+          "code": 4,
+          "name": "kel.class.possible",
+          "color": "#56B4E9",
+          "confidence": "low"
+        },
+        {
+          "code": 5,
+          "name": "kel.class.urban",
+          "color": "#999999",
+          "style": "hatch-fill",
+          "confidence": "none"
+        },
+        {
+          "code": 6,
+          "name": "class.cantsee",
+          "color": "#CFCFCF",
+          "confidence": "none"
+        }
+      ],
+      "swatch": [
+        "#E69F00",
+        "#0072B2",
+        "#56B4E9"
+      ],
+      "abbr": "FL"
+    },
+    {
+      "id": "kel_vv",
+      "areas": [
+        "kelantan"
+      ],
+      "group": "group.flood",
+      "name": "layer.kel_vv",
+      "simple": false,
+      "kind": "db",
+      "status": "placeholder",
+      "url": "data/kelantan_{date}_VV_3857.tif",
+      "dates": "passes",
+      "slot": "data",
+      "on": false,
+      "opacity": 1,
+      "scale": 0.1373,
+      "offset": -30.137,
+      "range": [
+        -25,
+        0
+      ],
+      "info": "info.kel_vv",
+      "swatch": [
+        "#000000",
+        "#FFFFFF"
+      ],
+      "abbr": "VV"
+    },
+    {
+      "id": "kel_dswx",
+      "areas": [
+        "kelantan"
+      ],
+      "group": "group.flood",
+      "name": "layer.kel_dswx",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1/default/{date}/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png",
+      "dates": "passes",
+      "maxzoom": 12,
+      "slot": "data",
+      "on": true,
+      "opacity": 0.75,
+      "info": "info.dswx",
+      "legend": "dswx",
+      "attribution": "OPERA DSWx-S1 via NASA GIBS. Contains modified Copernicus Sentinel data 2024",
+      "swatch": [
+        "#0000FF",
+        "#00FF00",
+        "#FFFFFF"
+      ],
+      "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
+      "abbr": "DW"
+    },
+    {
+      "id": "kel_nisar_watch",
+      "areas": [
+        "kelantan"
+      ],
+      "group": "group.context",
+      "name": "layer.kel_nisar_watch",
+      "simple": false,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/NISAR_L2_Geocoded_Polarimetric_Covariance/default/{date}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.png",
+      "dates": "fixed",
+      "fixed_date": "2026-10-22",
+      "maxzoom": 13,
+      "slot": "data",
+      "on": false,
+      "opacity": 0.9,
+      "info": "info.kel_nisar_watch",
+      "legend": "nisar",
+      "attribution": "NISAR GCOV (provisional) via NASA GIBS",
+      "swatch": [
+        "#22307A",
+        "#3C9B4E",
+        "#E7A6C8"
+      ],
+      "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
+      "abbr": "NI"
+    },
+    {
+      "id": "ked_first_flooded",
+      "areas": [
+        "kedah"
+      ],
+      "group": "group.paddy",
+      "name": "layer.ked_first_flooded",
+      "simple": true,
+      "kind": "class",
+      "status": "placeholder",
+      "url": "data/kedah_first_flooded_3857.tif",
+      "dates": "static",
+      "slot": "data",
+      "on": false,
+      "opacity": 0.9,
+      "exclusive_with": [
+        "ked_rgb"
+      ],
+      "info": "info.ked_first_flooded",
+      "classes": [
+        {
+          "code": 0,
+          "name": "ked.class.nodata",
+          "style": "hatch",
+          "confidence": "none"
+        },
+        {
+          "code": 1,
+          "name": "ked.class.notyet",
+          "style": "none",
+          "confidence": "none"
+        },
+        {
+          "code": 2,
+          "name": "ked.class.permanent",
+          "color": "#0072B2",
+          "confidence": "none"
+        },
+        {
+          "code": 11,
+          "name": "ked.class.flooded.t1",
+          "color": "#7FCFB6",
+          "confidence": "set-at-event"
+        },
+        {
+          "code": 12,
+          "name": "ked.class.flooded.t2",
+          "color": "#009E73",
+          "confidence": "set-at-event"
+        },
+        {
+          "code": 13,
+          "name": "ked.class.flooded.t3",
+          "color": "#005C43",
+          "confidence": "set-at-event"
+        }
+      ],
+      "swatch": [
+        "#7FCFB6",
+        "#009E73",
+        "#005C43"
+      ],
+      "abbr": "FP"
+    },
+    {
+      "id": "ked_rgb",
+      "areas": [
+        "kedah"
+      ],
+      "group": "group.paddy",
+      "name": "layer.ked_rgb",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "stand_in_for": "rgb",
+      "url": "{gibs}/NISAR_L2_Geocoded_Polarimetric_Covariance/default/{date}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.png",
+      "dates": "passes",
+      "maxzoom": 13,
+      "slot": "data",
+      "on": true,
+      "opacity": 0.95,
+      "exclusive_with": [
+        "ked_first_flooded"
+      ],
+      "values_from": [
+        "ked_hh",
+        "ked_hv"
+      ],
+      "info": "info.ked_rgb",
+      "legend": "nisar",
+      "attribution": "NISAR GCOV (provisional) via NASA GIBS",
+      "swatch": [
+        "#22307A",
+        "#3C9B4E",
+        "#E7A6C8"
+      ],
+      "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
+      "abbr": "RGB"
+    },
+    {
+      "id": "ked_hh",
+      "areas": [
+        "kedah"
+      ],
+      "group": "group.paddy",
+      "name": "layer.ked_hh",
+      "simple": false,
+      "kind": "db",
+      "status": "placeholder",
+      "url": "data/kedah_{date}_HH_3857.tif",
+      "dates": "passes",
+      "slot": "data",
+      "on": false,
+      "opacity": 1,
+      "scale": 0.1373,
+      "offset": -30.137,
+      "range": [
+        -25,
+        0
+      ],
+      "info": "info.ked_hh",
+      "swatch": [
+        "#000000",
+        "#FFFFFF"
+      ],
+      "abbr": "HH"
+    },
+    {
+      "id": "ked_hv",
+      "areas": [
+        "kedah"
+      ],
+      "group": "group.paddy",
+      "name": "layer.ked_hv",
+      "simple": false,
+      "kind": "db",
+      "status": "placeholder",
+      "url": "data/kedah_{date}_HV_3857.tif",
+      "dates": "passes",
+      "slot": "data",
+      "on": false,
+      "opacity": 1,
+      "scale": 0.1373,
+      "offset": -30.137,
+      "range": [
+        -32,
+        -8
+      ],
+      "info": "info.ked_hv",
+      "swatch": [
+        "#000000",
+        "#FFFFFF"
+      ],
+      "abbr": "HV"
+    },
+    {
+      "id": "ked_dswx",
+      "areas": [
+        "kedah"
+      ],
+      "group": "group.check",
+      "name": "layer.ked_dswx",
+      "simple": false,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1/default/{date}/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png",
+      "dates": "sensor:Sentinel-1D",
+      "maxzoom": 12,
+      "slot": "data",
+      "on": false,
+      "opacity": 0.75,
+      "info": "info.dswx_ked",
+      "legend": "dswx",
+      "attribution": "OPERA DSWx-S1 via NASA GIBS. Contains modified Copernicus Sentinel data 2026",
+      "swatch": [
+        "#0000FF",
+        "#00FF00",
+        "#FFFFFF"
+      ],
+      "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
+      "abbr": "DW"
+    },
+    {
+      "id": "ked_disagree",
+      "areas": [
+        "kedah"
+      ],
+      "group": "group.check",
+      "name": "layer.ked_disagree",
+      "simple": false,
+      "expert_only": true,
+      "kind": "class",
+      "status": "placeholder",
+      "url": "data/kedah_{date}_disagree_3857.tif",
+      "dates": "passes",
+      "slot": "data",
+      "on": false,
+      "opacity": 0.9,
+      "info": "info.ked_disagree",
+      "swatch": [
+        "#CC79A7",
+        "#56B4E9"
+      ],
+      "abbr": "Δ"
+    },
+    {
+      "id": "exp_nisar",
+      "areas": [
+        "explore"
+      ],
+      "group": "group.explore",
+      "name": "layer.exp_nisar",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/NISAR_L2_Geocoded_Polarimetric_Covariance/default/{date}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.png",
+      "dates": "daily",
+      "maxzoom": 13,
+      "slot": "data",
+      "on": true,
+      "opacity": 0.95,
+      "info": "info.exp_nisar",
+      "legend": "nisar",
+      "attribution": "NISAR GCOV (provisional) via NASA GIBS",
+      "swatch": [
+        "#22307A",
+        "#3C9B4E",
+        "#E7A6C8"
+      ],
+      "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
+      "abbr": "NI"
+    },
+    {
+      "id": "exp_dswx",
+      "areas": [
+        "explore"
+      ],
+      "group": "group.explore",
+      "name": "layer.exp_dswx",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1/default/{date}/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png",
+      "dates": "daily",
+      "maxzoom": 12,
+      "slot": "data",
+      "on": false,
+      "opacity": 0.75,
+      "info": "info.dswx",
+      "legend": "dswx",
+      "attribution": "OPERA DSWx-S1 via NASA GIBS. Contains modified Copernicus Sentinel data",
+      "swatch": [
+        "#0000FF",
+        "#00FF00",
+        "#FFFFFF"
+      ],
+      "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
+      "abbr": "DW"
+    },
+    {
+      "id": "jrc",
+      "areas": [
+        "kelantan",
+        "kedah"
+      ],
+      "group": "group.context",
+      "name": "layer.jrc",
+      "simple": true,
+      "kind": "xyz",
+      "status": "real",
+      "url": "https://storage.googleapis.com/global-surface-water/tiles2021/occurrence/{z}/{x}/{y}.png",
+      "dates": "static",
+      "maxzoom": 13,
+      "slot": "context",
+      "on": false,
+      "opacity": 0.8,
+      "info": "info.jrc",
+      "legend": "jrc",
+      "attribution": "Source: EC JRC/Google",
+      "swatch": [
+        "#E6D9FF",
+        "#0000FF"
+      ],
+      "abbr": "JRC"
+    },
+    {
+      "id": "districts",
+      "areas": [
+        "kelantan",
+        "kedah"
+      ],
+      "group": "group.context",
+      "name": "layer.districts",
+      "simple": false,
+      "kind": "vector",
+      "status": "real",
+      "url": "data/districts.geojson",
+      "dates": "static",
+      "slot": "top",
+      "on": true,
+      "opacity": 1,
+      "info": "info.districts",
+      "attribution": "District boundaries: DOSM data-open",
+      "swatch": [
+        "line"
+      ],
+      "abbr": "DOSM"
+    },
+    {
+      "id": "sat",
+      "areas": [
+        "kelantan",
+        "kedah",
+        "explore"
+      ],
+      "group": "group.sat",
+      "name": "layer.sat",
+      "simple": false,
+      "base": true,
+      "kind": "gibs",
+      "status": "real",
+      "url": "{gibs}/VIIRS_NOAA20_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+      "dates": "daily",
+      "maxzoom": 9,
+      "slot": "sat",
+      "on": false,
+      "opacity": 1,
+      "info": "info.sat",
+      "legend": "sat",
+      "attribution": "Imagery: NASA GIBS / VIIRS",
+      "swatch": [
+        "#5B7A45",
+        "#E8E8E8"
+      ],
+      "abbr": "SAT"
+    }
+  ],
+  "legend_colors": {
+    "dswx": {
+      "0": "#FFFFFF",
+      "1": "#0000FF",
+      "3": "#00FF00",
+      "250": "#C8C8C8",
+      "251": "#808080"
+    },
+    "nisar": {
+      "blue": "#22307A",
+      "green": "#3C9B4E",
+      "pink": "#E7A6C8",
+      "black": "#000000"
+    },
+    "jrc": {
+      "low": "#E6D9FF",
+      "high": "#0000FF"
+    },
+    "db": {
+      "low": "#000000",
+      "high": "#FFFFFF"
+    },
+    "study": {
+      "line": "#FF3EDB",
+      "casing": "#000000"
+    }
+  }
+}

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel options (mockups)</title>
+<link rel="icon" href="data:," />
+<!-- Rehearsal mockups only (12 Nov 2026). Style ideas inspired by sci-fi game menus; no game names, logos, icons or art. -->
+<style>
+  @font-face { font-family: 'Saira Variable'; font-stretch: 50% 125%; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/saira/files/saira-latin-wdth-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Geist Variable'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'JetBrains Mono Variable'; font-weight: 100 800; src: url('/node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --bg-deep: #05060e; --bg: #080a16; --surface: #0d1022; --surface-2: #151a33; --glass: #0d1022d9;
+    --line: #ffffff1c; --line-strong: #ffffff66; --text: #eef1ff; --text-2: #bcc2e0; --muted: #8c93b8;
+    --violet: #b386ff; --violet-ink: #0b0618; --label: #c7b5ff; --glow: 0 0 18px #9b6bff66;
+    --display: 'Saira Variable', 'Geist Variable', sans-serif; --sans: 'Geist Variable', system-ui, sans-serif; --mono: 'JetBrains Mono Variable', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px; color: var(--text-2); font: 14px/1.5 var(--sans);
+    background: radial-gradient(1px 1px at 12% 22%, #ffffff55 50%, transparent 51%), radial-gradient(1px 1px at 68% 14%, #ffffff40 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 84% 62%, #c7b5ff55 50%, transparent 51%), radial-gradient(ellipse 80% 50% at 70% 0%, #3b2a7a33, transparent 70%), var(--bg-deep);
+    background-size: 260px 260px, 340px 340px, 420px 420px, 100% 100%, auto;
+    width: 1360px;
+  }
+  .disp { font-family: var(--display); font-stretch: 88%; text-transform: uppercase; }
+  h1 { margin: 0 0 4px; color: var(--text); font: 700 28px/1.1 var(--display); font-stretch: 88%; letter-spacing: .12em; text-transform: uppercase; }
+  .intro { margin: 0 0 24px; color: var(--muted); max-width: 900px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .opt { border: 1px solid var(--line); background: #0a0d1c99; padding: 18px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+  .opt.wide { grid-column: 1 / -1; }
+  .opt-head { display: flex; align-items: baseline; gap: 12px; }
+  .opt-key { color: var(--violet-ink); background: var(--violet); font: 700 13px var(--display); padding: 2px 8px; letter-spacing: .1em; }
+  .opt-title { color: var(--text); font: 600 17px var(--display); font-stretch: 88%; letter-spacing: .12em; text-transform: uppercase; }
+  .opt-where { margin: 0; font-size: 12px; color: var(--muted); }
+  .opt-where b { color: var(--label); font-weight: 600; }
+  .stage { background: #070917; border: 1px solid var(--line); padding: 20px; min-height: 120px; position: relative; overflow: hidden; }
+  .stage.map { background: radial-gradient(ellipse at 40% 50%, #12193a, #070917 70%); }
+  .pros { margin: 0; font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+  .pros span::before { content: '+ '; color: var(--label); }
+  .pros span.con::before { content: '− '; color: var(--muted); }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .diamond { display: inline-block; width: 9px; height: 9px; background: var(--violet); clip-path: polygon(50% 0,100% 50%,50% 100%,0 50%); }
+  .brackets::before, .brackets::after { content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none; }
+  .brackets::before { top: -1px; left: -1px; border-top: 1.5px solid var(--label); border-left: 1.5px solid var(--label); }
+  .brackets::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--label); border-right: 1.5px solid var(--label); }
+  .hint { font: 600 10px var(--display); letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+  .key { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border: 1px solid var(--line-strong); color: var(--text); font: 600 11px var(--mono); }
+
+  /* A: inspect card */
+  .insp { width: 360px; position: relative; background: var(--glass); border: 1px solid var(--line); box-shadow: 0 18px 50px #000a; }
+  .insp-band { padding: 12px 16px 10px; background: linear-gradient(100deg, #9b6bff, #b386ff 70%, #c9a6ff); color: var(--violet-ink); /* ink on #9b6bff = 5.6:1 */ }
+  .insp-name { font: 700 22px/1 var(--display); font-stretch: 88%; letter-spacing: .08em; text-transform: uppercase; }
+  .insp-type { display: flex; justify-content: space-between; margin-top: 4px; font: 600 11px var(--display); letter-spacing: .14em; text-transform: uppercase; }
+  .insp-body { padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .lore { margin: 0; font-style: italic; color: var(--text-2); font-size: 13px; }
+  .stat { display: grid; grid-template-columns: 116px 1fr 64px; align-items: center; gap: 10px; font-size: 12px; }
+  .stat-label { color: var(--text-2); }
+  .stat-val { text-align: right; color: var(--text); }
+  .bar { height: 7px; background: #ffffff14; position: relative; }
+  .bar i { position: absolute; inset: 0 auto 0 0; background: var(--text); }
+  .bar.pending { background: repeating-linear-gradient(90deg, #ffffff22 0 6px, transparent 6px 9px); }
+  .sockets { display: flex; gap: 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .sock { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--line-strong); color: var(--text-2); font: 600 10px var(--mono); }
+  .sock.on { border-color: var(--violet); color: var(--text); box-shadow: var(--glow); background: #b386ff26; }
+  .insp-foot { display: flex; gap: 14px; padding: 8px 16px; border-top: 1px solid var(--line); background: #ffffff06; }
+
+  /* B: inspect screen */
+  .inspect-screen { display: grid; grid-template-columns: 300px 1fr 330px; gap: 24px; min-height: 360px; }
+  .big-name { color: var(--text); font: 700 40px/1 var(--display); font-stretch: 85%; letter-spacing: .06em; text-transform: uppercase; margin: 6px 0 4px; }
+  .rule { height: 1px; background: linear-gradient(90deg, var(--label), transparent); margin: 10px 0; }
+  .silhouette { display: grid; place-items: center; position: relative; }
+  .silhouette svg { width: 100%; height: 330px; filter: drop-shadow(0 0 24px #9b6bff55); }
+  .ring { position: absolute; width: 300px; height: 300px; border: 1px solid #ffffff14; border-radius: 50%; }
+  .ring.r2 { width: 220px; height: 220px; border-style: dashed; }
+  .perk-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .perk-col { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .perk-col .hint { margin-bottom: 2px; }
+
+  /* C: segmented stat bars */
+  .seg-row { display: grid; grid-template-columns: 170px 1fr 120px; align-items: center; gap: 12px; padding: 6px 0; border-bottom: 1px solid #ffffff0d; }
+  .seg { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; height: 12px; }
+  .seg b { background: #ffffff14; }
+  .seg b.f { background: var(--text); }
+  .seg b.d { background: var(--label); }
+  .seg.pending b { background: repeating-linear-gradient(135deg, #ffffff26 0 1px, transparent 1px 4px); }
+  .delta { color: var(--label); font-size: 11px; }
+
+  /* D: perk sockets for layers */
+  .sock-grid { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px 36px; }
+  .sock-col { display: flex; flex-direction: column; gap: 10px; align-items: center; position: relative; }
+  .sock-col::before { content: ''; position: absolute; top: 28px; bottom: 18px; width: 1px; background: var(--line); z-index: 0; }
+  .sock-col .sock { width: 46px; height: 46px; position: relative; z-index: 1; background: var(--bg); font-size: 11px; }
+  .sock-col .sock.on { background: #1b1440; }
+  .sock-col .sock.pend { border-style: dashed; color: var(--muted); }
+  .sock-tip { position: absolute; left: 380px; top: 34px; width: 280px; }
+
+  /* E: tab bar */
+  .tabbar { display: flex; align-items: center; justify-content: center; gap: 26px; padding: 10px 0 0; }
+  .tab { font: 600 14px var(--display); font-stretch: 88%; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; position: relative; }
+  .tab.on { color: var(--text); font-size: 17px; }
+  .tab.on::after { content: ''; position: absolute; left: -6px; right: -6px; bottom: 0; height: 2px; background: var(--violet); box-shadow: var(--glow); }
+  .tab-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+  .tab-dots i { width: 6px; height: 6px; background: #ffffff33; clip-path: polygon(50% 0,100% 50%,50% 100%,0 50%); }
+  .tab-dots i.on { background: var(--violet); }
+
+  /* F: objective tracker */
+  .tracker { width: 330px; margin-left: auto; display: flex; flex-direction: column; gap: 10px; }
+  .trk { border-left: 2px solid var(--label); padding: 4px 0 6px 12px; background: linear-gradient(90deg, #b386ff14, transparent); }
+  .trk-title { color: var(--text); font: 600 13px var(--display); letter-spacing: .14em; text-transform: uppercase; display: flex; justify-content: space-between; }
+  .obj { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-top: 4px; }
+  .chk { width: 11px; height: 11px; border: 1.5px solid var(--line-strong); transform: rotate(45deg); flex: none; }
+  .chk.done { background: var(--label); border-color: var(--label); }
+  .obj.done span { color: var(--muted); text-decoration: line-through; }
+  .prog { height: 3px; background: #ffffff1a; margin-top: 6px; }
+  .prog i { display: block; height: 100%; background: var(--label); }
+
+  /* G: destination picker */
+  .dest { height: 300px; position: relative; }
+  .dest svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .node .orb { width: 22px; height: 22px; background: var(--bg); border: 2px solid var(--text); transform: rotate(45deg); }
+  .node.on .orb { background: var(--text); box-shadow: 0 0 22px #ffffffaa; }
+  .node .nm { color: var(--text); font: 600 13px var(--display); letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; }
+  .node .sub { color: var(--muted); font-size: 11px; white-space: nowrap; }
+  .dest-card { position: absolute; right: 16px; top: 16px; width: 300px; background: var(--glass); border: 1px solid var(--line); padding: 14px 16px; }
+</style>
+</head>
+<body>
+  <h1>Panel options · star-map style</h1>
+  <p class="intro">Seven ways to push the panels further toward a sci-fi game menu. Each uses your real content; "—" marks numbers that only exist after the event-day pipeline. Pick any mix: they are independent.</p>
+
+  <div class="grid">
+    <!-- A -->
+    <section class="opt">
+      <div class="opt-head"><span class="opt-key">A</span><span class="opt-title">Inspect card</span></div>
+      <p class="opt-where">Replaces the <b>pixel popup</b> and the <b>focus-marker tooltip</b>: coloured header band, one-line lore, stat bars, socket row, key hints.</p>
+      <div class="stage map">
+        <div class="insp brackets">
+          <div class="insp-band"><div class="insp-name">Pasir Mas</div><div class="insp-type"><span>District · Kelantan</span><span>Focus area 1</span></div></div>
+          <div class="insp-body">
+            <p class="lore">"Most people evacuated." River floodplain upstream of the delta.</p>
+            <div class="stat"><span class="stat-label">District area</span><span class="bar"><i style="width:65%"></i></span><span class="stat-val num">573 km²</span></div>
+            <div class="stat"><span class="stat-label">Inside radar area</span><span class="bar"><i style="width:100%"></i></span><span class="stat-val num">100%</span></div>
+            <div class="stat"><span class="stat-label">New flood water</span><span class="bar pending"></span><span class="stat-val num">— ha</span></div>
+            <div class="stat"><span class="stat-label">Evacuees 29 Nov</span><span class="bar"><i style="width:100%"></i></span><span class="stat-val num">22,486</span></div>
+            <div class="sockets"><span class="sock on" title="Change detection">Δ</span><span class="sock" title="AI second opinion">AI</span><span class="sock" title="Town mask">▦</span></div>
+          </div>
+          <div class="insp-foot"><span class="hint"><span class="key">⏎</span> Open analysis</span><span class="hint"><span class="key">Esc</span> Close</span></div>
+        </div>
+      </div>
+      <p class="pros"><span>Most recognisable game-menu look</span><span>Fits existing popup content</span><span class="con">Bar scale needs a stated basis</span><span class="con">Header colour is new UI colour</span></p>
+    </section>
+
+    <!-- F -->
+    <section class="opt">
+      <div class="opt-head"><span class="opt-key">F</span><span class="opt-title">Objective tracker</span></div>
+      <p class="opt-where">A small <b>tracker in the map's top-right</b> for story progress and the focus-area tour, like a quest list. Ticks itself off as you go.</p>
+      <div class="stage map" style="min-height:320px">
+        <div class="tracker">
+          <div class="trk"><div class="trk-title"><span>Story · Radar through cloud</span><span class="num">3/6</span></div>
+            <div class="obj done"><span class="chk done"></span><span>See the clouds on 29 Nov</span></div>
+            <div class="obj done"><span class="chk done"></span><span>Compare 17 Nov before the flood</span></div>
+            <div class="obj"><span class="chk"></span><span>Swipe before / after</span></div>
+            <div class="prog"><i style="width:50%"></i></div></div>
+          <div class="trk"><div class="trk-title"><span>Kelantan focus tour</span><span class="num">1/3</span></div>
+            <div class="obj done"><span class="chk done"></span><span>Pasir Mas · most people evacuated</span></div>
+            <div class="obj"><span class="chk"></span><span>Tumpat · low delta by the sea</span></div>
+            <div class="obj"><span class="chk"></span><span>Kota Bharu · river mouth</span></div>
+            <div class="prog"><i style="width:33%"></i></div></div>
+        </div>
+      </div>
+      <p class="pros"><span>Guides first-time users (story goal)</span><span>Small, stays out of the way</span><span class="con">One more element on the map</span><span class="con">Needs a hide toggle on phones</span></p>
+    </section>
+
+    <!-- B -->
+    <section class="opt wide">
+      <div class="opt-head"><span class="opt-key">B</span><span class="opt-title">Inspect screen</span></div>
+      <p class="opt-where">Replaces the <b>expanded AI dashboard</b>: name and lore on the left, the district's real DOSM outline glowing in the centre, stats and "perk" columns (methods) on the right.</p>
+      <div class="stage map">
+        <div class="inspect-screen">
+          <div>
+            <span class="hint">AI analysis · preview · 1 of 3</span>
+            <div class="big-name">Pasir Mas</div>
+            <span class="hint" style="color:var(--label)">District · Kelantan · Focus area</span>
+            <div class="rule"></div>
+            <p class="lore">"Most people evacuated." On 29 Nov 2024 Pasir Mas had the most evacuees in Kelantan: 22,486 (Malay Mail).</p>
+            <p style="font-size:13px">The radar map for this district is made at the event. Then this summary will say where new water spread, and how sure we are.</p>
+            <span class="hint" style="color:var(--muted)">AI-drafted · not reviewed</span>
+          </div>
+          <div class="silhouette"><span class="ring"></span><span class="ring r2"></span><svg id="sil" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet"></svg></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span class="hint">Stats</span>
+            <div class="stat"><span class="stat-label">District area</span><span class="bar"><i style="width:65%"></i></span><span class="stat-val num">573 km²</span></div>
+            <div class="stat"><span class="stat-label">Inside radar</span><span class="bar"><i style="width:100%"></i></span><span class="stat-val num">100%</span></div>
+            <div class="stat"><span class="stat-label">New flood water</span><span class="bar pending"></span><span class="stat-val num">— ha</span></div>
+            <div class="stat"><span class="stat-label">Confidence</span><span class="bar pending"></span><span class="stat-val num">—</span></div>
+            <span class="hint" style="margin-top:6px">Methods</span>
+            <div class="perk-cols">
+              <div class="perk-col"><span class="hint">Detect</span><span class="sock on">Δ</span><span class="sock">≈</span></div>
+              <div class="perk-col"><span class="hint">Mask</span><span class="sock on">▦</span><span class="sock">⛰</span></div>
+              <div class="perk-col"><span class="hint">Check</span><span class="sock on">AI</span><span class="sock">✓</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="pros"><span>Strongest "wow" for the pitch</span><span>Uses real district geometry</span><span>Methods as perks explains the science</span><span class="con">Most build work (about 2–3 h)</span></p>
+    </section>
+
+    <!-- C -->
+    <section class="opt">
+      <div class="opt-head"><span class="opt-key">C</span><span class="opt-title">Segmented stat bars</span></div>
+      <p class="opt-where">For the <b>Numbers tab</b> and dashboard tiles: values as segment bars with a lighter "change" segment, like weapon stats.</p>
+      <div class="stage">
+        <span class="hint">MADA Season 2/2026 · area per phase (of 99,489 ha)</span>
+        <div class="seg-row"><span>Phase I</span><span class="seg" id="s1"></span><span class="num stat-val">33,237 ha</span></div>
+        <div class="seg-row"><span>Phase II</span><span class="seg" id="s2"></span><span class="num stat-val">32,366 ha</span></div>
+        <div class="seg-row"><span>Phase III</span><span class="seg" id="s3"></span><span class="num stat-val">33,886 ha</span></div>
+        <span class="hint" style="display:block;margin-top:12px">Dam storage</span>
+        <div class="seg-row"><span>17 Sep → 13 Oct</span><span class="seg" id="s4"></span><span class="num stat-val">35.76 → 40.13% <span class="delta">+4.37</span></span></div>
+        <div class="seg-row"><span>Field water by 5 Oct</span><span class="seg pending" id="s5"></span><span class="num stat-val">—%</span></div>
+      </div>
+      <p class="pros"><span>Reads at a glance</span><span>Change shown as a second shade</span><span class="con">20 segments = 5% steps (rounding)</span><span class="con">Not for exact comparisons</span></p>
+    </section>
+
+    <!-- D -->
+    <section class="opt">
+      <div class="opt-head"><span class="opt-key">D</span><span class="opt-title">Perk sockets</span></div>
+      <p class="opt-where">An alternative <b>layer dock</b>: each layer group is a column of round sockets; hover shows an inspect card. Dashed = made at the event.</p>
+      <div class="stage" style="min-height:260px">
+        <div class="sock-grid">
+          <div class="sock-col"><span class="hint">Paddy</span><span class="sock pend" title="Flooded for planting">FP</span><span class="sock on" title="Radar colours">RGB</span><span class="sock pend">HH</span><span class="sock pend">HV</span></div>
+          <div class="sock-col"><span class="hint">Check</span><span class="sock">DSWx</span><span class="sock pend">Δ</span></div>
+          <div class="sock-col"><span class="hint">Context</span><span class="sock">JRC</span><span class="sock on">DOSM</span><span class="sock">SAT</span></div>
+        </div>
+        <div class="insp brackets sock-tip" style="width:260px">
+          <div class="insp-band" style="padding:8px 12px"><div class="insp-name" style="font-size:16px">Radar colours</div><div class="insp-type"><span>NISAR · NASA preview</span></div></div>
+          <div class="insp-body" style="padding:10px 12px"><p class="lore" style="font-size:12px">Green = plants, dark blue = calm water. Red and blue = HH, green = HV.</p></div>
+        </div>
+      </div>
+      <p class="pros"><span>Very game-like, compact</span><span>Radio pair reads naturally</span><span class="con">Icons are less clear than words</span><span class="con">Needs labels for accessibility</span></p>
+    </section>
+
+    <!-- E -->
+    <section class="opt">
+      <div class="opt-head"><span class="opt-key">E</span><span class="opt-title">Tab bar with key hints</span></div>
+      <p class="opt-where">The <b>right-panel tabs</b> as a centred menu bar: the active tab is bigger and glows, with <b>Q / E</b> to step tabs and diamond page dots.</p>
+      <div class="stage">
+        <div class="tabbar"><span class="key">Q</span><span class="tab">Rain</span><span class="tab on">Paddy</span><span class="tab">Sure?</span><span class="tab">Story</span><span class="key">E</span></div>
+        <div class="tab-dots"><i></i><i class="on"></i><i></i><i></i><i></i></div>
+      </div>
+      <p class="pros"><span>Cheap (about 30 min)</span><span>Keyboard-friendly</span><span class="con">Fewer tabs visible at once</span><span class="con">Q/E hints hidden on phones</span></p>
+    </section>
+
+    <!-- G -->
+    <section class="opt">
+      <div class="opt-head"><span class="opt-key">G</span><span class="opt-title">Destination picker</span></div>
+      <p class="opt-where">Replaces the <b>area pills</b>: Kedah, Kelantan and Anywhere as nodes on a mini star chart at their real relative positions, with a destination card.</p>
+      <div class="stage map" style="padding:0">
+        <div class="dest">
+          <svg viewBox="0 0 600 300" preserveAspectRatio="none" aria-hidden="true">
+            <ellipse cx="250" cy="170" rx="210" ry="95" fill="none" stroke="#ffffff14" />
+            <ellipse cx="250" cy="170" rx="140" ry="62" fill="none" stroke="#ffffff1f" stroke-dasharray="4 5" />
+            <line x1="120" y1="150" x2="300" y2="190" stroke="#c7b5ff55" />
+            <line x1="300" y1="190" x2="250" y2="260" stroke="#ffffff22" />
+          </svg>
+          <div class="node" style="left:20%;top:50%"><span class="orb"></span><span class="nm">Kedah</span><span class="sub">Paddy · 2026 · NISAR</span></div>
+          <div class="node on" style="left:50%;top:63%"><span class="orb"></span><span class="nm">Kelantan</span><span class="sub">Flood · 2024 · Sentinel-1</span></div>
+          <div class="node" style="left:42%;top:87%"><span class="orb" style="border-style:dashed"></span><span class="nm">Anywhere</span></div>
+          <div class="dest-card brackets">
+            <span class="hint">Destination</span>
+            <div class="insp-name" style="color:var(--text);font-size:20px;margin:4px 0">Kelantan flood 2024</div>
+            <p style="margin:0;font-size:12px">Where did the 2024 flood spread, and which districts were hit hardest?</p>
+            <div class="rule"></div>
+            <span class="hint" style="color:var(--label)">6 radar passes · 3 focus areas</span>
+          </div>
+        </div>
+      </div>
+      <p class="pros"><span>Director-map feel on first screen</span><span>Shows "works anywhere" idea</span><span class="con">Takes more room than 3 pills</span><span class="con">Phones need the plain pills</span></p>
+    </section>
+  </div>
+
+<script type="module">
+  // C: build segment bars from the real numbers.
+  const seg = (id, val, max, delta = 0) => {
+    const el = document.getElementById(id); const n = 20;
+    const f = Math.round((val / max) * n); const d = Math.round(((val + delta) / max) * n);
+    for (let i = 0; i < n; i++) { const b = document.createElement('b'); if (i < f) b.className = 'f'; else if (i < d) b.className = 'd'; el.append(b); }
+  };
+  seg('s1', 33237, 99489); seg('s2', 32366, 99489); seg('s3', 33886, 99489); seg('s4', 35.76, 100, 4.37);
+  const p = document.getElementById('s5'); for (let i = 0; i < 20; i++) p.append(document.createElement('b'));
+  // B: draw the real Pasir Mas outline from the DOSM file.
+  const fc = await (await fetch('/data/districts.geojson')).json();
+  const f = fc.features.find((x) => x.properties.district === 'Pasir Mas');
+  const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+  const pts = polys.flatMap((p) => p[0]);
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  const s = 90 / Math.max(x1 - x0, y1 - y0);
+  const d = polys.map((p) => 'M' + p[0].map(([x, y]) => `${(5 + (x - x0) * s).toFixed(2)},${(95 - (y - y0) * s).toFixed(2)}`).join('L') + 'Z').join('');
+  document.getElementById('sil').innerHTML = `<path d="${d}" fill="#b386ff22" stroke="#eef1ff" stroke-width="0.6" stroke-linejoin="round"/>`;
+</script>
+</body>
+</html>

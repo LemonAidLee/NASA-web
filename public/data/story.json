@@ -1,0 +1,155 @@
+{
+  "_note": "Story steps (plan 07 F8). Text keys live in src/i18n/en.json.",
+  "steps": [
+    {
+      "title": "story.1.title",
+      "body": "story.1.body",
+      "footer": "story.footer.past",
+      "action": {
+        "label": "story.1.action",
+        "do": "base-map"
+      },
+      "camera": {
+        "center": [
+          102.15,
+          5.95
+        ],
+        "zoom": 8
+      },
+      "state": {
+        "area": "kelantan",
+        "date": "2024-11-29",
+        "base": "sat",
+        "compare": "off",
+        "layers": {
+          "kel_dswx": false
+        }
+      }
+    },
+    {
+      "title": "story.2.title",
+      "body": "story.2.body",
+      "camera": {
+        "center": [
+          102.15,
+          6
+        ],
+        "zoom": 9.3
+      },
+      "state": {
+        "area": "kelantan",
+        "date": "2024-11-17",
+        "base": "map",
+        "compare": "off",
+        "layers": {
+          "kel_dswx": true,
+          "kel_flood": true
+        }
+      }
+    },
+    {
+      "title": "story.3.title",
+      "body": "story.3.body",
+      "action": {
+        "label": "story.3.action",
+        "do": "compare"
+      },
+      "camera": {
+        "center": [
+          102.15,
+          6
+        ],
+        "zoom": 9.3
+      },
+      "state": {
+        "area": "kelantan",
+        "date": "2024-11-29",
+        "base": "map",
+        "compare": "off",
+        "layers": {
+          "kel_dswx": true,
+          "kel_flood": true
+        }
+      }
+    },
+    {
+      "title": "story.4.title",
+      "body": "story.4.body",
+      "action": {
+        "label": "story.4.action",
+        "do": "numbers"
+      },
+      "camera": {
+        "center": [
+          102.1,
+          5.95
+        ],
+        "zoom": 8.6
+      },
+      "state": {
+        "area": "kelantan",
+        "date": "2024-11-29",
+        "base": "map",
+        "compare": "off",
+        "layers": {
+          "kel_dswx": true,
+          "districts": true
+        }
+      }
+    },
+    {
+      "title": "story.5.title",
+      "bridge": "story.5.bridge",
+      "body": "story.5.body",
+      "action": {
+        "label": "story.5.action",
+        "do": "play"
+      },
+      "camera": {
+        "center": [
+          100.38,
+          6.2
+        ],
+        "zoom": 9.3
+      },
+      "state": {
+        "area": "kedah",
+        "date": "2026-09-23",
+        "base": "map",
+        "compare": "off",
+        "layers": {
+          "ked_rgb": true
+        }
+      }
+    },
+    {
+      "title": "story.6.title",
+      "body": "story.6.body",
+      "global": "story.6.global",
+      "action": {
+        "label": "story.6.action",
+        "do": "sure"
+      },
+      "action2": {
+        "label": "story.6.explore",
+        "do": "explore"
+      },
+      "camera": {
+        "center": [
+          100.38,
+          6.2
+        ],
+        "zoom": 9
+      },
+      "state": {
+        "area": "kedah",
+        "date": "2026-10-05",
+        "base": "map",
+        "compare": "off",
+        "layers": {
+          "ked_rgb": true
+        }
+      }
+    }
+  ]
+}

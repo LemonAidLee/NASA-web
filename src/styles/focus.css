@@ -1,0 +1,372 @@
+/* Focus areas + AI-analysis dashboard, and site-wide hover effects (added 12 Nov). UI colours from tokens only. */
+
+/* ---------- launcher (shown when the dashboard is closed) ---------- */
+
+.focus-launcher {
+  position: absolute;
+  top: var(--s3);
+  left: calc(var(--col-w) + 2 * var(--s3));
+  right: calc(var(--panel-w) + 2 * var(--s3));
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  pointer-events: none;
+}
+.focus-launcher[hidden] { display: none; }
+.focus-launcher > * { pointer-events: auto; }
+.focus-launcher .hud-label {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bar-bg);
+  box-shadow: var(--ring);
+}
+.launcher-tag {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bar-bg);
+}
+.focus-chip { background: var(--surface); }
+.focus-chip-num,
+.focus-num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.focus-chip-num {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg-deep);
+  font-size: 0.625rem;
+}
+
+/* ---------- map markers ---------- */
+
+.focus-marker {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 0 0 2px var(--text), 0 0 0 4px var(--bg-deep);
+  cursor: pointer;
+  transition: transform 150ms var(--ease), background-color 150ms var(--ease), color 150ms var(--ease);
+}
+.focus-num { font-size: var(--fs-caption); }
+.focus-marker.is-selected {
+  background: var(--text);
+  color: var(--bg-deep);
+  transform: scale(1.15);
+}
+.focus-marker.pulse::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--text);
+  animation: focus-pulse 1.6s var(--ease) 3; /* 3 loops then stop (plan 14 §7.3) */
+  pointer-events: none;
+}
+@keyframes focus-pulse {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(2.4); opacity: 0; }
+}
+.focus-tip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translate(-4px, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--ring);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-caption);
+  text-align: left;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms var(--ease), transform 150ms var(--ease);
+}
+.focus-tip strong { color: var(--text); font-family: var(--font-mono); }
+.focus-marker:focus-visible .focus-tip { opacity: 1; transform: translate(0, -50%); }
+
+/* ---------- dashboard ---------- */
+
+.dash {
+  position: absolute;
+  left: calc(var(--col-w) + 2 * var(--s3));
+  right: calc(var(--panel-w) + 2 * var(--s3));
+  bottom: var(--s3);
+  height: min(48%, 440px);
+  z-index: 6;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+.dash[hidden] { display: none; }
+[data-dash='max'] .dash {
+  left: var(--s3);
+  right: var(--s3);
+  top: var(--s3);
+  height: auto;
+  z-index: 8;
+}
+.dash-head {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: start;
+  gap: var(--s2) var(--s4);
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--border-subtle);
+  flex: none;
+}
+.dash-title-wrap { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dash-title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-card);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.dash-sub { color: var(--text-secondary); font-weight: 500; }
+.dash-tags { display: flex; flex-wrap: wrap; gap: var(--s1); justify-content: flex-end; max-width: 240px; }
+.chip-ai { box-shadow: inset 0 0 0 1px var(--border-strong); color: var(--text); }
+.dash-controls { display: flex; gap: var(--s1); }
+.dash-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s3) var(--s4) var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  min-height: 0;
+  flex: 1;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--s2);
+}
+.kpi {
+  padding: var(--s2) var(--s3);
+  border-radius: 10px;
+  background: var(--surface-2);
+  box-shadow: var(--ring);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: box-shadow 150ms var(--ease), transform 150ms var(--ease);
+}
+.kpi.is-pending { background-image: repeating-linear-gradient(135deg, var(--border-subtle) 0 1px, transparent 1px 6px); }
+.kpi-label { font-size: var(--fs-caption); color: var(--text-secondary); }
+.kpi-value { font-size: 1.5rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+.kpi.is-pending .kpi-value { color: var(--text-muted); }
+.kpi-note { font-size: 0.6875rem; color: var(--text-muted); }
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--s3);
+}
+.dash-block {
+  padding: var(--s3);
+  border-radius: 10px;
+  box-shadow: var(--ring);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  font-size: var(--fs-caption);
+  color: var(--text-secondary);
+  transition: box-shadow 150ms var(--ease);
+}
+.dash-h {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s1) var(--s2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--text);
+}
+.dash-tag { font-family: var(--font-sans); font-size: 0.6875rem; font-weight: 400; color: var(--text-muted); }
+.dash-summary { font-size: var(--fs-body); color: var(--text); line-height: 1.55; }
+.dash-rule { color: var(--text-muted); border-left: 2px solid var(--border-strong); padding-left: var(--s2); }
+.dash-list { display: flex; flex-direction: column; gap: var(--s2); }
+.dash-list li { padding-left: var(--s3); border-left: 2px solid var(--border-strong); transition: border-color 150ms var(--ease), color 150ms var(--ease); }
+.src { font-size: 0.6875rem; color: var(--text-muted); }
+a.src { color: var(--hud-label); }
+.dash-lookcloser { padding: var(--s2); border-radius: 8px; background: var(--surface-2); }
+.dash-actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+
+/* timeline inside the dashboard */
+.tl { display: flex; flex-direction: column; gap: 2px; }
+.tl-track {
+  position: relative;
+  height: 96px;
+  border-bottom: 1px solid var(--border-strong);
+}
+.tl-phase {
+  position: absolute;
+  bottom: 0;
+  height: 6px;
+  border-radius: 3px 3px 0 0;
+  background: var(--border-strong);
+}
+.tl-bar {
+  position: absolute;
+  bottom: 0;
+  width: 14px;
+  height: 46%;
+  padding: 0;
+  transform: translateX(-50%);
+  border: 0;
+  border-radius: 3px 3px 0 0;
+  background: repeating-linear-gradient(135deg, var(--hud-label) 0 1px, transparent 1px 4px);
+  box-shadow: inset 0 0 0 1px var(--hud-label);
+  cursor: pointer;
+  transition: height 150ms var(--ease), filter 150ms var(--ease);
+}
+.tl-bar.is-current { outline: 2px solid var(--brand); outline-offset: 2px; }
+.tl-event {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--text-muted);
+  pointer-events: none;
+}
+.tl-event-label {
+  position: absolute;
+  top: calc(var(--row, 0) * 15px);
+  left: 4px;
+  font-size: 0.625rem;
+  color: var(--text);
+  white-space: nowrap;
+  background: var(--surface);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+.tl-now {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--brand);
+  pointer-events: none;
+}
+.tl-ends { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted); }
+
+@media (max-width: 767px) {
+  /* Phones: numbered chips only, so all three fit beside the legend chip (names stay in aria-label and title). */
+  .focus-launcher {
+    top: var(--s2);
+    left: auto;
+    right: var(--s2);
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+  }
+  .focus-launcher .hud-label,
+  .launcher-tag,
+  .focus-chip-name { display: none; }
+  .focus-chip { width: var(--tap); padding: 0; }
+  .focus-chip-num { width: 24px; height: 24px; font-size: var(--fs-caption); }
+  .dash {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 78%;
+    z-index: 7;
+    border-radius: 16px 16px 0 0;
+  }
+  [data-dash='max'] .dash { left: 0; right: 0; top: 0; border-radius: 0; }
+  .dash-head { grid-template-columns: 1fr auto; padding: var(--s3); }
+  .dash-tags { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; max-width: none; }
+  .dash-body { padding: var(--s3); }
+  .focus-tip { display: none; }
+}
+
+/* ---------- hover effects, site-wide ----------
+   Mouse/trackpad only, so taps never leave a stuck highlight. Reduced motion removes the movement (tokens.css).
+   omarchy-style: rings brighten, rows get a HUD-cyan edge, nothing bounces. */
+
+@media (hover: hover) and (pointer: fine) {
+  .card:not(.dash):not(.story-card) { transition: box-shadow 150ms var(--ease); }
+  .card:not(.dash):not(.story-card):hover { box-shadow: var(--ring-hover); }
+  .tabpanel > .card { transition: background-color 150ms var(--ease); }
+  .tabpanel > .card:hover { box-shadow: none; background: color-mix(in srgb, var(--surface-2) 45%, transparent); }
+
+  .pill:not(:disabled):hover { transform: translateY(-1px); }
+  .pill:not(:disabled):active { transform: translateY(0); }
+  .pill:not([aria-pressed='true']):not(.pill-primary):not(.pill-quiet):not(:disabled):hover {
+    background: color-mix(in srgb, var(--surface-2) 88%, var(--text) 12%);
+  }
+  .pill-primary:not(:disabled):hover,
+  .pill[aria-pressed='true']:hover { filter: brightness(1.08); }
+  .pill-quiet:not(:disabled):hover { color: var(--text); background: var(--surface-2); }
+
+  .tab { transition: background-color 150ms var(--ease), color 150ms var(--ease); }
+  .tab:not([aria-selected='true']):hover { color: var(--text) !important; background: var(--surface-2); }
+
+  .layer-row { transition: background-color 150ms var(--ease), box-shadow 150ms var(--ease); }
+  .layer-row:hover { box-shadow: inset 2px 0 0 var(--hud-label); }
+
+  .link,
+  a { transition: color 150ms var(--ease); }
+  .link:hover,
+  a:hover { color: var(--text); text-decoration-thickness: 2px; }
+
+  .icon-btn { transition: background-color 150ms var(--ease), color 150ms var(--ease); }
+  .icon-btn:hover { background: var(--border-strong); color: var(--text); }
+
+  .cell { transition: transform 120ms var(--ease), filter 120ms var(--ease); }
+  .cell:hover { transform: scaleY(1.12); filter: brightness(1.15); z-index: 1; }
+
+  .table tbody th,
+  .table tbody td { transition: background-color 120ms var(--ease); }
+  .table tbody tr:hover th,
+  .table tbody tr:hover td { background: var(--surface-2); }
+
+  .facts li { transition: border-color 150ms var(--ease), color 150ms var(--ease); }
+  .facts li:hover,
+  .dash-list li:hover { border-left-color: var(--hud-label); color: var(--text); }
+
+  .hud-seg .hud-value { transition: color 150ms var(--ease); }
+  .hud-seg:hover .hud-value { color: var(--text); }
+
+  .legend-list li { transition: color 150ms var(--ease); }
+  .legend-list li:hover { color: var(--text); }
+
+  .kpi:hover { box-shadow: var(--ring-hover); transform: translateY(-1px); }
+  .dash-block:hover { box-shadow: var(--ring-hover); }
+  .tl-bar:hover { height: 58%; filter: brightness(1.25); }
+
+  .focus-marker:hover { transform: scale(1.15); background: var(--text); color: var(--bg-deep); }
+  .focus-marker:hover .focus-tip { opacity: 1; transform: translate(0, -50%); }
+
+  .maplibregl-ctrl-group button { transition: background-color 150ms var(--ease); }
+  .maplibregl-ctrl-group button:not(:disabled):hover { background-color: var(--surface-2) !important; }
+
+  .menu-item { transition: background-color 120ms var(--ease), box-shadow 120ms var(--ease); }
+  .menu-item:hover { box-shadow: inset 2px 0 0 var(--hud-label); }
+
+  .sheet-handle:hover span { background: var(--text-muted); }
+  .badge-link:hover { box-shadow: inset 0 0 0 1px var(--border-strong); }
+}

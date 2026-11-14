@@ -1,0 +1,364 @@
+{
+  "_note": "Focus areas for the AI-analysis dashboard. Rehearsal: 'analysis' text is an AI draft (Claude) from the plan's sourced facts, NOT reviewed and NOT computed from radar data. In the refined version this file is generated at build time from the pipeline outputs (AI writes text, code fills every number, a person reviews it; reports/AI integration in SAR prototype.md). scripts/make-focus-areas.mjs adds 'code' and 'center' from the DOSM districts.",
+  "meta": {
+    "generated_by": "Claude (draft text for the rehearsal)",
+    "reviewed": false
+  },
+  "areas": {
+    "kelantan": [
+      {
+        "id": "kel-pasir-mas",
+        "district": "Pasir Mas",
+        "title": "Most people evacuated",
+        "tagline": "River floodplain upstream of the delta",
+        "facts": [
+          {
+            "text": "On 29 Nov 2024 Pasir Mas had the most evacuees in Kelantan: 22,486.",
+            "src": "Malay Mail, 29 Nov 2024",
+            "url": "https://www.malaymail.com/news/malaysia/2024/11/29/worsening-floods-hit-eight-states-nearly-100000-displaced-as-kelantan-and-terengganu-endure-worst-impact/158425"
+          }
+        ],
+        "drivers": [
+          {
+            "text": "Rain is the trigger: monsoon surges filled the Kelantan River, which drains most of the state.",
+            "src": "BoM Kelantan report",
+            "url": "https://www.bom.gov.au/water/about/waterResearch/document/kelantan.pdf"
+          },
+          {
+            "text": "Land use upstream adds runoff, but in river modelling, changes in rain had about 3–4 times the effect of land-use change. So we never say forest loss causes the floods.",
+            "src": "UTS OPUS (HEC-HMS study)",
+            "url": "https://opus.lib.uts.edu.au/handle/10453/130821"
+          }
+        ],
+        "ai_focus": "Measure where new water spread between the 17 Nov and 29 Nov passes, rank the villages it reached, and flag fields where the physics map and the AI second opinion disagree.",
+        "ai_draft": "Pasir Mas is the first place to check. It had the most evacuees on 29 Nov, and it sits on low land along the river. The radar map for this district is made at the event. Then this summary will say where new water spread, and how sure we are.",
+        "events": [
+          {
+            "date": "2024-11-29",
+            "label": "22,486 evacuees (news)"
+          }
+        ],
+        "code": "3_4",
+        "center": [
+          102.086,
+          5.9999
+        ],
+        "area_km2": 573,
+        "inside_pct": 100
+      },
+      {
+        "id": "kel-tumpat",
+        "district": "Tumpat",
+        "title": "Low delta by the sea",
+        "tagline": "Where floodwater meets the tide",
+        "facts": [
+          {
+            "text": "On 29 Nov 2024 Tumpat had 11,105 evacuees, the second highest in Kelantan.",
+            "src": "FMT, 29 Nov 2024",
+            "url": "https://www.freemalaysiatoday.com/category/nation/2024/11/29/nearly-60000-evacuated-amid-floods-as-kelantan-worst-hit"
+          }
+        ],
+        "drivers": [
+          {
+            "text": "The coast is the bottleneck: flood risk rises when heavy rain meets high tides, which slow drainage of the flat delta.",
+            "src": "The Star, 24 Oct 2026 (MetMalaysia)",
+            "url": "https://www.thestar.com.my/news/nation/2026/10/24/northeast-monsoon-set-to-bring-flood-risks"
+          }
+        ],
+        "ai_focus": "Track how long water stayed in the delta across all six passes, and compare it with Pasir Mas upstream to see whether the coast held the water back.",
+        "ai_draft": "Tumpat is where the river reaches the sea. Water here can stay longer when tides are high. The AI summary will compare the six radar passes to show if the delta drained more slowly than the land upstream.",
+        "events": [
+          {
+            "date": "2024-11-29",
+            "label": "11,105 evacuees (news)"
+          }
+        ],
+        "code": "3_7",
+        "center": [
+          102.1632,
+          6.172
+        ],
+        "area_km2": 181,
+        "inside_pct": 100
+      },
+      {
+        "id": "kel-kota-bharu",
+        "district": "Kota Bharu",
+        "title": "Where the river meets the sea",
+        "tagline": "State capital at the river mouth",
+        "facts": [
+          {
+            "text": "The Kelantan River basin covers about 12,000–13,000 km², more than 85% of the state, and overflows regularly from November to February.",
+            "src": "BoM Kelantan report",
+            "url": "https://www.bom.gov.au/water/about/waterResearch/document/kelantan.pdf"
+          },
+          {
+            "text": "On 1 Dec 2024, 97,128 people in Kelantan were affected, from 30,017 families.",
+            "src": "The Star, 1 Dec 2024",
+            "url": "https://thestar.com.my/news/nation/2024/12/01/floods-97128-victims-affected-in-kelantan-shows-no-signs-of-improvement"
+          }
+        ],
+        "drivers": [
+          {
+            "text": "Towns are hard for radar: flooded streets can look bright, not dark, so town pixels are marked unreliable.",
+            "src": "plan 05 §5",
+            "url": ""
+          }
+        ],
+        "ai_focus": "Separate open floodwater around the town from built-up areas, where radar is unreliable, so the summary never claims a street was dry or wet without evidence.",
+        "ai_draft": "Kota Bharu is a city at the river mouth. Radar sees floods in open fields well but struggles between buildings. The AI summary will report water around the town and mark the town centre as uncertain.",
+        "events": [
+          {
+            "date": "2024-12-01",
+            "label": "97,128 affected statewide (news)"
+          }
+        ],
+        "code": "3_2",
+        "center": [
+          102.2529,
+          6.0552
+        ],
+        "area_km2": 404,
+        "inside_pct": 100
+      }
+    ],
+    "kedah": [
+      {
+        "id": "ked-kota-setar",
+        "district": "Kota Setar",
+        "title": "Heart of the rice bowl",
+        "tagline": "Dense paddy around Alor Setar",
+        "facts": [
+          {
+            "text": "The MADA granary grows about 37% of Malaysia's rice.",
+            "src": "NST, Feb 2025",
+            "url": "https://www.nst.com.my/amp/news/nation/2025/02/1181358/kedahs-rice-bowl-reborn-rm54bil-boost-rice-production"
+          },
+          {
+            "text": "Season 2/2026 covers 99,489 ha in three phases, starting 23 Sep, 3 Oct and 13 Oct.",
+            "src": "MADA notice, 14 Sep 2026",
+            "url": "https://www.mada.gov.my/?q=2F02&id=228"
+          }
+        ],
+        "drivers": [
+          {
+            "text": "People flood the fields on a schedule set by dam water and rain, before seeding.",
+            "src": "plan 08 §3",
+            "url": ""
+          }
+        ],
+        "ai_focus": "Group every paddy field by how its HH and HV echoes change over the six NISAR dates (k-means, no labels), then report the share of fields in each stage: flooded, growing, or not rice.",
+        "ai_draft": "Kota Setar has the most continuous paddy in our area. The AI will group fields by how their radar echo changed from 23 Sep to 19 Oct. Then this summary will say which fields filled first and how that fits MADA's three phases.",
+        "events": [
+          {
+            "date": "2026-09-23",
+            "label": "Phase I starts"
+          },
+          {
+            "date": "2026-10-03",
+            "label": "Phase II starts"
+          },
+          {
+            "date": "2026-10-13",
+            "label": "Phase III starts"
+          }
+        ],
+        "code": "2_3",
+        "center": [
+          100.3751,
+          6.1161
+        ],
+        "area_km2": 420,
+        "inside_pct": 100
+      },
+      {
+        "id": "ked-kubang-pasu",
+        "district": "Kubang Pasu",
+        "title": "Northern paddy belt",
+        "tagline": "About a third of our Kedah radar area",
+        "facts": [
+          {
+            "text": "Kubang Pasu covers about 31% of our Kedah radar area, the largest share of any district (our measurement from DOSM boundaries).",
+            "src": "scripts/district-overlap.mjs",
+            "url": ""
+          },
+          {
+            "text": "We found no MADA map of which blocks belong to which phase, so timing is checked against the whole schedule.",
+            "src": "plan 03 §4.3",
+            "url": ""
+          }
+        ],
+        "drivers": [
+          {
+            "text": "Irrigation this season depends on rain: dams stood at 35.76% on 17 Sep 2026.",
+            "src": "The Star, 17 Sep 2026",
+            "url": "https://www.thestar.com.my/news/nation/2026/09/17/water-levels-limited-at-three-mada-dams-in-kedah"
+          }
+        ],
+        "ai_focus": "Compare the date each field first turned dark with the three MADA phase windows, and list fields still dry after the last phase began.",
+        "ai_draft": "Kubang Pasu is the biggest part of our Kedah view. The AI summary will compare when fields first held water with MADA's three start dates, and point out areas that were still dry after the last phase began.",
+        "events": [
+          {
+            "date": "2026-09-17",
+            "label": "Dams 35.76% (news)"
+          }
+        ],
+        "code": "2_5",
+        "center": [
+          100.4021,
+          6.3564
+        ],
+        "area_km2": 945,
+        "inside_pct": 95
+      },
+      {
+        "id": "ked-pendang",
+        "district": "Pendang",
+        "title": "Inland edge of the granary",
+        "tagline": "Only partly inside our radar area",
+        "facts": [
+          {
+            "text": "About 63% of Pendang lies inside our radar area; the rest has no radar data in this prototype (our measurement).",
+            "src": "scripts/district-overlap.mjs",
+            "url": ""
+          },
+          {
+            "text": "By 13 Oct 2026 MADA dam storage had risen to 40.13%.",
+            "src": "Bernama, 13 Oct 2026",
+            "url": "https://bernama.com/radio/news.php?id=2619837"
+          }
+        ],
+        "drivers": [
+          {
+            "text": "Smooth dry soil can look like water to radar, so a drought year raises the risk of false alarms.",
+            "src": "plan 05 §5",
+            "url": ""
+          }
+        ],
+        "ai_focus": "Check fields that look wet on only one date against neighbouring dates, to separate real field water from smooth dry soil.",
+        "ai_draft": "Pendang sits at the inland edge of the rice bowl, and part of it falls outside our radar view. The AI summary will check if fields that look wet stay wet on the next pass, to avoid mistaking dry soil for water.",
+        "events": [
+          {
+            "date": "2026-10-13",
+            "label": "Dams 40.13% (news)"
+          }
+        ],
+        "code": "2_11",
+        "center": [
+          100.5499,
+          5.9849
+        ],
+        "area_km2": 637,
+        "inside_pct": 63
+      }
+    ]
+  },
+  "methods": {
+    "kelantan": [
+      {
+        "group": "Detect",
+        "items": [
+          {
+            "glyph": "Δ",
+            "name": "Change detection",
+            "text": "Same-track before and after: darker by more than 3 dB since 17 Nov (plan 04 §4.4).",
+            "status": "event"
+          },
+          {
+            "glyph": "≈",
+            "name": "Single-date water test",
+            "text": "Otsu threshold on VV, capped at −15.5 dB (HydroSAR).",
+            "status": "event"
+          }
+        ]
+      },
+      {
+        "group": "Mask",
+        "items": [
+          {
+            "glyph": "▦",
+            "name": "Town mask",
+            "text": "Built-up pixels not detected as flood are marked unreliable (ESA WorldCover).",
+            "status": "event"
+          },
+          {
+            "glyph": "⛰",
+            "name": "Slope mask",
+            "text": "Ground steeper than 5% is never counted as flood (Copernicus DEM).",
+            "status": "event"
+          },
+          {
+            "glyph": "≋",
+            "name": "Normal water",
+            "text": "Water at least 80% of the time in 1984–2021 is not new flood (EC JRC).",
+            "status": "event"
+          }
+        ]
+      },
+      {
+        "group": "Check",
+        "items": [
+          {
+            "glyph": "AI",
+            "name": "AI second opinion",
+            "text": "A model trained on pre-event JRC labels, shown only where it disagrees with the physics map.",
+            "status": "planned"
+          },
+          {
+            "glyph": "✓",
+            "name": "NASA water map",
+            "text": "Consistency check against OPERA DSWx-S1, built from the same radar.",
+            "status": "event"
+          }
+        ]
+      }
+    ],
+    "kedah": [
+      {
+        "group": "Detect",
+        "items": [
+          {
+            "glyph": "HH",
+            "name": "HH dark-water test",
+            "text": "Smooth water in a field sends the flat echo away: HH turns dark (plan 04 §4.5).",
+            "status": "event"
+          },
+          {
+            "glyph": "HV",
+            "name": "HV dark-water test",
+            "text": "HV must also be dark, which separates water from young plants.",
+            "status": "event"
+          }
+        ]
+      },
+      {
+        "group": "Group",
+        "items": [
+          {
+            "glyph": "AI",
+            "name": "AI field grouping",
+            "text": "k-means on six dates of HH and HV, with no labels; groups named from radar physics.",
+            "status": "planned"
+          }
+        ]
+      },
+      {
+        "group": "Check",
+        "items": [
+          {
+            "glyph": "✓",
+            "name": "NASA water map",
+            "text": "Independent comparison with Sentinel-1 DSWx-S1, a different radar.",
+            "status": "event"
+          },
+          {
+            "glyph": "▤",
+            "name": "MADA schedule",
+            "text": "First-flooded dates compared with the three phase start dates.",
+            "status": "event"
+          }
+        ]
+      }
+    ]
+  }
+}

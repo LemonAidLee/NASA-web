@@ -1,0 +1,380 @@
+// Right panel (desktop) / bottom-sheet tabs (mobile): Numbers (F7, F14), Rain (F13), How sure are we? (F9), Story, About + credits (F10).
+import { area, daysBetween, diffDays, fmtDate, fmtDay, fmtNum, primaryPasses, provenance, story } from '../config';
+import { t } from '../i18n';
+import { card, clear, h } from '../lib/dom';
+import * as S from '../state';
+import { districtByCode, districtsOf } from '../map/districts';
+import { map } from '../map/mainMap';
+import { legendCard, layersCard, titleCard } from './leftCol';
+import { segBar, statRow } from './kit';
+
+export const panelRoot = h('div', { class: 'panel-inner' });
+let mobile = false;
+
+export function setPanelMobile(m: boolean): void {
+  mobile = m;
+  render();
+}
+
+interface Tab {
+  id: string;
+  label: string;
+  badge?: string;
+}
+
+function tabs(s: S.State): Tab[] {
+  const a = area(s.area);
+  const expert = s.mode === 'expert' && !mobile;
+  const numbersLabel = a.kind === 'explore' ? t('tab.numbers.exp') : t(expert ? (a.panel.numbers_tab_expert ?? 'tab.numbers') : mobile ? 'tab.numbers' : (a.panel.numbers_tab ?? 'tab.numbers'));
+  const sureCount = String(a.panel.sure_lines.length);
+  if (mobile) {
+    return [
+      { id: 'layers', label: t('tab.layers') },
+      { id: 'numbers', label: numbersLabel },
+      { id: 'story', label: t('tab.story') },
+      { id: 'about', label: t('tab.about') },
+    ];
+  }
+  if (expert) {
+    const list: Tab[] = [
+      { id: 'numbers', label: numbersLabel.toUpperCase(), badge: s.area === 'kedah' ? String(primaryPasses('kedah').length) : s.area === 'kelantan' ? '—' : undefined },
+    ];
+    if (a.kind !== 'explore') list.push({ id: 'rain', label: t('tab.rain').toUpperCase() });
+    list.push(
+      { id: 'sure', label: t('tab.sure').toUpperCase(), badge: sureCount },
+      { id: 'story', label: t('tab.story').toUpperCase(), badge: String(story.steps.length) },
+      { id: 'about', label: t('tab.about').toUpperCase() },
+    );
+    return list;
+  }
+  return [
+    { id: 'numbers', label: numbersLabel },
+    { id: 'story', label: t('tab.story') },
+    { id: 'sure', label: t('sure.pill') },
+    { id: 'about', label: t('tab.about') },
+  ];
+}
+
+function activeTab(s: S.State, list: Tab[]): string {
+  let id = s.tab;
+  if (mobile && id === 'sure') id = 'about';
+  if (!mobile && id === 'layers') id = 'numbers';
+  return list.some((x) => x.id === id) ? id : list[0].id;
+}
+
+// ---------------- Numbers ----------------
+
+const src = (label: string, url: string) => h('a', { href: url, target: '_blank', rel: 'noopener' }, label);
+
+function badge(): HTMLElement {
+  return h('button', { class: 'badge badge-link', onclick: () => S.set({ tab: 'sure', sheet: 'half' }) }, t('num.badge'));
+}
+
+function pendingNote(): HTMLElement {
+  return h('p', { class: 'pending' }, h('strong', {}, t('num.pending')), ' ', t('num.pending.long'));
+}
+
+function selectDistrict(code: string): void {
+  S.set({ district: code });
+  const d = districtByCode(code);
+  if (d) map.fitBounds(d.bbox, { padding: 60, duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900 });
+}
+
+function districtCard(s: S.State): HTMLElement | null {
+  if (!s.district) return null;
+  const d = districtByCode(s.district);
+  if (!d) return null;
+  const row = (k: string, v: string) => h('div', { class: 'kv' }, h('dt', {}, k), h('dd', { class: 'num' }, v));
+  const kel = s.area === 'kelantan';
+  return h('section', { class: 'card district-card', 'aria-live': 'polite' },
+    h('h2', { class: 'card-title' }, t('district.card.title', { district: d.district })),
+    h('p', { class: 'card-tagline' }, t('district.card.tagline', { state: d.state })),
+    h('dl', {},
+      kel ? row(t('num.ha'), '— ha') : row(t('num.ked.pct'), '—%'),
+      kel ? row(t('num.change'), '—') : null,
+      row(t('num.conf'), t('conf.pending')),
+      kel ? row(t('num.exposed'), '— to —') : null,
+    ),
+    badge(),
+    h('button', { class: 'pill pill-quiet', onclick: () => S.set({ district: null }) }, t('district.card.close')),
+  );
+}
+
+function numbersKelantan(s: S.State): HTMLElement[] {
+  const rows = districtsOf(['Kelantan']);
+  const table = h('table', { class: 'table' },
+    h('caption', { class: 'sr-only' }, t('num.table.caption', { date: fmtDate(s.date) })),
+    h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t('num.district')), h('th', { scope: 'col' }, t('num.ha')), h('th', { scope: 'col', class: 'x-only' }, t('num.change')), h('th', { scope: 'col' }, t('num.conf')))),
+    h('tbody', {}, rows.map((r) =>
+      h('tr', { class: s.district === r.code ? 'is-selected' : '' },
+        h('th', { scope: 'row' }, h('button', { class: 'link', onclick: () => selectDistrict(r.code) }, r.district)),
+        h('td', { class: 'num' }, '— ha'),
+        h('td', { class: 'num x-only' }, '—'),
+        h('td', {}, t('conf.pending')),
+      ))),
+  );
+  return [
+    card(t('num.kel.title'), t('num.kel.tagline'),
+      h('p', { class: 'headline-num' }, t('num.kel.headline', { district: 'Pasir Mas', date: fmtDay(s.date) })),
+      badge(),
+      pendingNote(),
+      h('div', { class: 'table-wrap' }, table),
+    ),
+    card(t('num.context.title'), t('num.context.tagline'),
+      h('ul', { class: 'facts' },
+        h('li', {}, t('num.context.4'), ' ', src(t('num.context.4.src'), 'https://thestartv.com/v/floods-in-kelantan-the-worst-in-history-says-state-police-chief')),
+        h('li', {}, t('num.context.1'), ' ', src(t('num.context.1.src'), 'https://www.malaymail.com/news/malaysia/2024/11/29/worsening-floods-hit-eight-states-nearly-100000-displaced-as-kelantan-and-terengganu-endure-worst-impact/158425')),
+        h('li', {}, t('num.context.2'), ' ', src(t('num.context.2.src'), 'https://thestar.com.my/news/nation/2024/12/01/floods-97128-victims-affected-in-kelantan-shows-no-signs-of-improvement')),
+        h('li', {}, t('num.context.3'), ' ', src(t('num.context.3.src'), 'https://www.dosm.gov.my/portal-main/release-content/special-report-on-impact-of-floods-in-malaysia-2024')),
+      ),
+    ),
+  ];
+}
+
+function phaseChart(s: S.State): HTMLElement {
+  const a = area('kedah');
+  const [start, end] = a.strip ?? ['2026-09-15', '2026-10-31'];
+  const total = daysBetween(start, end).length;
+  const pos = (d: string) => `${(Math.max(0, Math.min(total, diffDays(d, start))) / total) * 100}%`;
+  const chart = h('div', { class: 'phase-chart', role: 'img', 'aria-label': t('num.ked.phases') });
+  for (const p of a.phases ?? []) {
+    const endClip = p.end > end ? end : p.end;
+    chart.append(h('div', { class: 'phase-row' },
+      h('span', { class: 'phase-name' }, `Phase ${p.id}`),
+      h('span', { class: 'phase-track' }, h('span', { class: 'phase-bar', style: `left:${pos(p.start)};width:calc(${pos(endClip)} - ${pos(p.start)})` }, p.end > end ? '→' : '')),
+    ));
+  }
+  const ticks = h('div', { class: 'phase-row phase-ticks' }, h('span', { class: 'phase-name' }, t('num.ked.passmark')), h('span', { class: 'phase-track' }));
+  for (const p of primaryPasses('kedah')) {
+    ticks.lastElementChild?.append(h('span', { class: 'tick', style: `left:${pos(p.date_myt)}`, title: fmtDate(p.date_myt) }, p.direction === 'A' ? '▲' : '▼'));
+  }
+  chart.append(ticks);
+  chart.append(h('span', { class: 'now-line', style: `left:calc(5.5rem + (100% - 5.5rem) * ${diffDays(s.date, start) / total})` }));
+  const list = h('ul', { class: 'phase-list' }, (a.phases ?? []).map((p) =>
+    h('li', {}, t('num.ked.phase', { id: p.id, ha: fmtNum(p.ha), start: fmtDay(p.start), end: fmtDate(p.end) }))));
+  return h('div', {}, h('h3', { class: 'legend-title' }, t('num.ked.phases')), chart, list);
+}
+
+function numbersKedah(s: S.State): HTMLElement[] {
+  // C · segmented bars: % field water per pass (made at the event), then real MADA phase areas and dam storage.
+  const bars = h('ul', { class: 'pct-bars' }, primaryPasses('kedah').map((p) =>
+    h('li', { class: p.date_myt === s.date ? 'is-selected' : '' },
+      h('button', { class: 'link', onclick: () => S.set({ date: p.date_myt }) }, fmtDay(p.date_myt)),
+      segBar({ value: null, max: 100, basis: t('seg.pending') }),
+      h('span', { class: 'num' }, '—%'),
+    )));
+  const season = area('kedah').phases ?? [];
+  const seasonHa = 99489; // MADA notice, 14 Sep 2026 (plan 08 §4.7)
+  const phaseBars = h('div', { class: 'stat-list' },
+    h('h3', { class: 'legend-title' }, t('num.ked.phases')),
+    ...season.map((p) => statRow(`Phase ${p.id}`, segBar({ value: p.ha, max: seasonHa, basis: t('num.ked.phase.basis') }), `${fmtNum(p.ha)} ha`)),
+    h('h3', { class: 'legend-title' }, t('num.ked.dams')),
+    statRow(t('num.ked.dams.row'), segBar({ value: 35.76, delta: 40.13 - 35.76, max: 100, basis: t('num.ked.dams.basis') }), '35.76 → 40.13%',
+      h('span', { class: 'delta' }, ' +4.37')),
+    h('p', { class: 'src-line' }, src('The Star, 17 Sep 2026', 'https://www.thestar.com.my/news/nation/2026/09/17/water-levels-limited-at-three-mada-dams-in-kedah'), ' · ',
+      src('Bernama, 13 Oct 2026', 'https://bernama.com/radio/news.php?id=2619837'), ' · ', src('MADA notice, 14 Sep 2026', 'https://www.mada.gov.my/?q=2F02&id=228')),
+  );
+  return [
+    card(t('num.ked.title'), t('num.ked.tagline'),
+      h('p', { class: 'headline-num' }, t('ked.headline.placeholder', { date: fmtDay(s.date) })),
+      badge(),
+      pendingNote(),
+      h('h3', { class: 'legend-title' }, t('num.ked.pct')),
+      bars,
+      phaseChart(s),
+      phaseBars,
+    ),
+    card(t('num.ked.context.title'), t('num.ked.context.tagline'),
+      h('ul', { class: 'facts' },
+        h('li', {}, t('num.ked.context.1'), ' ', src(t('num.ked.context.1.src'), 'https://www.thestar.com.my/news/nation/2026/09/17/water-levels-limited-at-three-mada-dams-in-kedah')),
+        h('li', {}, t('num.ked.context.2'), ' ', src(t('num.ked.context.2.src'), 'https://www.nst.com.my/amp/news/nation/2025/02/1181358/kedahs-rice-bowl-reborn-rm54bil-boost-rice-production')),
+      ),
+      h('p', { class: 'chain' }, t('num.ked.chain')),
+    ),
+  ];
+}
+
+function numbers(s: S.State): (HTMLElement | null)[] {
+  const a = area(s.area);
+  if (a.kind === 'explore') return [card(t('num.exp.title'), t('exp.badge'), h('p', {}, t('num.exp.body')))];
+  return [districtCard(s), ...(s.area === 'kelantan' ? numbersKelantan(s) : numbersKedah(s))];
+}
+
+// ---------------- Rain (F13 placeholder) ----------------
+
+function rain(s: S.State): HTMLElement[] {
+  const a = area(s.area);
+  const days = a.strip ? daysBetween(a.strip[0], a.strip[1]) : [];
+  const skeleton = h('div', { class: 'rain-skeleton', 'aria-hidden': 'true' }, days.map((d) =>
+    h('span', { class: `rain-bar${primaryPasses(s.area).some((p) => p.date_myt === d) ? ' is-pass' : ''}${d === s.date ? ' is-current' : ''}` })));
+  return [card(t('rain.title'), t('rain.tagline'), skeleton, pendingNote(), h('p', { class: 'muted small' }, t('rain.pending')), h('p', { class: 'small' }, t('rain.lag')))];
+}
+
+// ---------------- How sure are we? (F9) ----------------
+
+export function sureCard(s: S.State): HTMLElement {
+  const a = area(s.area);
+  const first = h('ol', { class: 'sure-first' }, a.panel.sure_first.map((k) => h('li', {}, t(k))));
+  const links = a.panel.official_links.length
+    ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('sure.links')), ' ',
+        ...a.panel.official_links.flatMap((l, i) => [i ? ' · ' : '', h('a', { href: l.url, target: '_blank', rel: 'noopener' }, t(l.label))]))
+    : null;
+  const el = h('section', { class: 'card sure-card', id: 'sure-card', tabindex: '-1' },
+    h('h2', { class: 'card-title' }, t('sure.title')),
+    h('p', { class: 'card-tagline' }, t('sure.tagline')),
+    first,
+    links,
+    h('button', { class: 'pill', 'aria-expanded': String(s.sureOpen), onclick: () => S.set({ sureOpen: !S.get().sureOpen }) }, t(s.sureOpen ? 'sure.less' : 'sure.more')),
+  );
+  if (s.sureOpen) el.append(sureDetails(s));
+  return el;
+}
+
+function sureDetails(s: S.State): HTMLElement {
+  const a = area(s.area);
+  const metric = (k: string, gloss: string) => h('tr', {}, h('th', { scope: 'row' }, t(k)), h('td', { class: 'num' }, '—'), h('td', {}, t(gloss)));
+  const det = h('div', { class: 'sure-details' },
+    h('h3', { class: 'legend-title' }, t('sure.lines')),
+    h('ul', { class: 'lim-list' }, a.panel.sure_lines.map((k) => {
+      const [head, ...rest] = t(k).split('. ');
+      return h('li', {}, h('strong', {}, `${head}.`), ' ', rest.join('. '));
+    })),
+  );
+  if (a.kind === 'explore') return det;
+  det.append(
+    h('h3', { class: 'legend-title' }, t('sure.agreement')),
+    h('p', { class: 'small' }, t(a.panel.validation ?? '')),
+    h('p', { class: 'pending small' }, t('sure.agreement.pending')),
+    h('div', { class: 'table-wrap' }, h('table', { class: 'table' },
+      h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t('sure.metric')), h('th', { scope: 'col' }, t('sure.value')), h('th', { scope: 'col' }, t('sure.meaning')))),
+      h('tbody', {}, metric('sure.f1', 'sure.f1.gloss'), metric('sure.iou', 'sure.iou.gloss'), metric('sure.kappa', 'sure.kappa.gloss'), metric('sure.offset', 'sure.offset.gloss')),
+    )),
+    h('p', { class: 'small muted' }, t('sure.benchmark')),
+    valuesTable(s),
+  );
+  return det;
+}
+
+function valuesTable(s: S.State): HTMLElement {
+  const kel = s.area === 'kelantan';
+  const m = t('sure.values.measure');
+  const rows: [string, string, string][] = kel
+    ? [
+        ['values.water', t('values.water.vv'), t('values.water.vh')],
+        ['values.paddy', `${t('values.dark')} · ${m}`, `${t('values.dark')} · ${m}`],
+        ['values.forest', `${t('values.grey')} · ${m}`, `${t('values.brighter')} · ${m}`],
+        ['values.town', `${t('values.town.c')} · ${m}`, m],
+        ['values.dry', `${t('values.grey')} · ${m}`, `${t('values.grey')} · ${m}`],
+      ]
+    : [
+        ['values.water', `${t('values.verydark')} · ${m}`, `${t('values.verydark')} · ${m}`],
+        ['values.paddy', `${t('values.dark')} · ${m}`, `${t('values.dark')} · ${m}`],
+        ['values.rice', `${t('values.rises')} · ${m}`, `${t('values.rises')} · ${m}`],
+        ['values.forest', `${t('values.grey')} · ${m}`, `${t('values.brighter')} · ${m}`],
+        ['values.town', `${t('values.bright')} · ${m}`, m],
+        ['values.dry', `${t('values.grey')} · ${m}`, m],
+      ];
+  return h('div', {},
+    h('h3', { class: 'legend-title' }, t('sure.values.title')),
+    h('p', { class: 'muted small' }, t('sure.values.tagline')),
+    h('div', { class: 'table-wrap' }, h('table', { class: 'table' },
+      h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t('sure.values.surface')), h('th', { scope: 'col' }, kel ? 'VV' : 'HH'), h('th', { scope: 'col' }, kel ? 'VH' : 'HV'))),
+      h('tbody', {}, rows.map(([k, a, b]) => h('tr', {}, h('th', { scope: 'row' }, t(k)), h('td', {}, a), h('td', {}, b)))),
+    )),
+  );
+}
+
+// ---------------- Story list ----------------
+
+function storyTab(): HTMLElement[] {
+  return [card(t('tab.story'), t('story.footer.past'),
+    h('ol', { class: 'story-list' }, story.steps.map((st, i) =>
+      h('li', {}, h('button', { class: 'link', onclick: () => S.set({ step: i }) }, t(st.title))))),
+    h('button', { class: 'pill pill-primary', onclick: () => S.set({ step: 0 }) }, t('menu.story')),
+  )];
+}
+
+// ---------------- About + credits (F10) ----------------
+
+function about(s: S.State): (HTMLElement | null)[] {
+  const credits = ['credit.nisar', 'credit.rtc', 'credit.dswx', 'credit.gibs', 'credit.jrc', 'credit.dosm', 'credit.osm', 'credit.imerg', 'credit.worldcover', 'credit.dem', 'credit.news', 'credit.themes', 'credit.fonts', 'credit.libs', 'credit.noendorse'];
+  const qa = (q: string, a2: string) => h('div', { class: 'qa' }, h('h3', { class: 'legend-title' }, t(q)), h('p', {}, t(a2)));
+  return [
+    mobile ? sureCard(s) : null,
+    card(t('about.passdays.title'), t('lim.passdays').split('. ')[1] ?? '', h('p', {}, t('about.passdays.body'))),
+    card(t('about.challenge.title'), t('app.subtitle'), qa('about.why.q', 'about.why.a'), qa('about.pol.q', 'about.pol.a'), qa('about.future.q', 'about.future.a')),
+    card(t('about.credits.title'), t('about.credits.tagline'),
+      h('ul', { class: 'credits' }, credits.map((k) => h('li', {}, t(k)))),
+      h('details', {}, h('summary', {}, t('about.granules')),
+        h('p', { class: 'muted small' }, t('about.granules.note')),
+        h('ul', { class: 'granules' }, provenance.granules.map((g) => h('li', {}, h('span', { class: 'muted' }, `${g.product}: `), h('code', {}, g.id))))),
+    ),
+    card(t('about.ai.title'), t('about.prior'), h('p', {}, t('about.ai.body'))),
+    card(t('about.glossary.title'), t('legend.tagline'),
+      h('ul', { class: 'credits' }, ['gloss.sar', 'gloss.backscatter', 'gloss.hhhv', 'gloss.band', 'gloss.pass', 'gloss.track'].map((k) => h('li', {}, t(k))))),
+  ];
+}
+
+// ---------------- render ----------------
+
+function render(): void {
+  const s = S.get();
+  const list = tabs(s);
+  const active = activeTab(s, list);
+  clear(panelRoot);
+  const tl = h('div', { class: 'tabs', role: 'tablist', 'aria-label': t('tab.list') });
+  for (const tab of list) {
+    tl.append(h('button', {
+      class: 'tab', role: 'tab', id: `tab-${tab.id}`, 'aria-selected': String(tab.id === active), 'aria-controls': 'tabpanel',
+      tabindex: tab.id === active ? '0' : '-1',
+      onclick: () => S.set({ tab: tab.id, sheet: S.get().sheet === 'peek' ? 'half' : S.get().sheet }),
+      onkeydown: (e: Event) => {
+        const k = (e as KeyboardEvent).key;
+        if (k !== 'ArrowRight' && k !== 'ArrowLeft') return;
+        const i = list.findIndex((x) => x.id === active);
+        const n = list[(i + (k === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+        S.set({ tab: n.id });
+        window.setTimeout(() => document.getElementById(`tab-${n.id}`)?.focus(), 0);
+      },
+    }, tab.label, tab.badge ? h('span', { class: 'tab-badge x-only' }, tab.badge) : null));
+  }
+  const content = h('div', { class: 'tabpanel', id: 'tabpanel', role: 'tabpanel', 'aria-labelledby': `tab-${active}` });
+  let body: (HTMLElement | null)[] = [];
+  if (active === 'layers') body = [titleCard, layersCard, legendCard];
+  else if (active === 'numbers') body = numbers(s);
+  else if (active === 'rain') body = rain(s);
+  else if (active === 'sure') body = [sureCard(s)];
+  else if (active === 'story') body = storyTab();
+  else if (active === 'about') body = about(s);
+  for (const b of body) if (b) content.append(b);
+  // E · tab bar with Q / E hints and diamond page dots (hints hidden on touch screens).
+  const idx = list.findIndex((x) => x.id === active);
+  const bar = h('div', { class: 'tabbar' },
+    h('button', { class: 'tab-key', 'aria-label': t('tabs.prev'), title: t('tabs.prev'), onclick: () => cycleTab(-1) }, 'Q'),
+    tl,
+    h('button', { class: 'tab-key', 'aria-label': t('tabs.next'), title: t('tabs.next'), onclick: () => cycleTab(1) }, 'E'),
+  );
+  const dots = h('div', { class: 'tab-dots', 'aria-hidden': 'true' }, list.map((_, k) => h('i', { class: k === idx ? 'on' : '' })));
+  panelRoot.append(bar, dots, content);
+}
+
+/** Q / E: previous / next panel tab (F25 shortcuts, E · tab bar). */
+export function cycleTab(dir: 1 | -1): void {
+  const s = S.get();
+  const list = tabs(s);
+  const i = list.findIndex((x) => x.id === activeTab(s, list));
+  const n = list[(i + dir + list.length) % list.length];
+  S.set({ tab: n.id, sheet: s.sheet === 'peek' ? 'half' : s.sheet });
+}
+
+export function initPanel(): void {
+  render();
+  S.subscribe((_s, ch) => {
+    if (['area', 'date', 'mode', 'tab', 'district', 'sureOpen'].some((k) => ch.has(k as keyof S.State))) render();
+  });
+}
+
+/** Called by layout when the left-column cards must return to the desktop column. */
+export function rerenderPanel(): void {
+  render();
+}
