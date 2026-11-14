@@ -1,6 +1,6 @@
 // Main map (F1): OpenFreeMap basemap, raster sync, area fit, theme swap (F19).
 import { Map as MLMap, NavigationControl, ScaleControl, AttributionControl } from 'maplibre-gl';
-import { area, focusById, focusFor, layersFor, studyBbox, type LayerDef } from '../config';
+import { area, focusById, focusFor, imageryOnly, layersFor, studyBbox, type LayerDef } from '../config';
 import * as S from '../state';
 import { basemapStyle } from '../lib/theme';
 import { pruneExplore, syncRasters, type RenderCtx } from './rasters';
@@ -15,6 +15,9 @@ export function ctxFrom(s: S.State, extra: Partial<RenderCtx> = {}): RenderCtx {
   const sel = s.dash !== 'closed' ? focusById(s.focus)?.code ?? null : null;
   return { area: s.area, date: s.date, layers: s.layers, base: s.base, selectedDistrict: s.district, focusCodes: focus.map((f) => f.code), focusSel: sel, ...extra };
 }
+
+/** Context for the main map itself (compare maps call ctxFrom without `main`). */
+const mainCtx = (s: S.State): RenderCtx => ctxFrom(s, { main: true });
 
 /** District hover highlight (feature-state on the DOSM source). */
 function initDistrictHover(): void {
@@ -62,7 +65,12 @@ export function createMap(container: HTMLElement): MLMap | null {
   map.addControl(new NavigationControl({ showCompass: false }), 'bottom-right');
   map.addControl(new ScaleControl({ unit: 'metric', maxWidth: 90 }), 'bottom-left');
 
-  map.on('style.load', () => syncRasters(map, ctxFrom(S.get())));
+  map.on('style.load', () => syncRasters(map, mainCtx(S.get())));
+  // Explore searches the newest NISAR pass in the visible box, so it follows the camera.
+  map.on('moveend', () => {
+    const st = S.get();
+    if (st.area === 'explore' && st.layers.nisar_latest?.on) syncRasters(map, mainCtx(st));
+  });
   map.once('load', initDistrictHover); // after the first style.load has added 'districts-fill'
   // OpenFreeMap styles reference a few sprite icons they do not ship (e.g. "circle-11"): draw nothing for them.
   map.setMissingStyleImageResolver(() => undefined);
@@ -79,7 +87,7 @@ export function createMap(container: HTMLElement): MLMap | null {
       const swapStyle = basemapStyle(st.theme) !== basemapStyle(currentTheme);
       currentTheme = st.theme;
       if (swapStyle) map.setStyle(basemapStyle(st.theme)); // rasters re-added on style.load
-      else syncRasters(map, ctxFrom(st));
+      else syncRasters(map, mainCtx(st));
       return;
     }
     if (changed.has('area')) {
@@ -87,8 +95,8 @@ export function createMap(container: HTMLElement): MLMap | null {
       if (st.step === null && a2.kind !== 'explore') fitArea(studyBbox(a2.id));
     }
     if (['area', 'date', 'layers', 'base', 'district', 'focus', 'dash'].some((k) => changed.has(k as keyof S.State))) {
-      if (st.area === 'explore') pruneExplore(map, st.date);
-      syncRasters(map, ctxFrom(st));
+      if (imageryOnly(area(st.area))) pruneExplore(map, st.date);
+      syncRasters(map, mainCtx(st));
     }
   });
   return map;

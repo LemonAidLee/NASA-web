@@ -1,6 +1,6 @@
 // F5 pixel popup (plain sentence first, numbers under "More") and F21 cursor readout bar.
 import { Popup, type MapMouseEvent } from 'maplibre-gl';
-import { area, fmtDate, fmtNum, focusFor, layersFor, type Area } from '../config';
+import { area, imageryOnly, fmtDate, fmtNum, focusFor, layersFor, type Area } from '../config';
 import { inspectCard, keyHint, segBar, statRow } from './kit';
 import { openFocus } from './focus';
 import { t } from '../i18n';
@@ -32,7 +32,7 @@ function popupContent(lng: number, lat: number): HTMLElement {
   const vis = visibleLayers(s);
   const previews = vis.filter((l) => l.status === 'real' && l.kind === 'gibs').map((l) => t(l.name));
   let sentence: string;
-  if (a.kind === 'explore') sentence = t('popup.imagery');
+  if (imageryOnly(a)) sentence = t('popup.imagery');
   else if (!inStudy(a, lng, lat, d?.district)) sentence = t('popup.outside', { area: t(a.short) });
   else sentence = t(s.area === 'kelantan' ? 'popup.pending.kel' : 'popup.pending.ked', { date: fmtDate(s.date) });
   const expert = s.mode === 'expert';
@@ -41,7 +41,7 @@ function popupContent(lng: number, lat: number): HTMLElement {
       h('div', { class: 'kv' }, h('dt', {}, t('popup.coords')), h('dd', { class: 'num' }, fmtCoord(lat, lng))),
       d ? h('div', { class: 'kv' }, h('dt', {}, t('popup.district')), h('dd', {}, h('button', { class: 'link', onclick: () => S.set({ district: d.code, tab: 'numbers', sheet: 'half' }) }, d.district))) : null,
     ),
-    a.kind !== 'explore' ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('popup.why')), ' ', t(s.area === 'kelantan' ? 'popup.why.kel' : 'popup.why.ked')) : null,
+    !imageryOnly(a) ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('popup.why')), ' ', t(s.area === 'kelantan' ? 'popup.why.kel' : 'popup.why.ked')) : null,
   );
   const moreBtn = h('button', { class: 'link', 'aria-expanded': String(expert) }, t(expert ? 'popup.less' : 'popup.more'));
   moreBtn.addEventListener('click', () => {
@@ -56,7 +56,7 @@ function popupContent(lng: number, lat: number): HTMLElement {
   const f = fi >= 0 ? focusList[fi] : undefined;
   const pendingRadar = vis.some((l) => l.status === 'placeholder' && (l.kind === 'class' || l.kind === 'db'));
   const stats: HTMLElement[] = [];
-  if (a.kind !== 'explore') {
+  if (!imageryOnly(a)) {
     stats.push(statRow(t('insp.stat.radar'), segBar({ value: null, max: 1, basis: t('seg.pending') }), pendingRadar ? '—' : t('hud.radar.preview')));
   }
   if (f) {
@@ -70,14 +70,14 @@ function popupContent(lng: number, lat: number): HTMLElement {
   actions.push(keyHint('Esc', t('insp.close')));
   const sockets = vis.filter((l) => l.abbr && l.kind !== 'vector').map((l) => ({ abbr: l.abbr as string, name: t(l.name), on: true, pending: l.status === 'placeholder' }));
   return inspectCard({
-    name: d ? d.district : a.kind === 'explore' ? t('insp.location') : t('insp.outside'),
+    name: d ? d.district : imageryOnly(a) ? t('insp.location') : t('insp.outside'),
     typeLeft: d ? t('insp.type.district', { state: d.state }) : fmtCoord(lat, lng),
     typeRight: f ? t('insp.focus', { n: fi + 1 }) : undefined,
     lore: sentence,
     stats,
     sockets,
     more: h('div', { class: 'insp-more' },
-      previews.length && a.kind !== 'explore' ? h('p', { class: 'small muted' }, t('popup.preview', { layers: previews.join(', ') })) : null,
+      previews.length && !imageryOnly(a) ? h('p', { class: 'small muted' }, t('popup.preview', { layers: previews.join(', ') })) : null,
       moreBtn, more),
     actions,
   });
@@ -140,7 +140,7 @@ function renderCursor(lng?: number, lat?: number): void {
   const d = lng !== undefined && lat !== undefined ? districtAt(lng, lat) : null;
   const vis = visibleLayers(s);
   const hasPending = vis.some((l) => l.status === 'placeholder' && (l.kind === 'class' || l.kind === 'db'));
-  const radar = a.kind === 'explore' ? t('hud.radar.preview') : hasPending ? t('hud.radar.pending') : t('hud.radar.preview');
+  const radar = imageryOnly(a) ? t('hud.radar.preview') : hasPending ? t('hud.radar.pending') : t('hud.radar.preview');
   const seg = (label: string, value: string) => h('span', { class: 'hud-seg' }, h('span', { class: 'hud-label' }, label), ' ', h('span', { class: 'hud-value' }, value));
   clear(bar);
   bar.append(
@@ -151,7 +151,7 @@ function renderCursor(lng?: number, lat?: number): void {
       seg(t('hud.zoom'), map.getZoom().toFixed(1)),
     ),
     h('div', { class: 'hud-row s-only' },
-      h('span', { class: 'small' }, d ? `${d.district} · ` : '', lng !== undefined ? t(a.kind === 'explore' ? 'popup.imagery' : 'hint.tap') : t('hint.tap')),
+      h('span', { class: 'small' }, d ? `${d.district} · ` : '', lng !== undefined ? t(imageryOnly(a) ? 'popup.imagery' : 'hint.tap') : t('hint.tap')),
     ),
   );
 }

@@ -478,3 +478,24 @@ button.obj:hover { color: var(--text); }
 @media (prefers-reduced-motion: no-preference) {
   .win.is-dragging { transition: none; }
 }
+
+/* ---------- live data, data links, radar explainer (14 Nov) ---------- */
+
+.chip-live { box-shadow: inset 0 0 0 1px var(--brand); color: var(--text); }
+.layer-info p + .layer-links { margin-top: var(--s1); }
+.layer-links a { white-space: nowrap; }
+.layer-status {
+  grid-column: 1 / -1;
+  padding: 0 var(--s2) var(--s1) 32px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-hud);
+  color: var(--text-secondary);
+}
+.live-days { display: flex; flex-direction: column; gap: var(--s1); }
+.pass-days { flex-wrap: wrap; }
+.echo-list { display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-caption); }
+.echo-row { display: grid; grid-template-columns: 1.5rem 1fr; gap: var(--s2); align-items: start; }
+.echo-glyph { color: var(--brand); font-size: 1rem; line-height: 1.2; text-align: center; }
+.quote { margin: 0; padding: var(--s2) var(--s3); border-left: 2px solid var(--brand); background: var(--surface-2); border-radius: 0 8px 8px 0; }
+.quote p { font-size: var(--fs-caption); color: var(--text); }
+.quote cite { display: block; margin-top: var(--s1); font-style: normal; }

@@ -1,11 +1,13 @@
 // Left column: title card + area switch (F1), layer dock / "What's on the map" (F2), legend (F4), Explore controls (F31).
-import { area, cfg, fmtDate, focusFor, layer, layersFor, primaryPasses, studyBbox, studyOutlines, type ClassDef, type LayerDef } from '../config';
+import { area, cfg, fmtDate, fmtDay, focusFor, imageryOnly, layer, layersFor, outlineId, primaryPasses, studyBbox, studyOutlines, type Area, type ClassDef, type LayerDef } from '../config';
 import { allDistrictShapes } from '../map/districts';
 import { t } from '../i18n';
 import { clear, h } from '../lib/dom';
 import * as S from '../state';
 import { compareDefault } from '../map/compare';
 import { flyTo, map } from '../map/mainMap';
+import { acquisitionDays, earthdataSearchUrl, vertexUrl, worldviewUrl, type Bbox } from '../lib/catalog';
+import { latestInfo } from '../map/latestNisar';
 
 export const titleCard = h('section', { class: 'card title-card', id: 'titlecard' });
 export const layersCard = h('section', { class: 'card layers-card', id: 'layers-card' });
@@ -15,14 +17,15 @@ export const legendChip = h('button', { class: 'legend-chip mobile-only', onclic
 const AREA_PILLS: [string, string][] = [
   ['kelantan', 'area.pill.kelantan'],
   ['kedah', 'area.pill.kedah'],
+  ['kelantan_live', 'area.pill.live'],
   ['explore', 'area.pill.explore'],
 ];
 
 export function switchArea(id: string): void {
   const a = area(id);
   const patch: Partial<S.State> = { area: id, date: a.default_date, district: null, playing: false };
-  if (S.get().compare !== 'off' && a.kind === 'explore') patch.compare = 'off';
-  if (a.kind !== 'explore') {
+  if (S.get().compare !== 'off' && imageryOnly(a)) patch.compare = 'off';
+  if (!imageryOnly(a)) {
     patch.cmpA = a.compare_default?.[0] ?? a.default_date;
     patch.cmpB = a.compare_default?.[1] ?? a.default_date;
   }
@@ -59,8 +62,8 @@ function renderTitle(): void {
     h('p', { class: 'question' }, t(a.panel.question)),
     h('p', { class: 'sensor' }, t(a.panel.sensor)),
   );
-  if (a.kind === 'explore') {
-    titleCard.append(exploreControls());
+  if (imageryOnly(a)) {
+    titleCard.append(exploreControls(a));
   } else {
     titleCard.append(
       h('div', { class: 'headline' },
@@ -99,18 +102,22 @@ function destPicker(s: S.State): HTMLElement {
   for (const d of allDistrictShapes()) svg.append(svgEl('path', { d: ringPath(d.polys), class: 'dest-land' }));
   for (const o of studyOutlines) {
     const rings = (o.geometry.type === 'Polygon' ? [o.geometry.coordinates] : o.geometry.coordinates) as number[][][][];
-    svg.append(svgEl('path', { d: ringPath(rings), class: `dest-study${o.properties.id === s.area ? ' is-on' : ''}` }));
+    svg.append(svgEl('path', { d: ringPath(rings), class: `dest-study${o.properties.id === outlineId(s.area) ? ' is-on' : ''}` }));
   }
   const places = cfg.areas.map((a) => {
     const b = studyBbox(a.id);
-    const at: [number, number] = a.kind === 'explore' ? ANYWHERE_AT : [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
+    const at: [number, number] = a.kind === 'explore' ? ANYWHERE_AT : a.pick_at ?? [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
     return { a, at };
   });
   const k = places.find((p) => p.a.id === 'kedah');
   const l = places.find((p) => p.a.id === 'kelantan');
+  const lv = places.find((p) => p.a.kind === 'live');
   const x = places.find((p) => p.a.kind === 'explore');
-  if (k && l) svg.append(svgEl('line', { x1: `${px(k.at[0])}`, y1: `${py(k.at[1])}`, x2: `${px(l.at[0])}`, y2: `${py(l.at[1])}`, class: 'dest-link' }));
-  if (l && x) svg.append(svgEl('line', { x1: `${px(l.at[0])}`, y1: `${py(l.at[1])}`, x2: `${px(x.at[0])}`, y2: `${py(x.at[1])}`, class: 'dest-link dest-link-dash' }));
+  const link = (p: typeof k, q: typeof k, cls: string) =>
+    p && q && svg.append(svgEl('line', { x1: `${px(p.at[0])}`, y1: `${py(p.at[1])}`, x2: `${px(q.at[0])}`, y2: `${py(q.at[1])}`, class: cls }));
+  link(k, l, 'dest-link');
+  link(l, lv, 'dest-link dest-link-dash');
+  link(lv ?? l, x, 'dest-link dest-link-dash');
 
   const caption = h('p', { class: 'dest-caption', 'aria-live': 'polite' });
   const describe = (id: string) => {
@@ -119,7 +126,7 @@ function destPicker(s: S.State): HTMLElement {
     const nf = focusFor(id).length;
     const np = primaryPasses(id).length;
     caption.append(h('strong', {}, t(a.short)), ' ',
-      h('span', {}, a.kind === 'explore' ? t('dest.anywhere') : [t(a.name), t('dest.passes', { n: np }), t('dest.focus', { n: nf })].join(' · ')));
+      h('span', {}, a.kind === 'explore' ? t('dest.anywhere') : a.kind === 'live' ? t('dest.live') : [t(a.name), t('dest.passes', { n: np }), t('dest.focus', { n: nf })].join(' · ')));
   };
   const stage = h('div', { class: 'dest-stage', style: `aspect-ratio: 100 / ${DEST_H.toFixed(2)}` }, svg);
   for (const { a, at } of places) {
@@ -127,7 +134,7 @@ function destPicker(s: S.State): HTMLElement {
       class: `dest-node${a.id === s.area ? ' is-on' : ''}${a.kind === 'explore' ? ' is-any' : ''}`,
       style: `left:${px(at[0]).toFixed(2)}%;top:${((py(at[1]) / DEST_H) * 100).toFixed(2)}%`,
       'aria-pressed': String(a.id === s.area),
-      'aria-label': t('dest.label', { name: t(a.short), sub: a.kind === 'explore' ? t('dest.anywhere') : t(a.name) }),
+      'aria-label': t('dest.label', { name: t(a.short), sub: a.kind === 'explore' ? t('dest.anywhere') : a.kind === 'live' ? t('dest.live') : t(a.name) }),
       onclick: () => switchArea(a.id),
       onmouseenter: () => describe(a.id),
       onfocus: () => describe(a.id),
@@ -168,10 +175,10 @@ function socketStrip(list: LayerDef[]): HTMLElement | null {
   );
 }
 
-function exploreControls(): HTMLElement {
+function exploreControls(a: Area): HTMLElement {
   const s = S.get();
-  const a = area('explore');
-  const [min, max] = a.date_range ?? ['2025-10-29', '2026-10-23'];
+  const live = a.kind === 'live';
+  const [min, max] = a.date_range ?? ['2025-10-29', new Date().toISOString().slice(0, 10)];
   const input = h('input', {
     type: 'date', class: 'input', min, max, value: s.date, 'aria-label': t('exp.date'),
     onchange: (e: Event) => {
@@ -184,12 +191,102 @@ function exploreControls(): HTMLElement {
     presets.append(h('button', { class: 'pill pill-sm', onclick: () => { S.set({ date: p.date }); flyTo(p.center, p.zoom); } }, t(p.label)));
   }
   return h('div', { class: 'explore' },
-    h('p', { class: 'badge badge-imagery' }, t('exp.badge')),
+    h('p', { class: 'badge badge-imagery' }, t(live ? 'live.badge' : 'exp.badge')),
     h('label', { class: 'field' }, h('span', { class: 'hud-label' }, t('exp.date')), input),
-    h('span', { class: 'hud-label' }, t('exp.presets')),
-    presets,
-    h('p', { class: 'muted small' }, t('exp.empty')),
+    live ? livePassDays(a, s.date) : h('span', { class: 'hud-label' }, t('exp.presets')),
+    live ? null : presets,
+    h('p', { class: 'muted small' }, t(live ? 'live.empty' : 'exp.empty')),
   );
+}
+
+// ---------- live area: radar pass days, read from NASA's catalogue on each visit ----------
+
+interface PassDay {
+  day: string;
+  sensors: string[];
+}
+const passDayCache = new Map<string, Promise<PassDay[]>>();
+
+function loadPassDays(a: Area): Promise<PassDay[]> {
+  const [start, end] = a.date_range ?? [a.default_date, a.default_date];
+  const key = `${a.id}|${start}|${end}`;
+  let p = passDayCache.get(key);
+  if (!p) {
+    const box = a.bbox as Bbox;
+    p = Promise.all([acquisitionDays('opera_dswx', box, start, end), acquisitionDays('nisar_gcov', box, start, end)]).then(([s1, ni]) => {
+      const days = new Map<string, string[]>();
+      for (const d of s1) days.set(d, ['Sentinel-1']);
+      for (const d of ni) days.set(d, [...(days.get(d) ?? []), 'NISAR']);
+      return [...days.entries()].sort((x, y) => (x[0] < y[0] ? 1 : -1)).map(([day, sensors]) => ({ day, sensors }));
+    });
+    p.catch(() => passDayCache.delete(key));
+    passDayCache.set(key, p);
+  }
+  return p;
+}
+
+function livePassDays(a: Area, current: string): HTMLElement {
+  const list = h('div', { class: 'area-pills pass-days', 'aria-live': 'polite' }, h('span', { class: 'muted small' }, t('live.days.loading')));
+  loadPassDays(a)
+    .then((days) => {
+      clear(list);
+      if (!days.length) list.append(h('span', { class: 'muted small' }, t('live.days.none')));
+      for (const d of days.slice(0, 12)) {
+        list.append(h('button', {
+          class: 'pill pill-sm', 'aria-pressed': String(d.day === current),
+          title: t('live.days.title', { date: fmtDate(d.day), sensors: d.sensors.join(' + ') }),
+          onclick: () => S.set({ date: d.day }),
+        }, `${fmtDay(d.day)} · ${d.sensors.map((x) => (x === 'NISAR' ? 'NI' : 'S1')).join('+')}`));
+      }
+    })
+    .catch(() => {
+      clear(list);
+      list.append(h('span', { class: 'muted small' }, t('live.days.error')));
+    });
+  return h('div', { class: 'live-days' },
+    h('span', { class: 'hud-label' }, t('live.days')),
+    list,
+    h('p', { class: 'muted small' }, t('live.days.lag')),
+  );
+}
+
+// ---------- "Get this data": open the same product, place and dates in NASA's own tools ----------
+
+function dataWindow(a: Area, s: S.State): [string, string] {
+  if (a.strip) return a.strip;
+  if (a.date_range) return [a.date_range[0], a.date_range[1]];
+  return [s.date, s.date];
+}
+
+function dataLinks(l: LayerDef, s: S.State): HTMLElement | null {
+  if (!l.collection) return null;
+  const a = area(s.area);
+  const box: Bbox = a.kind === 'explore' ? (() => {
+    const b = map.getBounds();
+    return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map((v) => Math.round(v * 100) / 100) as Bbox;
+  })() : (a.bbox as Bbox);
+  const [start, end] = a.kind === 'explore' ? [s.date, s.date] : dataWindow(a, s);
+  const vx = vertexUrl(l.collection, box, start, end);
+  const link = (label: string, href: string) => h('a', { href, target: '_blank', rel: 'noopener' }, label);
+  return h('p', { class: 'layer-links small' },
+    h('span', { class: 'hud-label' }, t('data.get')), ' ',
+    link(t('data.earthdata'), earthdataSearchUrl(l.collection, box, start, end)),
+    vx ? ' · ' : null, vx ? link(t('data.vertex'), vx) : null,
+    l.wms_layer ? ' · ' : null, l.wms_layer ? link(t('data.worldview'), worldviewUrl(l.wms_layer, box, s.date)) : null,
+  );
+}
+
+/** Status line under the "newest NISAR picture" row: which pass, or why there is nothing. */
+function latestLine(): HTMLElement {
+  const i = latestInfo;
+  const f = i.frames[0];
+  const text =
+    i.state === 'loading' ? t('latest.loading')
+      : i.state === 'ok' && f ? t('latest.ok', { date: fmtDate(f.time.slice(0, 10)), time: f.time.slice(11, 16), track: `${f.path} ${f.direction === 'ASCENDING' ? 'A' : 'D'}`, n: i.frames.length })
+        : i.state === 'none' ? t('latest.none')
+          : i.state === 'error' ? t('latest.error')
+            : t('latest.idle');
+  return h('p', { class: 'layer-status small', 'aria-live': 'polite' }, text);
 }
 
 function layerRow(l: LayerDef, expert: boolean): HTMLElement {
@@ -203,7 +300,10 @@ function layerRow(l: LayerDef, expert: boolean): HTMLElement {
       : l.preview
         ? h('span', { class: 'tag', title: t('layers.preview.long') }, t('layers.preview'))
         : null;
-  const info = h('p', { class: 'layer-info', hidden: true, id: `${id}-info` }, t(l.info), l.status === 'placeholder' ? ` ${t('layers.pending.long')}` : '');
+  const info = h('div', { class: 'layer-info', hidden: true, id: `${id}-info` },
+    h('p', {}, t(l.info), l.status === 'placeholder' ? ` ${t('layers.pending.long')}` : ''),
+    dataLinks(l, s),
+  );
   const row = h(
     'li',
     { class: `layer-row${on ? ' is-on' : ''}${l.status === 'placeholder' ? ' is-pending' : ''}` },
@@ -227,6 +327,7 @@ function layerRow(l: LayerDef, expert: boolean): HTMLElement {
         btn.setAttribute('aria-expanded', String(!info.hidden));
       },
     }, 'i'),
+    l.kind === 'browse' && on ? latestLine() : null,
     expert && l.kind !== 'vector'
       ? h('input', {
           type: 'range', class: 'opacity', min: 0, max: 1, step: 0.05, value: ls.opacity,
@@ -319,6 +420,12 @@ function renderLegend(): void {
         [lc.nisar.pink, t('legend.nisar.pink')], [lc.nisar.black, t('legend.nisar.black')],
       ], t('legend.nisar.more')));
       chipColors.push(lc.nisar.green);
+    } else if (l.legend === 'rtc') {
+      legendCard.append(h('div', { class: 'legend-block' },
+        h('h3', { class: 'legend-title' }, t(l.name)),
+        h('div', { class: 'ramp', style: `background: linear-gradient(90deg, ${lc.rtc.low}, ${lc.rtc.high})` }),
+        h('p', { class: 'small' }, t('legend.rtc')),
+      ));
     } else if (l.legend === 'jrc') {
       legendCard.append(legendBlock(t('legend.jrc.title'), [[lc.jrc.low, t('legend.jrc.low')], [lc.jrc.high, t('legend.jrc.high')]]));
     } else if (l.legend === 'sat') {
@@ -332,7 +439,7 @@ function renderLegend(): void {
       ));
     }
   }
-  if (s.mode === 'expert' && a.kind !== 'explore') {
+  if (s.mode === 'expert' && !imageryOnly(a)) {
     legendCard.append(h('button', { class: 'link', onclick: () => S.set({ tab: 'sure', sheet: 'half', sureOpen: true }) }, t('legend.more')));
   }
   clear(legendChip);
@@ -351,6 +458,8 @@ export function initLeftCol(): void {
   renderLayers();
   renderLegend();
   let lastDock = dockKey(S.get());
+  // The newest-NISAR row shows which pass it found; redraw the dock when that answer arrives.
+  document.addEventListener('nisar-latest', () => renderLayers());
   S.subscribe((s, ch) => {
     if (['area', 'date', 'compare', 'mode'].some((k) => ch.has(k as keyof S.State))) renderTitle();
     const key = dockKey(s);

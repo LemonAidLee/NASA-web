@@ -1,7 +1,8 @@
 // F20 HUD status bar (expert), plain top bar (simple / mobile), menu, theme switch (F19), live catalogue check (F27).
-import { area, fmtDate, layersFor, passesFor, primaryPasses, provenance, resolveDate } from '../config';
+import { area, imageryOnly, fmtDate, layersFor, passesFor, primaryPasses, provenance, resolveDate } from '../config';
 import { t } from '../i18n';
 import { $, clear, h, storage } from '../lib/dom';
+import { latestTime } from '../lib/catalog';
 import * as S from '../state';
 import { compareDefault } from '../map/compare';
 import { resetLayout } from './windows';
@@ -67,9 +68,9 @@ function render(): void {
       ' · ', h('span', { class: 'hud-label' }, t('hud.utc')), ' ', h('span', { class: 'hud-value', id: 'clock-utc' }, '--:--:--'), h('span', { class: 'hud-value' }, 'Z')),
     seg(t('hud.area'), t(a.short).toUpperCase()),
     seg(t('hud.date'), dateLabel.toUpperCase()),
-    a.kind !== 'explore' && age !== null ? seg(t('hud.age'), `${age} D`, age > 6 ? 'hud-muted' : '') : null,
+    !imageryOnly(a) && age !== null ? seg(t('hud.age'), `${age} D`, age > 6 ? 'hud-muted' : '') : null,
     seg(t('hud.layers'), `${onCount}/${visible.length}`),
-    a.kind !== 'explore' ? seg(t('hud.scenes'), String(scenes)) : null,
+    !imageryOnly(a) ? seg(t('hud.scenes'), String(scenes)) : null,
     h('button', { class: 'hud-seg hud-btn', onclick: openSure, 'aria-label': t('sure.pill') },
       h('span', { class: 'hud-label' }, t('hud.data')), ' ', h('span', { class: 'hud-value' }, `● ${t('hud.provisional').toUpperCase()}`)),
     seg(t('hud.mode'), liveOk ? t('hud.livecheck').toUpperCase() : t('hud.archive').toUpperCase()),
@@ -91,7 +92,7 @@ function render(): void {
     { class: 'hud-row s-only' },
     h('span', { class: 'app-title' }, t('app.title')),
     h('span', { class: 'top-where' }, `${t(a.short)} · ${fmtDate(s.date)}`),
-    h('span', { class: 'chip chip-past' }, t('hud.past')),
+    a.kind === 'live' ? h('span', { class: 'chip chip-live' }, t('hud.live')) : h('span', { class: 'chip chip-past' }, t('hud.past')),
     h('span', { class: 'hud-spacer' }),
     a.kind !== 'explore'
       ? h('button', { class: 'pill pill-sm desktop-only', 'aria-pressed': String(s.base === 'sat'), onclick: () => S.set({ base: s.base === 'sat' ? 'map' : 'sat' }) }, t('hud.satbtn'))
@@ -129,7 +130,7 @@ function openMenu(): void {
       item(s.mode === 'expert' ? t('menu.expert.off') : t('menu.expert.on'), toggleMode),
       item(t('menu.story'), () => S.set({ step: 0 })),
       item(t('menu.theme', { name: t(`theme.${s.theme}`) }), nextTheme),
-      s.area !== 'explore' ? item(t('compare.open'), () => S.set(compareDefault())) : null,
+      !imageryOnly(area(s.area)) ? item(t('compare.open'), () => S.set(compareDefault())) : null,
       item(t('menu.copy'), () => {
         navigator.clipboard?.writeText(location.href).catch(() => undefined);
         document.dispatchEvent(new CustomEvent('toast', { detail: t('menu.copied') }));
@@ -153,18 +154,15 @@ function tick(): void {
   if (b) b.textContent = utc.format(now);
 }
 
-/** F27: one CMR search, no login. Falls back to the date in provenance.json and MODE ARCHIVE. */
+/** F27: CMR search of both NISAR GCOV collections (validated from 21 Oct 2026, provisional before), no login.
+ *  Falls back to the date in provenance.json and MODE ARCHIVE. */
 async function liveCheck(areaId: string): Promise<void> {
   const a = area(areaId);
-  latestPass = provenance.latest_nisar_baked[areaId] ?? null;
+  latestPass = provenance.latest_nisar_baked[areaId] ?? provenance.latest_nisar_baked[a.outline ?? ''] ?? null;
   liveOk = false;
   if (a.kind === 'explore') return;
   try {
-    const url = `https://cmr.earthdata.nasa.gov/search/granules.json?collection_concept_id=C2854338529-ASF&bounding_box=${a.bbox.join(',')}&sort_key=-start_date&page_size=1`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) throw new Error(String(res.status));
-    const j = (await res.json()) as { feed: { entry: { time_start: string }[] } };
-    const ts = j.feed.entry[0]?.time_start;
+    const ts = await latestTime('nisar_gcov', a.bbox);
     if (ts) {
       latestPass = ts.slice(0, 10);
       liveOk = true;
@@ -172,7 +170,7 @@ async function liveCheck(areaId: string): Promise<void> {
   } catch {
     /* offline or blocked: archive mode */
   }
-  render();
+  if (S.get().area === areaId) render();
 }
 
 export function initTopBar(): void {

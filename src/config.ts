@@ -1,8 +1,14 @@
 // Types and helpers for the layers.json / passes.json contract (plan 06 §4, 04 §4.1).
 import { gibsTileTemplate } from './lib/gibs';
+import type { CollectionKey } from './lib/catalog';
 
-export type AreaKind = 'disaster' | 'agri' | 'explore';
-export type LayerKind = 'class' | 'db' | 'rgb' | 'gibs' | 'xyz' | 'vector';
+/** live = a fixed place watched with NASA's ready-made pictures up to today (no baked maps, any day pickable). */
+export type AreaKind = 'disaster' | 'agri' | 'explore' | 'live';
+/** browse = the newest NISAR pass's public browse picture, found live through the ASF Search API. */
+export type LayerKind = 'class' | 'db' | 'rgb' | 'gibs' | 'xyz' | 'vector' | 'browse' | 'image';
+
+/** Areas that show only NASA's ready-made pictures, with a free date picker instead of pass stepping. */
+export const imageryOnly = (a: { kind: AreaKind }): boolean => a.kind === 'explore' || a.kind === 'live';
 
 export interface ClassDef {
   code: number;
@@ -57,6 +63,12 @@ export interface Area {
   presets?: Preset[];
   /** DOSM districts with at least half their area inside the radar box; their merged outline is drawn on the map. */
   study_districts?: string[];
+  /** Use another area's study outline (the live Kelantan view reuses Kelantan's). */
+  outline?: string;
+  /** Where the destination picker draws this area's node, when its box centre is taken by another area. */
+  pick_at?: [number, number];
+  /** Learn-more links shown in "How sure are we?". */
+  learn_links?: { label: string; url: string }[];
   panel: Panel;
 }
 
@@ -96,6 +108,12 @@ export interface LayerDef {
   wms_layer?: string;
   /** Short code for socket buttons and inspect cards. */
   abbr?: string;
+  /** NASA collection behind this layer, for the "Get this data" links. */
+  collection?: CollectionKey;
+  /** kind=image: lon/lat corners (NW, NE, SE, SW) of the baked PNG per date key ("static" for one picture). */
+  corners?: [[number, number], [number, number], [number, number], [number, number]];
+  /** kind=image: dates for which a baked picture exists. */
+  baked_dates?: string[];
 }
 
 export interface Pass {
@@ -188,7 +206,12 @@ export const areaOfFocus = (id: string): string | undefined => Object.keys(focus
 
 /** Camera box for an area: its study-district outline when there is one, else the radar box. */
 export function studyBbox(areaId: string): [number, number, number, number] {
-  return studyOutlines.find((o) => o.properties.id === areaId)?.properties.bbox ?? area(areaId).bbox;
+  return studyOutlines.find((o) => o.properties.id === outlineId(areaId))?.properties.bbox ?? area(areaId).bbox;
+}
+
+/** Which study outline belongs to an area (itself, or the area it borrows one from). */
+export function outlineId(areaId: string): string {
+  return cfg.areas.find((a) => a.id === areaId)?.outline ?? areaId;
 }
 
 export function dataUrl(path: string): string {
@@ -214,6 +237,9 @@ export async function loadConfig(): Promise<void> {
   focusAreas = fo.areas;
   focusMeta = fo.meta;
   methods = fo.methods ?? {};
+  // "today" in a date range means the viewer's current UTC day, so imagery areas never go stale.
+  const today = new Date().toISOString().slice(0, 10);
+  for (const a of c.areas) if (a.date_range?.[1] === 'today') a.date_range = [a.date_range[0], today];
   cfg = c;
   passes = p.passes.slice().sort((a, b) => (a.date_myt < b.date_myt ? -1 : a.date_myt > b.date_myt ? 1 : 0));
   story = s;

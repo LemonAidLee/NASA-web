@@ -1,5 +1,5 @@
 // F25 keyboard shortcuts + "?" help card.
-import { area, studyBbox } from '../config';
+import { area, imageryOnly, studyBbox } from '../config';
 import { t } from '../i18n';
 import { $, h } from '../lib/dom';
 import * as S from '../state';
@@ -104,7 +104,7 @@ export function initShortcuts(): void {
         S.set({ dockOpen: !s.dockOpen });
         break;
       case 's':
-        if (area(s.area).kind !== 'explore') S.set(s.compare === 'dates' ? { compare: 'off' } : compareDefault());
+        if (!imageryOnly(area(s.area))) S.set(s.compare === 'dates' ? { compare: 'off' } : compareDefault());
         break;
       case 'p':
         if (s.area === 'kedah') S.set({ compare: s.compare === 'pol' ? 'off' : 'pol' });

@@ -1,5 +1,5 @@
 // F3 time control: pass-only stepping, play, date strip of real pass days, no-pass message, radar scene age.
-import { addDays, area, daysBetween, diffDays, fmtDate, fmtDay, layersFor, passesFor, primaryPasses, resolveDate, type Pass } from '../config';
+import { addDays, area, imageryOnly, daysBetween, diffDays, fmtDate, fmtDay, layersFor, passesFor, primaryPasses, resolveDate, type Pass } from '../config';
 import { t } from '../i18n';
 import { announce, append, clear, h } from '../lib/dom';
 import * as S from '../state';
@@ -12,7 +12,7 @@ const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matc
 export function step(dir: 1 | -1): void {
   const s = S.get();
   const a = area(s.area);
-  if (a.kind === 'explore') {
+  if (imageryOnly(a)) {
     const [min, max] = a.date_range ?? [s.date, s.date];
     const d = addDays(s.date, dir);
     if (d >= min && d <= max) S.set({ date: d });
@@ -76,7 +76,7 @@ function ageLine(s: S.State): HTMLElement | null {
 function noPassBox(s: S.State): HTMLElement | null {
   const a = area(s.area);
   const list = primaryPasses(s.area);
-  if (a.kind === 'explore' || list.some((p) => p.date_myt === s.date)) return null;
+  if (imageryOnly(a) || list.some((p) => p.date_myt === s.date)) return null;
   const before = [...list].reverse().find((p) => p.date_myt < s.date);
   const after = list.find((p) => p.date_myt > s.date);
   const desc = (p?: Pass) => (p ? `${fmtDay(p.date_myt)} (${Math.abs(diffDays(p.date_myt, s.date))} days ${p.date_myt < s.date ? 'before' : 'after'})` : '—');
@@ -151,12 +151,12 @@ function render(): void {
   const a = area(s.area);
   clear(timeControl);
   const list = primaryPasses(s.area);
-  const atStart = a.kind !== 'explore' && !list.some((p) => p.date_myt < s.date);
-  const atEnd = a.kind !== 'explore' && !list.some((p) => p.date_myt > s.date);
+  const atStart = !imageryOnly(a) && !list.some((p) => p.date_myt < s.date);
+  const atEnd = !imageryOnly(a) && !list.some((p) => p.date_myt > s.date);
   const controls = h('div', { class: 'time-buttons' },
     h('button', { class: 'pill pill-icon', 'aria-label': t('time.prev'), disabled: atStart, onclick: () => step(-1) }, '◀'),
     h('button', { class: 'pill pill-icon', 'aria-label': t('time.next'), disabled: atEnd, onclick: () => step(1) }, '▶'),
-    a.kind !== 'explore'
+    !imageryOnly(a)
       ? h('button', { class: 'pill pill-icon', 'aria-label': s.playing ? t('time.pause') : t('time.play'), 'aria-pressed': String(s.playing), onclick: () => togglePlay() }, s.playing ? '❚❚' : '▷')
       : null,
   );

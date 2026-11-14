@@ -1,4 +1,4 @@
-// THROWAWAY REHEARSAL (12 Nov 2026) — do not reuse. See ../README-REHEARSAL.md.
+// Radar water map: NASA Space Apps 2026, "Dancing with the SARs". Boot, styles and map protocols.
 import './styles/tokens.css';
 import '@fontsource-variable/jetbrains-mono';
 import '@fontsource-variable/geist';

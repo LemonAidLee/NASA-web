@@ -1,5 +1,5 @@
 // Right panel (desktop) / bottom-sheet tabs (mobile): Numbers (F7, F14), Rain (F13), How sure are we? (F9), Story, About + credits (F10).
-import { area, daysBetween, diffDays, fmtDate, fmtDay, fmtNum, primaryPasses, provenance, story } from '../config';
+import { area, imageryOnly, daysBetween, diffDays, fmtDate, fmtDay, fmtNum, primaryPasses, provenance, story } from '../config';
 import { t } from '../i18n';
 import { card, clear, h } from '../lib/dom';
 import * as S from '../state';
@@ -7,6 +7,7 @@ import { districtByCode, districtsOf } from '../map/districts';
 import { map } from '../map/mainMap';
 import { legendCard, layersCard, titleCard } from './leftCol';
 import { segBar, statRow } from './kit';
+import { earthdataSearchUrl, latestTime, vertexUrl, type Bbox } from '../lib/catalog';
 
 export const panelRoot = h('div', { class: 'panel-inner' });
 let mobile = false;
@@ -25,7 +26,7 @@ interface Tab {
 function tabs(s: S.State): Tab[] {
   const a = area(s.area);
   const expert = s.mode === 'expert' && !mobile;
-  const numbersLabel = a.kind === 'explore' ? t('tab.numbers.exp') : t(expert ? (a.panel.numbers_tab_expert ?? 'tab.numbers') : mobile ? 'tab.numbers' : (a.panel.numbers_tab ?? 'tab.numbers'));
+  const numbersLabel = imageryOnly(a) ? t(a.kind === 'live' ? 'tab.numbers.live' : 'tab.numbers.exp') : t(expert ? (a.panel.numbers_tab_expert ?? 'tab.numbers') : mobile ? 'tab.numbers' : (a.panel.numbers_tab ?? 'tab.numbers'));
   const sureCount = String(a.panel.sure_lines.length);
   if (mobile) {
     return [
@@ -39,7 +40,7 @@ function tabs(s: S.State): Tab[] {
     const list: Tab[] = [
       { id: 'numbers', label: numbersLabel.toUpperCase(), badge: s.area === 'kedah' ? String(primaryPasses('kedah').length) : s.area === 'kelantan' ? '—' : undefined },
     ];
-    if (a.kind !== 'explore') list.push({ id: 'rain', label: t('tab.rain').toUpperCase() });
+    if (!imageryOnly(a)) list.push({ id: 'rain', label: t('tab.rain').toUpperCase() });
     list.push(
       { id: 'sure', label: t('tab.sure').toUpperCase(), badge: sureCount },
       { id: 'story', label: t('tab.story').toUpperCase(), badge: String(story.steps.length) },
@@ -194,9 +195,42 @@ function numbersKedah(s: S.State): HTMLElement[] {
   ];
 }
 
+// ---------------- Live (Kelantan this monsoon): what NASA has published so far ----------------
+
+function liveNumbers(s: S.State): HTMLElement[] {
+  const a = area(s.area);
+  const facts = h('ul', { class: 'facts', 'aria-live': 'polite' }, h('li', { class: 'muted' }, t('live.days.loading')));
+  const box = a.bbox as Bbox;
+  const [start, end] = a.date_range ?? [a.default_date, a.default_date];
+  Promise.all([latestTime('opera_dswx', box), latestTime('opera_rtc', box), latestTime('nisar_gcov', box)])
+    .then(([dswx, rtc, nisar]) => {
+      clear(facts);
+      const row = (label: string, iso: string | null) =>
+        h('li', {}, h('strong', {}, label), ' ', iso ? `${fmtDate(iso.slice(0, 10))}, ${iso.slice(11, 16)} UTC` : t('live.none'));
+      facts.append(row(t('live.latest.dswx'), dswx), row(t('live.latest.rtc'), rtc), row(t('live.latest.nisar'), nisar));
+    })
+    .catch(() => {
+      clear(facts);
+      facts.append(h('li', { class: 'muted' }, t('live.days.error')));
+    });
+  const link = (label: string, href: string) => h('a', { href, target: '_blank', rel: 'noopener' }, label);
+  return [
+    card(t('live.title'), t('live.tagline'),
+      h('p', {}, t('live.body')),
+      h('h3', { class: 'legend-title' }, t('live.latest')),
+      facts,
+      h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('data.get')), ' ',
+        link(t('data.earthdata'), earthdataSearchUrl('opera_dswx', box, start, end)), ' · ',
+        link(t('data.vertex.nisar'), vertexUrl('nisar_gcov', box, start, end) ?? '#')),
+      h('p', { class: 'pending small' }, t('live.notmeasured')),
+    ),
+  ];
+}
+
 function numbers(s: S.State): (HTMLElement | null)[] {
   const a = area(s.area);
-  if (a.kind === 'explore') return [card(t('num.exp.title'), t('exp.badge'), h('p', {}, t('num.exp.body')))];
+  if (a.kind === 'live') return liveNumbers(s);
+  if (imageryOnly(a)) return [card(t('num.exp.title'), t('exp.badge'), h('p', {}, t('num.exp.body')))];
   return [districtCard(s), ...(s.area === 'kelantan' ? numbersKelantan(s) : numbersKedah(s))];
 }
 
@@ -215,15 +249,17 @@ function rain(s: S.State): HTMLElement[] {
 export function sureCard(s: S.State): HTMLElement {
   const a = area(s.area);
   const first = h('ol', { class: 'sure-first' }, a.panel.sure_first.map((k) => h('li', {}, t(k))));
-  const links = a.panel.official_links.length
-    ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('sure.links')), ' ',
-        ...a.panel.official_links.flatMap((l, i) => [i ? ' · ' : '', h('a', { href: l.url, target: '_blank', rel: 'noopener' }, t(l.label))]))
-    : null;
+  const linkRow = (label: string, list: { label: string; url: string }[] | undefined) =>
+    list?.length
+      ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t(label)), ' ',
+          ...list.flatMap((l, i) => [i ? ' · ' : '', h('a', { href: l.url, target: '_blank', rel: 'noopener' }, t(l.label))]))
+      : null;
   const el = h('section', { class: 'card sure-card', id: 'sure-card', tabindex: '-1' },
     h('h2', { class: 'card-title' }, t('sure.title')),
     h('p', { class: 'card-tagline' }, t('sure.tagline')),
     first,
-    links,
+    linkRow('sure.links', a.panel.official_links),
+    linkRow('sure.learn', a.learn_links),
     h('button', { class: 'pill', 'aria-expanded': String(s.sureOpen), onclick: () => S.set({ sureOpen: !S.get().sureOpen }) }, t(s.sureOpen ? 'sure.less' : 'sure.more')),
   );
   if (s.sureOpen) el.append(sureDetails(s));
@@ -240,7 +276,7 @@ function sureDetails(s: S.State): HTMLElement {
       return h('li', {}, h('strong', {}, `${head}.`), ' ', rest.join('. '));
     })),
   );
-  if (a.kind === 'explore') return det;
+  if (imageryOnly(a)) return det;
   det.append(
     h('h3', { class: 'legend-title' }, t('sure.agreement')),
     h('p', { class: 'small' }, t(a.panel.validation ?? '')),
@@ -296,13 +332,70 @@ function storyTab(): HTMLElement[] {
 
 // ---------------- About + credits (F10) ----------------
 
+/** "How radar sees water": the echo types from NASA Earthdata's SAR basics page, tied to our layers. */
+function radarExplainer(): HTMLElement {
+  const row = (glyph: string, title: string, body: string) =>
+    h('li', { class: 'echo-row' }, h('span', { class: 'echo-glyph', 'aria-hidden': 'true' }, glyph), h('div', {}, h('strong', {}, t(title)), ' ', t(body)));
+  const bands = h('div', { class: 'table-wrap' }, h('table', { class: 'table' },
+    h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t('explain.band')), h('th', { scope: 'col' }, t('explain.wave')), h('th', { scope: 'col' }, t('explain.here')))),
+    h('tbody', {},
+      h('tr', {}, h('th', { scope: 'row' }, 'C'), h('td', { class: 'num' }, '3.8–7.5 cm'), h('td', {}, t('explain.c'))),
+      h('tr', {}, h('th', { scope: 'row' }, 'S'), h('td', { class: 'num' }, '7.5–15 cm'), h('td', {}, t('explain.s'))),
+      h('tr', {}, h('th', { scope: 'row' }, 'L'), h('td', { class: 'num' }, '15–30 cm'), h('td', {}, t('explain.l'))),
+    ),
+  ));
+  return card(t('explain.title'), t('explain.tagline'),
+    h('ul', { class: 'echo-list' },
+      row('◢', 'explain.mirror.title', 'explain.mirror.body'),
+      row('≋', 'explain.rough.title', 'explain.rough.body'),
+      row('❦', 'explain.volume.title', 'explain.volume.body'),
+      row('⌐', 'explain.double.title', 'explain.double.body'),
+    ),
+    bands,
+    h('p', { class: 'src-line small' }, t('explain.src'), ' ',
+      h('a', { href: 'https://www.earthdata.nasa.gov/learn/earth-observation-data-basics/sar', target: '_blank', rel: 'noopener' }, t('learn.sarbasics'))),
+  );
+}
+
+/** What NASA said NISAR would do, before launch, in its one-page application overviews (2017). */
+function nisarPromise(): HTMLElement {
+  const quote = (text: string, src: string, url: string) =>
+    h('blockquote', { class: 'quote' }, h('p', {}, `“${t(text)}”`), h('cite', { class: 'small' }, h('a', { href: url, target: '_blank', rel: 'noopener' }, t(src))));
+  return card(t('promise.title'), t('promise.tagline'),
+    quote('promise.floods', 'promise.floods.src', 'https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Floods.pdf'),
+    quote('promise.food', 'promise.food.src', 'https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Food_Security1.pdf'),
+    h('p', { class: 'small' }, t('promise.us')),
+  );
+}
+
+function learnMore(): HTMLElement {
+  const items: [string, string][] = [
+    ['learn.sarbasics', 'https://www.earthdata.nasa.gov/learn/earth-observation-data-basics/sar'],
+    ['learn.eobasics', 'https://www.earthdata.nasa.gov/learn/earth-observation-data-basics'],
+    ['learn.arset', 'https://www.earthdata.nasa.gov/data/projects/arset'],
+    ['learn.storymaps', 'https://science.nasa.gov/mission/nisar/arcgis-storymaps/'],
+    ['learn.benefits', 'https://science.nasa.gov/mission/nisar/societal-benefits/'],
+    ['learn.uavsar', 'https://uavsar.jpl.nasa.gov/education/postcards.html'],
+    ['learn.nisardocs', 'https://nisar-docs.asf.alaska.edu/'],
+    ['learn.earthdatasearch', 'https://search.earthdata.nasa.gov/search'],
+    ['learn.vertex', 'https://search.asf.alaska.edu/#/'],
+  ];
+  return card(t('learn.title'), t('learn.tagline'),
+    h('ul', { class: 'credits' }, items.map(([k, url]) => h('li', {}, h('a', { href: url, target: '_blank', rel: 'noopener' }, t(k)), ' · ', t(`${k}.what`)))),
+    h('p', { class: 'muted small' }, t('learn.others')),
+  );
+}
+
 function about(s: S.State): (HTMLElement | null)[] {
-  const credits = ['credit.nisar', 'credit.rtc', 'credit.dswx', 'credit.gibs', 'credit.jrc', 'credit.dosm', 'credit.osm', 'credit.imerg', 'credit.worldcover', 'credit.dem', 'credit.news', 'credit.themes', 'credit.fonts', 'credit.libs', 'credit.noendorse'];
+  const credits = ['credit.nisar', 'credit.rtc', 'credit.dswx', 'credit.gibs', 'credit.asf', 'credit.jrc', 'credit.dosm', 'credit.osm', 'credit.imerg', 'credit.worldcover', 'credit.dem', 'credit.news', 'credit.themes', 'credit.fonts', 'credit.libs', 'credit.noendorse'];
   const qa = (q: string, a2: string) => h('div', { class: 'qa' }, h('h3', { class: 'legend-title' }, t(q)), h('p', {}, t(a2)));
   return [
     mobile ? sureCard(s) : null,
+    radarExplainer(),
     card(t('about.passdays.title'), t('lim.passdays').split('. ')[1] ?? '', h('p', {}, t('about.passdays.body'))),
     card(t('about.challenge.title'), t('app.subtitle'), qa('about.why.q', 'about.why.a'), qa('about.pol.q', 'about.pol.a'), qa('about.future.q', 'about.future.a')),
+    nisarPromise(),
+    learnMore(),
     card(t('about.credits.title'), t('about.credits.tagline'),
       h('ul', { class: 'credits' }, credits.map((k) => h('li', {}, t(k)))),
       h('details', {}, h('summary', {}, t('about.granules')),

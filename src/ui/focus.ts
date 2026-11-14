@@ -1,5 +1,5 @@
 // Focus areas + AI-analysis dashboard (expandable, closable).
-// Rehearsal: the analysis text is an AI draft from sourced facts, clearly tagged; every radar number is a placeholder.
+// The analysis text is an AI draft from sourced facts, clearly tagged; every radar number is a placeholder.
 // Refined version (reports/AI integration in SAR prototype.md): AI writes text at build time, code fills every number
 // from the pipeline outputs, a person reviews it. No runtime model, no AI numbers, no safety advice.
 // Panel options (12 Nov): A inspect card on marker hover, B inspect screen when expanded, C segmented stat bars.

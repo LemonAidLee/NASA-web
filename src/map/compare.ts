@@ -3,7 +3,7 @@
 import Compare from '@maplibre/maplibre-gl-compare';
 import '@maplibre/maplibre-gl-compare/dist/maplibre-gl-compare.css';
 import { Map as MLMap, AttributionControl } from 'maplibre-gl';
-import { area, fmtDate, primaryPasses, type Pass } from '../config';
+import { area, imageryOnly, fmtDate, primaryPasses, type Pass } from '../config';
 import { t } from '../i18n';
 import { $, clear, h } from '../lib/dom';
 import { basemapStyle } from '../lib/theme';
@@ -22,7 +22,7 @@ export function initCompare(): void {
       S.set({ compare: 'off' });
       return;
     }
-    if (ch.has('area') && s.compare !== 'off' && s.area === 'explore') {
+    if (ch.has('area') && s.compare !== 'off' && imageryOnly(area(s.area))) {
       S.set({ compare: 'off' });
       return;
     }

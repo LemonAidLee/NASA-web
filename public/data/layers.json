@@ -1,5 +1,5 @@
 {
-  "_note": "Rehearsal contract (plan 06 §4). At the event 09_bake_web.py writes this file. status=real layers load login-free NASA/JRC tiles at runtime; status=placeholder layers wait for the event-day pipeline.",
+  "_note": "Layer contract (plan 06 §4). status=real layers load login-free NASA/JRC tiles at runtime, or pictures baked by pipeline/bake.py; status=placeholder layers draw nothing until the pipeline has made them.",
   "gibs_base": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best",
   "areas": [
     {
@@ -62,6 +62,20 @@
         "legend_layer": "kel_flood",
         "pulse_label": "kel.pulse"
       },
+      "learn_links": [
+        {
+          "label": "learn.storymap",
+          "url": "https://storymaps.arcgis.com/stories/c00d7691b8004b20a14f28df710d05fd"
+        },
+        {
+          "label": "learn.floods",
+          "url": "https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Floods.pdf"
+        },
+        {
+          "label": "learn.sarbasics",
+          "url": "https://www.earthdata.nasa.gov/learn/earth-observation-data-basics/sar"
+        }
+      ],
       "study_districts": [
         "Tumpat",
         "Kota Bharu",
@@ -86,7 +100,7 @@
       "default_date": "2026-10-05",
       "strip": [
         "2026-09-15",
-        "2026-10-31"
+        "2026-11-08"
       ],
       "revisit_days": 12,
       "compare_default": [
@@ -150,11 +164,89 @@
         "legend_layer": "ked_first_flooded",
         "pulse_label": "ked.pulse"
       },
+      "learn_links": [
+        {
+          "label": "learn.foodsecurity",
+          "url": "https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Food_Security1.pdf"
+        },
+        {
+          "label": "learn.sarbasics",
+          "url": "https://www.earthdata.nasa.gov/learn/earth-observation-data-basics/sar"
+        },
+        {
+          "label": "learn.arset",
+          "url": "https://www.earthdata.nasa.gov/data/projects/arset"
+        }
+      ],
       "study_districts": [
         "Kota Setar",
         "Kubang Pasu",
         "Pokok Sena",
         "Pendang"
+      ]
+    },
+    {
+      "id": "kelantan_live",
+      "kind": "live",
+      "name": "area.live",
+      "short": "area.live.short",
+      "bbox": [
+        101.8,
+        5.6,
+        102.6,
+        6.3
+      ],
+      "outline": "kelantan",
+      "pick_at": [
+        101.75,
+        4.95
+      ],
+      "default_date": "2026-11-02",
+      "date_range": [
+        "2026-10-01",
+        "today"
+      ],
+      "revisit_days": 6,
+      "states": [
+        "Kelantan"
+      ],
+      "panel": {
+        "question": "live.question",
+        "sensor": "live.sensor",
+        "headline": "live.badge",
+        "official": "kel.official",
+        "official_links": [
+          {
+            "label": "link.infobanjir",
+            "url": "https://publicinfobanjir.water.gov.my/"
+          },
+          {
+            "label": "link.nadma",
+            "url": "https://www.nadma.gov.my/"
+          }
+        ],
+        "sure_first": [
+          "live.sure.1",
+          "live.sure.2",
+          "live.sure.3"
+        ],
+        "sure_lines": [
+          "lim.imagery.live",
+          "lim.lag",
+          "lim.notwarning",
+          "lim.notreviewed",
+          "lim.passdays"
+        ]
+      },
+      "learn_links": [
+        {
+          "label": "learn.storymap",
+          "url": "https://storymaps.arcgis.com/stories/c00d7691b8004b20a14f28df710d05fd"
+        },
+        {
+          "label": "learn.floods",
+          "url": "https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Floods.pdf"
+        }
       ]
     },
     {
@@ -171,7 +263,7 @@
       "default_date": "2026-10-05",
       "date_range": [
         "2025-10-29",
-        "2026-10-23"
+        "today"
       ],
       "presets": [
         {
@@ -190,7 +282,7 @@
             6
           ],
           "zoom": 9,
-          "date": "2026-10-22"
+          "date": "2026-10-31"
         },
         {
           "label": "preset.malaysia",
@@ -281,7 +373,8 @@
         "#0072B2",
         "#56B4E9"
       ],
-      "abbr": "FL"
+      "abbr": "FL",
+      "collection": "opera_rtc"
     },
     {
       "id": "kel_vv",
@@ -309,7 +402,8 @@
         "#000000",
         "#FFFFFF"
       ],
-      "abbr": "VV"
+      "abbr": "VV",
+      "collection": "opera_rtc"
     },
     {
       "id": "kel_dswx",
@@ -337,7 +431,8 @@
         "#FFFFFF"
       ],
       "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
-      "abbr": "DW"
+      "abbr": "DW",
+      "collection": "opera_dswx"
     },
     {
       "id": "kel_nisar_watch",
@@ -359,14 +454,15 @@
       "opacity": 0.9,
       "info": "info.kel_nisar_watch",
       "legend": "nisar",
-      "attribution": "NISAR GCOV (provisional) via NASA GIBS",
+      "attribution": "NISAR GCOV via NASA GIBS",
       "swatch": [
         "#22307A",
         "#3C9B4E",
         "#E7A6C8"
       ],
       "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
-      "abbr": "NI"
+      "abbr": "NI",
+      "collection": "nisar_gcov"
     },
     {
       "id": "ked_first_flooded",
@@ -430,7 +526,8 @@
         "#009E73",
         "#005C43"
       ],
-      "abbr": "FP"
+      "abbr": "FP",
+      "collection": "nisar_gcov"
     },
     {
       "id": "ked_rgb",
@@ -459,14 +556,15 @@
       ],
       "info": "info.ked_rgb",
       "legend": "nisar",
-      "attribution": "NISAR GCOV (provisional) via NASA GIBS",
+      "attribution": "NISAR GCOV via NASA GIBS",
       "swatch": [
         "#22307A",
         "#3C9B4E",
         "#E7A6C8"
       ],
       "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
-      "abbr": "RGB"
+      "abbr": "RGB",
+      "collection": "nisar_gcov"
     },
     {
       "id": "ked_hh",
@@ -494,7 +592,8 @@
         "#000000",
         "#FFFFFF"
       ],
-      "abbr": "HH"
+      "abbr": "HH",
+      "collection": "nisar_gcov"
     },
     {
       "id": "ked_hv",
@@ -522,7 +621,8 @@
         "#000000",
         "#FFFFFF"
       ],
-      "abbr": "HV"
+      "abbr": "HV",
+      "collection": "nisar_gcov"
     },
     {
       "id": "ked_dswx",
@@ -550,7 +650,8 @@
         "#FFFFFF"
       ],
       "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
-      "abbr": "DW"
+      "abbr": "DW",
+      "collection": "opera_dswx"
     },
     {
       "id": "ked_disagree",
@@ -573,7 +674,8 @@
         "#CC79A7",
         "#56B4E9"
       ],
-      "abbr": "Δ"
+      "abbr": "Δ",
+      "collection": "nisar_gcov"
     },
     {
       "id": "exp_nisar",
@@ -594,14 +696,15 @@
       "opacity": 0.95,
       "info": "info.exp_nisar",
       "legend": "nisar",
-      "attribution": "NISAR GCOV (provisional) via NASA GIBS",
+      "attribution": "NISAR GCOV via NASA GIBS",
       "swatch": [
         "#22307A",
         "#3C9B4E",
         "#E7A6C8"
       ],
       "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
-      "abbr": "NI"
+      "abbr": "NI",
+      "collection": "nisar_gcov"
     },
     {
       "id": "exp_dswx",
@@ -629,13 +732,137 @@
         "#FFFFFF"
       ],
       "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
-      "abbr": "DW"
+      "abbr": "DW",
+      "collection": "opera_dswx"
+    },
+    {
+      "id": "live_rtc",
+      "areas": [
+        "kelantan_live"
+      ],
+      "group": "group.live",
+      "name": "layer.live_rtc",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/OPERA_L2_Radiometric_Terrain_Corrected_SAR_Sentinel-1/default/{date}/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png",
+      "dates": "daily",
+      "maxzoom": 12,
+      "slot": "data",
+      "on": false,
+      "opacity": 0.9,
+      "info": "info.live_rtc",
+      "legend": "rtc",
+      "attribution": "OPERA RTC-S1 via NASA GIBS. Contains modified Copernicus Sentinel data 2026",
+      "swatch": [
+        "#000000",
+        "#FFFFFF"
+      ],
+      "wms_layer": "OPERA_L2_Radiometric_Terrain_Corrected_SAR_Sentinel-1",
+      "abbr": "RTC",
+      "collection": "opera_rtc",
+      "exclusive_with": [
+        "live_nisar"
+      ]
+    },
+    {
+      "id": "live_dswx",
+      "areas": [
+        "kelantan_live"
+      ],
+      "group": "group.live",
+      "name": "layer.kel_dswx",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1/default/{date}/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png",
+      "dates": "daily",
+      "maxzoom": 12,
+      "slot": "data",
+      "on": true,
+      "opacity": 0.75,
+      "info": "info.dswx_live",
+      "legend": "dswx",
+      "attribution": "OPERA DSWx-S1 via NASA GIBS. Contains modified Copernicus Sentinel data 2026",
+      "swatch": [
+        "#0000FF",
+        "#00FF00",
+        "#FFFFFF"
+      ],
+      "wms_layer": "OPERA_L3_Dynamic_Surface_Water_Extent-Sentinel-1",
+      "abbr": "DW",
+      "collection": "opera_dswx"
+    },
+    {
+      "id": "live_nisar",
+      "areas": [
+        "kelantan_live"
+      ],
+      "group": "group.live",
+      "name": "layer.exp_nisar",
+      "simple": true,
+      "kind": "gibs",
+      "status": "real",
+      "preview": true,
+      "url": "{gibs}/NISAR_L2_Geocoded_Polarimetric_Covariance/default/{date}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.png",
+      "dates": "daily",
+      "maxzoom": 13,
+      "slot": "data",
+      "on": false,
+      "opacity": 0.95,
+      "info": "info.exp_nisar",
+      "legend": "nisar",
+      "attribution": "NISAR GCOV via NASA GIBS",
+      "swatch": [
+        "#22307A",
+        "#3C9B4E",
+        "#E7A6C8"
+      ],
+      "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
+      "abbr": "NI",
+      "collection": "nisar_gcov",
+      "exclusive_with": [
+        "live_rtc"
+      ]
+    },
+    {
+      "id": "nisar_latest",
+      "areas": [
+        "kelantan",
+        "kedah",
+        "kelantan_live",
+        "explore"
+      ],
+      "group": "group.latest",
+      "name": "layer.nisar_latest",
+      "simple": true,
+      "kind": "browse",
+      "status": "real",
+      "preview": true,
+      "url": "asf:latest",
+      "dates": "static",
+      "slot": "context",
+      "on": false,
+      "opacity": 0.9,
+      "info": "info.nisar_latest",
+      "legend": "nisar",
+      "attribution": "NISAR GCOV browse image, NASA/JPL via ASF DAAC",
+      "swatch": [
+        "#3C9B4E",
+        "#E7A6C8",
+        "#22307A"
+      ],
+      "abbr": "NEW",
+      "collection": "nisar_gcov"
     },
     {
       "id": "jrc",
       "areas": [
         "kelantan",
-        "kedah"
+        "kedah",
+        "kelantan_live"
       ],
       "group": "group.context",
       "name": "layer.jrc",
@@ -661,7 +888,8 @@
       "id": "districts",
       "areas": [
         "kelantan",
-        "kedah"
+        "kedah",
+        "kelantan_live"
       ],
       "group": "group.context",
       "name": "layer.districts",
@@ -685,6 +913,7 @@
       "areas": [
         "kelantan",
         "kedah",
+        "kelantan_live",
         "explore"
       ],
       "group": "group.sat",
@@ -734,6 +963,10 @@
     "study": {
       "line": "#FF3EDB",
       "casing": "#000000"
+    },
+    "rtc": {
+      "low": "#000000",
+      "high": "#FFFFFF"
     }
   }
 }

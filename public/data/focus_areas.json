@@ -1,7 +1,7 @@
 {
-  "_note": "Focus areas for the AI-analysis dashboard. Rehearsal: 'analysis' text is an AI draft (Claude) from the plan's sourced facts, NOT reviewed and NOT computed from radar data. In the refined version this file is generated at build time from the pipeline outputs (AI writes text, code fills every number, a person reviews it; reports/AI integration in SAR prototype.md). scripts/make-focus-areas.mjs adds 'code' and 'center' from the DOSM districts.",
+  "_note": "Focus areas for the AI-analysis dashboard. The 'analysis' text is an AI draft (Claude) from the plan's sourced facts, NOT reviewed and NOT computed from radar data. In the refined version this file is generated at build time from the pipeline outputs (AI writes text, code fills every number, a person reviews it; reports/AI integration in SAR prototype.md). scripts/make-focus-areas.mjs adds 'code' and 'center' from the DOSM districts.",
   "meta": {
-    "generated_by": "Claude (draft text for the rehearsal)",
+    "generated_by": "Claude (draft text, not yet reviewed)",
     "reviewed": false
   },
   "areas": {

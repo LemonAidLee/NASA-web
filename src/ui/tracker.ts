@@ -1,7 +1,7 @@
 // F · objectives tracker: a small, collapsible quest-style list in the map's top-right for the story and the
 // focus-area tour. Ticks itself off from what the user has actually seen (kit.visited). Hidden on phones, during the
 // story itself, in compare mode and behind the expanded dashboard.
-import { area, focusFor, story } from '../config';
+import { area, imageryOnly, focusFor, story } from '../config';
 import { t } from '../i18n';
 import { $, clear, h, storage } from '../lib/dom';
 import * as S from '../state';
@@ -18,7 +18,7 @@ function render(): void {
   const s = S.get();
   const list = focusFor(s.area);
   clear(el);
-  el.hidden = s.step !== null || s.compare !== 'off' || s.dash === 'max' || area(s.area).kind === 'explore';
+  el.hidden = s.step !== null || s.compare !== 'off' || s.dash === 'max' || imageryOnly(area(s.area));
   if (el.hidden) return;
   const isCollapsed = collapsed();
   el.append(h('button', {

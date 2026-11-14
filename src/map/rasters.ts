@@ -1,10 +1,11 @@
 // Reconcile state → raster layers on any map (main map and both compare maps use this).
 // Plan 06 §6.3 rule 10: one layer per date, switched with raster-opacity; only the active date and its neighbours load.
 import type { Map as MLMap, LayerSpecification, ExpressionSpecification } from 'maplibre-gl';
-import { cfg, gibsUrl, passesFor, primaryPasses, resolveDate, studyOutlines, type LayerDef } from '../config';
+import { cfg, dataUrl, gibsUrl, outlineId, passesFor, primaryPasses, resolveDate, studyOutlines, type LayerDef } from '../config';
 import type { Base, LayerState } from '../state';
 import { cssVar } from '../lib/theme';
 import { t } from '../i18n';
+import { syncLatest } from './latestNisar';
 
 export interface RenderCtx {
   area: string;
@@ -17,6 +18,8 @@ export interface RenderCtx {
   /** District codes of the area's focus areas, and the selected one (AI-analysis dashboard). */
   focusCodes?: string[];
   focusSel?: string | null;
+  /** Main map only: draws the live "newest NISAR picture" (compare maps leave it out). */
+  main?: boolean;
 }
 
 const SLOTS = ['slot-sat', 'slot-context', 'slot-data', 'slot-top'] as const;
@@ -115,12 +118,14 @@ export function isOn(l: LayerDef, ctx: RenderCtx): boolean {
 
 /** Date keys to keep loaded for a dated layer: the active picture plus its neighbours (preload). */
 function wantedKeys(l: LayerDef, ctx: RenderCtx): { active: string | null; exact: boolean; neighbours: string[] } {
-  if (l.kind === 'xyz') return { active: 'static', exact: true, neighbours: [] };
+  if (l.kind === 'xyz' || l.dates === 'static') return { active: 'static', exact: true, neighbours: [] };
   const r = resolveDate(l, ctx.area, ctx.date);
   if (!r) return { active: null, exact: true, neighbours: [] };
+  if (l.kind === 'image' && l.baked_dates && !l.baked_dates.includes(r.utc)) return { active: null, exact: true, neighbours: [] };
   let list: string[] = [];
   if (l.dates === 'passes') list = primaryPasses(ctx.area).filter((p) => p.gibs).map((p) => p.date_utc);
   else if (l.dates.startsWith('sensor:')) list = passesFor(ctx.area).filter((p) => p.sensor === l.dates.slice(7)).map((p) => p.date_utc);
+  if (l.kind === 'image' && l.baked_dates) list = list.filter((d) => l.baked_dates?.includes(d));
   const i = list.indexOf(r.utc);
   const neighbours = i < 0 ? [] : [list[i - 1], list[i + 1]].filter((x): x is string => !!x);
   return { active: r.utc, exact: r.exact, neighbours };
@@ -129,8 +134,12 @@ function wantedKeys(l: LayerDef, ctx: RenderCtx): { active: string | null; exact
 function addRaster(map: MLMap, l: LayerDef, key: string): void {
   const id = `${PREFIX}${l.id}@${key}`;
   if (map.getLayer(id)) return;
-  const { url, tileSize } = l.kind === 'gibs' ? gibsUrl(l, key) : { url: l.url, tileSize: 256 };
-  if (!map.getSource(id)) {
+  if (l.kind === 'image') {
+    // A picture baked by our pipeline (pipeline/bake.py): one PNG per date, already in Web Mercator, placed by corners.
+    if (!l.corners) return;
+    if (!map.getSource(id)) map.addSource(id, { type: 'image', url: dataUrl(l.url.replace('{date}', key)), coordinates: l.corners });
+  } else if (!map.getSource(id)) {
+    const { url, tileSize } = l.kind === 'gibs' ? gibsUrl(l, key) : { url: l.url, tileSize: 256 };
     map.addSource(id, {
       type: 'raster',
       tiles: [url],
@@ -161,7 +170,11 @@ export function syncRasters(map: MLMap, ctx: RenderCtx): void {
   const existing = map.getStyle().layers.filter((x) => x.id.startsWith(PREFIX)).map((x) => x.id);
 
   for (const l of cfg.layers) {
-    if (l.status !== 'real' || (l.kind !== 'gibs' && l.kind !== 'xyz')) continue;
+    if (l.kind === 'browse') {
+      if (ctx.main) syncLatest(map, ctx.area, isOn(l, ctx), ctx.layers[l.id]?.opacity ?? l.opacity);
+      continue;
+    }
+    if (l.status !== 'real' || (l.kind !== 'gibs' && l.kind !== 'xyz' && l.kind !== 'image')) continue;
     const mine = existing.filter((id) => id.startsWith(`${PREFIX}${l.id}@`));
     if (!isOn(l, ctx)) {
       for (const id of mine) map.setLayoutProperty(id, 'visibility', 'none');
@@ -189,10 +202,10 @@ export function syncRasters(map: MLMap, ctx: RenderCtx): void {
   syncStudyAreas(map, ctx);
 }
 
-/** Remove date layers that piled up in Explore mode (any day can be picked there). */
+/** Remove date layers that piled up in imagery-only areas (any day can be picked there). */
 export function pruneExplore(map: MLMap, keepUtc: string): void {
   for (const l of map.getStyle().layers) {
-    if (!l.id.startsWith(`${PREFIX}exp_`) && !l.id.startsWith(`${PREFIX}sat@`)) continue;
+    if (!l.id.startsWith(`${PREFIX}exp_`) && !l.id.startsWith(`${PREFIX}live_`) && !l.id.startsWith(`${PREFIX}sat@`)) continue;
     if (l.id.endsWith(`@${keepUtc}`)) continue;
     map.removeLayer(l.id);
     if (map.getSource(l.id)) map.removeSource(l.id);
@@ -237,9 +250,10 @@ export function syncStudyAreas(map: MLMap, ctx: RenderCtx): void {
     });
     // Topmost label layer: placed first, so basemap names make room for it instead of printing over it.
   }
-  const strength: ExpressionSpecification = ['case', ['==', ['get', 'id'], ctx.area], 1, 0.45];
+  const own = outlineId(ctx.area);
+  const strength: ExpressionSpecification = ['case', ['==', ['get', 'id'], own], 1, 0.45];
   map.setPaintProperty('study-line', 'line-opacity', strength);
-  map.setPaintProperty('study-casing', 'line-opacity', ['case', ['==', ['get', 'id'], ctx.area], 0.9, 0.4]);
+  map.setPaintProperty('study-casing', 'line-opacity', ['case', ['==', ['get', 'id'], own], 0.9, 0.4]);
   map.setPaintProperty('study-label', 'text-opacity', strength);
 }
 

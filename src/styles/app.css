@@ -1235,7 +1235,7 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
   #cursorbar { display: none !important; }
   #topbar .s-only { padding: 2px var(--s2) 2px var(--s3); gap: var(--s2); flex-wrap: nowrap; }
   #topbar .app-title,
-  #topbar .chip-past { display: none; }
+  #topbar .chip-past, #topbar .chip-live { display: none; }
   .top-where { font-size: var(--fs-caption); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .pill-sure { padding: 0 var(--s3); }
 
