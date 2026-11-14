@@ -8,6 +8,7 @@ import { map } from '../map/mainMap';
 import { legendCard, layersCard, titleCard } from './leftCol';
 import { segBar, statRow } from './kit';
 import { earthdataSearchUrl, latestTime, vertexUrl, type Bbox } from '../lib/catalog';
+import { ha as haFmt, haRange, kedDateByUtc, kedPass, kelPass, stats } from '../lib/stats';
 
 export const panelRoot = h('div', { class: 'panel-inner' });
 let mobile = false;
@@ -81,45 +82,68 @@ function selectDistrict(code: string): void {
   if (d) map.fitBounds(d.bbox, { padding: 60, duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900 });
 }
 
+const signed = (n: number | null): string => (n === null ? '—' : `${n > 0 ? '+' : n < 0 ? '−' : '±'}${fmtNum(Math.abs(n))} ha`);
+
 function districtCard(s: S.State): HTMLElement | null {
   if (!s.district) return null;
   const d = districtByCode(s.district);
   if (!d) return null;
   const row = (k: string, v: string) => h('div', { class: 'kv' }, h('dt', {}, k), h('dd', { class: 'num' }, v));
   const kel = s.area === 'kelantan';
+  const kp = kel ? kelPass(s.date) : null;
+  const kr = kp?.districts[s.district];
+  const dp = kel ? null : kedPass(s.date);
+  const dr = dp?.districts[s.district];
   return h('section', { class: 'card district-card', 'aria-live': 'polite' },
     h('h2', { class: 'card-title' }, t('district.card.title', { district: d.district })),
     h('p', { class: 'card-tagline' }, t('district.card.tagline', { state: d.state })),
     h('dl', {},
-      kel ? row(t('num.ha'), '— ha') : row(t('num.ked.pct'), '—%'),
-      kel ? row(t('num.change'), '—') : null,
-      row(t('num.conf'), t('conf.pending')),
-      kel ? row(t('num.exposed'), '— to —') : null,
+      kel ? row(t('num.ha'), kr ? `${haFmt(kr.flood_ha)} (${haRange(kr.flood_ha_low, kr.flood_ha_high)})` : '— ha') : row(t('num.ked.pct'), dr ? `${dr.pct_field_water}%` : '—%'),
+      kel ? row(t('num.change'), kr ? signed(kr.change_ha) : '—') : null,
+      kel ? row(t('num.possible'), kr ? haFmt(kr.possible_ha) : '—') : row(t('num.ked.seen'), dr ? haFmt(dr.cropland_ha_seen) : '—'),
+      kel ? row(t('num.conf'), kr ? t(`conf.${kr.confidence}`) : t('conf.pending')) : null,
     ),
+    kp || dp ? h('p', { class: 'muted small' }, t(kel ? 'num.date.kel' : 'num.date.ked', { date: fmtDate((kp ?? dp)!.date_myt) })) : null,
     badge(),
     h('button', { class: 'pill pill-quiet', onclick: () => S.set({ district: null }) }, t('district.card.close')),
   );
 }
 
+function methodNote(text: string): HTMLElement {
+  return h('p', { class: 'method-note small' }, text);
+}
+
 function numbersKelantan(s: S.State): HTMLElement[] {
-  const rows = districtsOf(['Kelantan']);
+  const pass = kelPass(s.date);
+  const rows = districtsOf(['Kelantan'])
+    .map((r) => ({ ...r, v: pass?.districts[r.code] }))
+    .sort((x, y) => (y.v?.flood_ha ?? -1) - (x.v?.flood_ha ?? -1));
   const table = h('table', { class: 'table' },
-    h('caption', { class: 'sr-only' }, t('num.table.caption', { date: fmtDate(s.date) })),
+    h('caption', { class: 'sr-only' }, t('num.table.caption', { date: fmtDate(pass?.date_myt ?? s.date) })),
     h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t('num.district')), h('th', { scope: 'col' }, t('num.ha')), h('th', { scope: 'col', class: 'x-only' }, t('num.change')), h('th', { scope: 'col' }, t('num.conf')))),
     h('tbody', {}, rows.map((r) =>
-      h('tr', { class: s.district === r.code ? 'is-selected' : '' },
+      h('tr', { class: `${s.district === r.code ? 'is-selected' : ''}${r.v && !r.v.study ? ' is-outside' : ''}` },
         h('th', { scope: 'row' }, h('button', { class: 'link', onclick: () => selectDistrict(r.code) }, r.district)),
-        h('td', { class: 'num' }, '— ha'),
-        h('td', { class: 'num x-only' }, '—'),
-        h('td', {}, t('conf.pending')),
+        h('td', { class: 'num', title: r.v ? haRange(r.v.flood_ha_low, r.v.flood_ha_high) : '' }, r.v ? haFmt(r.v.flood_ha) : '— ha'),
+        h('td', { class: 'num x-only' }, r.v ? signed(r.v.change_ha) : '—'),
+        h('td', {}, r.v ? t(`conf.${r.v.confidence}`) : t('conf.pending')),
       ))),
   );
+  const top = pass?.top_district ? Object.values(pass.districts).find((d) => d.district === pass.top_district) : undefined;
   return [
     card(t('num.kel.title'), t('num.kel.tagline'),
-      h('p', { class: 'headline-num' }, t('num.kel.headline', { district: 'Pasir Mas', date: fmtDay(s.date) })),
+      h('p', { class: 'headline-num' }, pass && top && top.flood_ha > 0
+        ? t('num.kel.headline.real', { district: top.district, ha: haFmt(top.flood_ha), date: fmtDay(pass.date_myt) })
+        : pass ? t('num.kel.headline.none', { date: fmtDay(pass.date_myt) }) : t('num.kel.headline', { district: 'Pasir Mas', date: fmtDay(s.date) })),
+      pass ? h('p', { class: 'small' }, t('num.kel.total', { ha: haFmt(pass.flood_ha), range: haRange(pass.flood_ha_low, pass.flood_ha_high) })) : null,
       badge(),
-      pendingNote(),
+      pass
+        ? methodNote(pass.reference
+          ? t('num.method.kel', { date: fmtDate(pass.date_myt), track: pass.track, ref: fmtDate(pass.reference), t: pass.threshold_db })
+          : t('num.method.kel.ref', { date: fmtDate(pass.date_myt), track: pass.track }))
+        : pendingNote(),
       h('div', { class: 'table-wrap' }, table),
+      pass ? h('p', { class: 'muted small' }, t('num.kel.outside')) : null,
     ),
     card(t('num.context.title'), t('num.context.tagline'),
       h('ul', { class: 'facts' },
@@ -157,13 +181,16 @@ function phaseChart(s: S.State): HTMLElement {
 }
 
 function numbersKedah(s: S.State): HTMLElement[] {
-  // C · segmented bars: % field water per pass (made at the event), then real MADA phase areas and dam storage.
-  const bars = h('ul', { class: 'pct-bars' }, primaryPasses('kedah').map((p) =>
-    h('li', { class: p.date_myt === s.date ? 'is-selected' : '' },
+  // C · segmented bars: % of cropland with field water per NISAR pass, then MADA phase areas and dam storage.
+  const bars = h('ul', { class: 'pct-bars' }, primaryPasses('kedah').map((p) => {
+    const v = kedDateByUtc(p.date_utc);
+    return h('li', { class: p.date_myt === s.date ? 'is-selected' : '', title: v ? t('num.ked.range', { lo: v.pct_low, hi: v.pct_high }) : '' },
       h('button', { class: 'link', onclick: () => S.set({ date: p.date_myt }) }, fmtDay(p.date_myt)),
-      segBar({ value: null, max: 100, basis: t('seg.pending') }),
-      h('span', { class: 'num' }, '—%'),
-    )));
+      segBar({ value: v ? v.pct_field_water : null, max: 100, basis: v ? t('num.ked.pct.basis') : t('seg.pending') }),
+      h('span', { class: 'num' }, v ? `${v.pct_field_water}%` : '—%'),
+    );
+  }));
+  const kp = kedPass(s.date);
   const season = area('kedah').phases ?? [];
   const seasonHa = 99489; // MADA notice, 14 Sep 2026 (plan 08 §4.7)
   const phaseBars = h('div', { class: 'stat-list' },
@@ -177,9 +204,11 @@ function numbersKedah(s: S.State): HTMLElement[] {
   );
   return [
     card(t('num.ked.title'), t('num.ked.tagline'),
-      h('p', { class: 'headline-num' }, t('ked.headline.placeholder', { date: fmtDay(s.date) })),
+      h('p', { class: 'headline-num' }, kp
+        ? t('ked.headline', { pct: kp.pct_field_water, date: fmtDay(kp.date_myt), lo: kp.pct_low, hi: kp.pct_high })
+        : t('ked.headline.placeholder', { date: fmtDay(s.date) })),
       badge(),
-      pendingNote(),
+      kp ? methodNote(t('num.method.ked', { track: kp.track, ha: fmtNum(kp.paddy_ha_seen) })) : pendingNote(),
       h('h3', { class: 'legend-title' }, t('num.ked.pct')),
       bars,
       phaseChart(s),
@@ -268,7 +297,14 @@ export function sureCard(s: S.State): HTMLElement {
 
 function sureDetails(s: S.State): HTMLElement {
   const a = area(s.area);
-  const metric = (k: string, gloss: string) => h('tr', {}, h('th', { scope: 'row' }, t(k)), h('td', { class: 'num' }, '—'), h('td', {}, t(gloss)));
+  const v = s.area === 'kelantan' ? stats?.validation.kelantan : s.area === 'kedah' ? stats?.validation.kedah : undefined;
+  const fmtR = (r?: { median: number; min: number; max: number }, unit = '') =>
+    r ? `${r.median}${unit} (${r.min}–${r.max}${unit})` : '—';
+  const value = (k: string): string =>
+    k === 'sure.f1' ? fmtR(v?.summary.f1) : k === 'sure.iou' ? fmtR(v?.summary.iou) : k === 'sure.kappa' ? fmtR(v?.summary.kappa)
+      : fmtR(v?.summary.date_gap_days, ' d');
+  const metric = (k: string, gloss: string) => h('tr', {}, h('th', { scope: 'row' }, t(k)), h('td', { class: 'num' }, value(k)), h('td', {}, t(gloss)));
+  const peak = s.area === 'kelantan' ? v?.per_date['2024-11-29'] : undefined;
   const det = h('div', { class: 'sure-details' },
     h('h3', { class: 'legend-title' }, t('sure.lines')),
     h('ul', { class: 'lim-list' }, a.panel.sure_lines.map((k) => {
@@ -280,7 +316,8 @@ function sureDetails(s: S.State): HTMLElement {
   det.append(
     h('h3', { class: 'legend-title' }, t('sure.agreement')),
     h('p', { class: 'small' }, t(a.panel.validation ?? '')),
-    h('p', { class: 'pending small' }, t('sure.agreement.pending')),
+    v ? h('p', { class: 'small' }, t(s.area === 'kelantan' ? 'sure.agreement.kel' : 'sure.agreement.ked', { f1: peak?.f1 ?? '—', iou: peak?.iou ?? '—' }))
+      : h('p', { class: 'pending small' }, t('sure.agreement.pending')),
     h('div', { class: 'table-wrap' }, h('table', { class: 'table' },
       h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, t('sure.metric')), h('th', { scope: 'col' }, t('sure.value')), h('th', { scope: 'col' }, t('sure.meaning')))),
       h('tbody', {}, metric('sure.f1', 'sure.f1.gloss'), metric('sure.iou', 'sure.iou.gloss'), metric('sure.kappa', 'sure.kappa.gloss'), metric('sure.offset', 'sure.offset.gloss')),
@@ -294,9 +331,16 @@ function sureDetails(s: S.State): HTMLElement {
 function valuesTable(s: S.State): HTMLElement {
   const kel = s.area === 'kelantan';
   const m = t('sure.values.measure');
+  const kp = stats?.kelantan.dates['2024-11-29'];
+  const kd = stats?.kedah.dates['2026-10-31'];
+  const measured = (water: number | null | undefined, land: number | null | undefined, date: string) =>
+    water != null && land != null ? t('values.measured', { water: water.toFixed(1), land: land.toFixed(1), date }) : null;
+  const ownKel = measured(kp?.water_median_db, kp?.land_median_db, '29 Nov 2024');
+  const ownHH = measured(kd?.hh_water_median_db, kd?.hh_land_median_db, '31 Oct 2026');
+  const ownHV = measured(kd?.hv_water_median_db, kd?.hv_land_median_db, '31 Oct 2026');
   const rows: [string, string, string][] = kel
     ? [
-        ['values.water', t('values.water.vv'), t('values.water.vh')],
+        ['values.water', ownKel ? `${t('values.water.vv')} ${ownKel}` : t('values.water.vv'), t('values.water.vh')],
         ['values.paddy', `${t('values.dark')} · ${m}`, `${t('values.dark')} · ${m}`],
         ['values.forest', `${t('values.grey')} · ${m}`, `${t('values.brighter')} · ${m}`],
         ['values.town', `${t('values.town.c')} · ${m}`, m],
@@ -304,7 +348,7 @@ function valuesTable(s: S.State): HTMLElement {
       ]
     : [
         ['values.water', `${t('values.verydark')} · ${m}`, `${t('values.verydark')} · ${m}`],
-        ['values.paddy', `${t('values.dark')} · ${m}`, `${t('values.dark')} · ${m}`],
+        ['values.paddy', ownHH ? `${t('values.dark')} · ${ownHH}` : `${t('values.dark')} · ${m}`, ownHV ? `${t('values.dark')} · ${ownHV}` : `${t('values.dark')} · ${m}`],
         ['values.rice', `${t('values.rises')} · ${m}`, `${t('values.rises')} · ${m}`],
         ['values.forest', `${t('values.grey')} · ${m}`, `${t('values.brighter')} · ${m}`],
         ['values.town', `${t('values.bright')} · ${m}`, m],

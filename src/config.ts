@@ -114,6 +114,10 @@ export interface LayerDef {
   corners?: [[number, number], [number, number], [number, number], [number, number]];
   /** kind=image: dates for which a baked picture exists. */
   baked_dates?: string[];
+  /** kind=image grey pictures: grey 1–255 spread linearly over this dB range (pipeline/09_bake_web.py). */
+  encoding?: { type: 'grey'; range: [number, number] };
+  /** Fixed per-channel stretch of the HH/HV composite, in dB. */
+  stretch?: Record<string, [number, number]>;
 }
 
 export interface Pass {

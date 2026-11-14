@@ -499,3 +499,5 @@ button.obj:hover { color: var(--text); }
 .quote { margin: 0; padding: var(--s2) var(--s3); border-left: 2px solid var(--brand); background: var(--surface-2); border-radius: 0 8px 8px 0; }
 .quote p { font-size: var(--fs-caption); color: var(--text); }
 .quote cite { display: block; margin-top: var(--s1); font-style: normal; }
+.method-note { color: var(--text-secondary); padding: var(--s2) var(--s3); border-left: 2px solid var(--border-strong); }
+.table tr.is-outside { opacity: 0.55; }

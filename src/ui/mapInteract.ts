@@ -1,6 +1,8 @@
 // F5 pixel popup (plain sentence first, numbers under "More") and F21 cursor readout bar.
 import { Popup, type MapMouseEvent } from 'maplibre-gl';
-import { area, imageryOnly, fmtDate, fmtNum, focusFor, layersFor, type Area } from '../config';
+import { area, imageryOnly, fmtDate, fmtNum, focusFor, layer, layersFor, resolveDate, type Area } from '../config';
+import { classAt, dbAt } from '../lib/pixels';
+import { stats } from '../lib/stats';
 import { inspectCard, keyHint, segBar, statRow } from './kit';
 import { openFocus } from './focus';
 import { t } from '../i18n';
@@ -25,7 +27,57 @@ function inStudy(a: Area, lng: number, lat: number, district?: string): boolean 
   return inBox(lng, lat, a.bbox);
 }
 
-function popupContent(lng: number, lat: number): HTMLElement {
+interface Reading {
+  sentence: string;
+  why: string;
+}
+
+const FIRST_LABEL: Record<number, string> = { 11: '23–25 Sep', 12: '5–7 Oct', 13: '17–19 Oct', 14: '31 Oct' };
+const db1 = (v: number | null) => (v === null ? '—' : `${v.toFixed(1)} dB`);
+
+/** What our baked maps hold at this spot, in plain words (null when the pipeline has not made them). */
+async function ourReading(a: Area, date: string, lng: number, lat: number): Promise<Reading | null> {
+  try {
+    if (a.id === 'kelantan') {
+      const fl = layer('kel_flood');
+      const vvL = layer('kel_vv');
+      if (!fl || fl.kind !== 'image') return null;
+      const r = resolveDate(fl, 'kelantan', date);
+      if (!r) return null;
+      const [code, vv] = await Promise.all([classAt(fl, r.utc, lng, lat), vvL ? dbAt(vvL, r.utc, lng, lat) : Promise.resolve(null)]);
+      const th = stats?.kelantan.dates[r.utc]?.threshold_db;
+      const key = code === 3 ? 'kel.popup.flood' : code === 4 ? 'kel.popup.possible' : code === 2 ? 'kel.popup.permanent'
+        : code === 5 ? 'kel.popup.urban' : code === 6 ? 'kel.popup.cantsee' : 'kel.popup.dry';
+      return { sentence: t(key, { date: fmtDate(r.myt) }), why: t('popup.why.kel.real', { vv: db1(vv), t: th ?? '—', date: fmtDate(r.myt) }) };
+    }
+    if (a.id === 'kedah') {
+      const ff = layer('ked_first_flooded');
+      const hhL = layer('ked_hh');
+      const hvL = layer('ked_hv');
+      if (!ff || ff.kind !== 'image' || !hhL || !hvL) return null;
+      const r = resolveDate(hhL, 'kedah', date);
+      const [code, hh, hv] = await Promise.all([
+        classAt(ff, 'static', lng, lat),
+        r ? dbAt(hhL, r.utc, lng, lat) : Promise.resolve(null),
+        r ? dbAt(hvL, r.utc, lng, lat) : Promise.resolve(null),
+      ]);
+      const track = r ? stats?.kedah.dates[r.utc]?.track : undefined;
+      const st = track ? stats?.kedah.stacks[track] : undefined;
+      const wet = hh !== null && hv !== null && st ? hh < st.HH.threshold_db && hv < st.HV.threshold_db : null;
+      const first = code !== null && FIRST_LABEL[code] ? t('ked.popup.first', { when: FIRST_LABEL[code] }) : code === 1 ? t('ked.popup.notyet') : code === 2 ? t('ked.popup.permanent') : t('ked.popup.notcrop');
+      const now = r && wet !== null && code !== null && code !== 2 ? ` ${t(wet ? 'ked.popup.now.wet' : 'ked.popup.now.dry', { date: fmtDate(r.myt) })}` : '';
+      return {
+        sentence: `${first}${now}`,
+        why: t('popup.why.ked.real', { hh: db1(hh), hv: db1(hv), thh: st?.HH.threshold_db ?? '—', thv: st?.HV.threshold_db ?? '—' }),
+      };
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function popupContent(lng: number, lat: number, reading: Reading | null = null): HTMLElement {
   const s = S.get();
   const a = area(s.area);
   const d = districtAt(lng, lat);
@@ -34,6 +86,7 @@ function popupContent(lng: number, lat: number): HTMLElement {
   let sentence: string;
   if (imageryOnly(a)) sentence = t('popup.imagery');
   else if (!inStudy(a, lng, lat, d?.district)) sentence = t('popup.outside', { area: t(a.short) });
+  else if (reading) sentence = reading.sentence;
   else sentence = t(s.area === 'kelantan' ? 'popup.pending.kel' : 'popup.pending.ked', { date: fmtDate(s.date) });
   const expert = s.mode === 'expert';
   const more = h('div', { class: 'popup-more', hidden: !expert },
@@ -41,7 +94,7 @@ function popupContent(lng: number, lat: number): HTMLElement {
       h('div', { class: 'kv' }, h('dt', {}, t('popup.coords')), h('dd', { class: 'num' }, fmtCoord(lat, lng))),
       d ? h('div', { class: 'kv' }, h('dt', {}, t('popup.district')), h('dd', {}, h('button', { class: 'link', onclick: () => S.set({ district: d.code, tab: 'numbers', sheet: 'half' }) }, d.district))) : null,
     ),
-    !imageryOnly(a) ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('popup.why')), ' ', t(s.area === 'kelantan' ? 'popup.why.kel' : 'popup.why.ked')) : null,
+    !imageryOnly(a) ? h('p', { class: 'small' }, h('span', { class: 'hud-label' }, t('popup.why')), ' ', reading ? reading.why : t(s.area === 'kelantan' ? 'popup.why.kel' : 'popup.why.ked')) : null,
   );
   const moreBtn = h('button', { class: 'link', 'aria-expanded': String(expert) }, t(expert ? 'popup.less' : 'popup.more'));
   moreBtn.addEventListener('click', () => {
@@ -57,7 +110,7 @@ function popupContent(lng: number, lat: number): HTMLElement {
   const pendingRadar = vis.some((l) => l.status === 'placeholder' && (l.kind === 'class' || l.kind === 'db'));
   const stats: HTMLElement[] = [];
   if (!imageryOnly(a)) {
-    stats.push(statRow(t('insp.stat.radar'), segBar({ value: null, max: 1, basis: t('seg.pending') }), pendingRadar ? '—' : t('hud.radar.preview')));
+    stats.push(statRow(t('insp.stat.radar'), segBar({ value: null, max: 1, basis: reading ? t('insp.basis.reading') : t('seg.pending') }), reading ? reading.why.split(' · ')[0] : pendingRadar ? '—' : t('hud.radar.preview')));
   }
   if (f) {
     const maxKm = Math.max(...focusList.map((x) => x.area_km2));
@@ -83,10 +136,14 @@ function popupContent(lng: number, lat: number): HTMLElement {
   });
 }
 
-function onClick(e: MapMouseEvent): void {
+async function onClick(e: MapMouseEvent): Promise<void> {
   dismissHint();
   const { lng, lat } = e.lngLat;
-  const content = popupContent(lng, lat);
+  const s0 = S.get();
+  const a0 = area(s0.area);
+  const reading = imageryOnly(a0) ? null : await ourReading(a0, s0.date, lng, lat);
+  if (S.get().area !== s0.area || S.get().date !== s0.date) return; // the view changed while reading
+  const content = popupContent(lng, lat, reading);
   if (isMobile()) {
     popup?.remove();
     clear(sheetPopup);
@@ -157,7 +214,7 @@ function renderCursor(lng?: number, lat?: number): void {
 }
 
 export function initMapInteract(): void {
-  map.on('click', onClick);
+  map.on('click', (e) => void onClick(e));
   map.on('mousemove', (e) => {
     const now = performance.now();
     lastXY = [e.lngLat.lng, e.lngLat.lat];

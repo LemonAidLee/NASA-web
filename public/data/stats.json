@@ -1,0 +1,1486 @@
+{
+ "_note": "Made by pipeline/08_stats.py from our radar maps. Hectares are 30 m pixels × 0.09 ha; ranges come from moving the water threshold by ±1 dB.",
+ "kelantan": {
+  "dates": {
+   "2024-11-17": {
+    "date_myt": "2024-11-17",
+    "track": "T172",
+    "reference": null,
+    "threshold_db": -15.5,
+    "threshold_method": "otsu",
+    "capped": true,
+    "flood_ha": 0,
+    "flood_ha_low": 0,
+    "flood_ha_high": 0,
+    "possible_ha": 181,
+    "top_district": "Bachok",
+    "water_median_db": -19.43,
+    "land_median_db": -6.9,
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 13,
+      "permanent_ha": 271,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 45,
+      "permanent_ha": 1683,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 5,
+      "permanent_ha": 672,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 58,
+      "permanent_ha": 1014,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 47,
+      "permanent_ha": 842,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 9,
+      "permanent_ha": 321,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 4,
+      "permanent_ha": 855,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 0,
+      "permanent_ha": 206,
+      "change_ha": null,
+      "confidence": "none"
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 9,
+      "permanent_ha": 24,
+      "change_ha": null,
+      "confidence": "none"
+     }
+    }
+   },
+   "2024-11-23": {
+    "date_myt": "2024-11-24",
+    "track": "T091",
+    "reference": null,
+    "threshold_db": -15.5,
+    "threshold_method": "otsu",
+    "capped": true,
+    "flood_ha": 0,
+    "flood_ha_low": 0,
+    "flood_ha_high": 0,
+    "possible_ha": 2161,
+    "top_district": "Bachok",
+    "water_median_db": -20.55,
+    "land_median_db": -6.31,
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 536,
+      "permanent_ha": 271,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 280,
+      "permanent_ha": 1683,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 15,
+      "permanent_ha": 673,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 506,
+      "permanent_ha": 1014,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 579,
+      "permanent_ha": 842,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 29,
+      "permanent_ha": 322,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 216,
+      "permanent_ha": 855,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 0,
+      "permanent_ha": 206,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 15,
+      "permanent_ha": 24,
+      "change_ha": 0,
+      "confidence": "none"
+     }
+    }
+   },
+   "2024-11-29": {
+    "date_myt": "2024-11-29",
+    "track": "T172",
+    "reference": "2024-11-17",
+    "threshold_db": -15.5,
+    "threshold_method": "otsu",
+    "capped": true,
+    "flood_ha": 20285,
+    "flood_ha_low": 17247,
+    "flood_ha_high": 20285,
+    "possible_ha": 205,
+    "top_district": "Pasir Puteh",
+    "water_median_db": -18.41,
+    "land_median_db": -6.39,
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "flood_ha": 3562,
+      "flood_ha_low": 2721,
+      "flood_ha_high": 3562,
+      "possible_ha": 13,
+      "permanent_ha": 271,
+      "change_ha": 3562,
+      "confidence": "high"
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "flood_ha": 2404,
+      "flood_ha_low": 1949,
+      "flood_ha_high": 2404,
+      "possible_ha": 58,
+      "permanent_ha": 1682,
+      "change_ha": 2404,
+      "confidence": "high"
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "flood_ha": 1053,
+      "flood_ha_low": 798,
+      "flood_ha_high": 1053,
+      "possible_ha": 20,
+      "permanent_ha": 673,
+      "change_ha": 1053,
+      "confidence": "high"
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "flood_ha": 4680,
+      "flood_ha_low": 4137,
+      "flood_ha_high": 4680,
+      "possible_ha": 60,
+      "permanent_ha": 1014,
+      "change_ha": 4680,
+      "confidence": "high"
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "flood_ha": 4774,
+      "flood_ha_low": 4297,
+      "flood_ha_high": 4774,
+      "possible_ha": 26,
+      "permanent_ha": 842,
+      "change_ha": 4774,
+      "confidence": "high"
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "flood_ha": 216,
+      "flood_ha_low": 161,
+      "flood_ha_high": 216,
+      "possible_ha": 21,
+      "permanent_ha": 321,
+      "change_ha": 216,
+      "confidence": "high"
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "flood_ha": 3596,
+      "flood_ha_low": 3184,
+      "flood_ha_high": 3596,
+      "possible_ha": 7,
+      "permanent_ha": 855,
+      "change_ha": 3596,
+      "confidence": "high"
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "flood_ha": 20,
+      "flood_ha_low": 8,
+      "flood_ha_high": 20,
+      "possible_ha": 0,
+      "permanent_ha": 206,
+      "change_ha": 20,
+      "confidence": "medium"
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 7,
+      "permanent_ha": 24,
+      "change_ha": 0,
+      "confidence": "none"
+     }
+    }
+   },
+   "2024-12-05": {
+    "date_myt": "2024-12-06",
+    "track": "T091",
+    "reference": "2024-11-23",
+    "threshold_db": -15.5,
+    "threshold_method": "otsu",
+    "capped": true,
+    "flood_ha": 2243,
+    "flood_ha_low": 1993,
+    "flood_ha_high": 2243,
+    "possible_ha": 728,
+    "top_district": "Tumpat",
+    "water_median_db": -21.16,
+    "land_median_db": -6.5,
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "flood_ha": 4,
+      "flood_ha_low": 1,
+      "flood_ha_high": 4,
+      "possible_ha": 129,
+      "permanent_ha": 271,
+      "change_ha": -3558,
+      "confidence": "low"
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "flood_ha": 37,
+      "flood_ha_low": 16,
+      "flood_ha_high": 37,
+      "possible_ha": 94,
+      "permanent_ha": 1683,
+      "change_ha": -2367,
+      "confidence": "medium"
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "flood_ha": 13,
+      "flood_ha_low": 9,
+      "flood_ha_high": 13,
+      "possible_ha": 13,
+      "permanent_ha": 673,
+      "change_ha": -1040,
+      "confidence": "medium"
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "flood_ha": 786,
+      "flood_ha_low": 707,
+      "flood_ha_high": 786,
+      "possible_ha": 283,
+      "permanent_ha": 1014,
+      "change_ha": -3894,
+      "confidence": "high"
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 64,
+      "permanent_ha": 842,
+      "change_ha": -4774,
+      "confidence": "none"
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "flood_ha": 73,
+      "flood_ha_low": 71,
+      "flood_ha_high": 73,
+      "possible_ha": 9,
+      "permanent_ha": 322,
+      "change_ha": -143,
+      "confidence": "high"
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "flood_ha": 1330,
+      "flood_ha_low": 1189,
+      "flood_ha_high": 1330,
+      "possible_ha": 136,
+      "permanent_ha": 855,
+      "change_ha": -2266,
+      "confidence": "high"
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 0,
+      "permanent_ha": 206,
+      "change_ha": -20,
+      "confidence": "none"
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 14,
+      "permanent_ha": 24,
+      "change_ha": 0,
+      "confidence": "none"
+     }
+    }
+   },
+   "2024-12-11": {
+    "date_myt": "2024-12-11",
+    "track": "T172",
+    "reference": "2024-11-17",
+    "threshold_db": -15.5,
+    "threshold_method": "otsu",
+    "capped": true,
+    "flood_ha": 2513,
+    "flood_ha_low": 1494,
+    "flood_ha_high": 2513,
+    "possible_ha": 165,
+    "top_district": "Pasir Mas",
+    "water_median_db": -19.82,
+    "land_median_db": -6.76,
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "flood_ha": 217,
+      "flood_ha_low": 113,
+      "flood_ha_high": 217,
+      "possible_ha": 18,
+      "permanent_ha": 271,
+      "change_ha": 213,
+      "confidence": "medium"
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "flood_ha": 692,
+      "flood_ha_low": 376,
+      "flood_ha_high": 692,
+      "possible_ha": 43,
+      "permanent_ha": 1682,
+      "change_ha": 655,
+      "confidence": "medium"
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "flood_ha": 102,
+      "flood_ha_low": 75,
+      "flood_ha_high": 102,
+      "possible_ha": 4,
+      "permanent_ha": 672,
+      "change_ha": 89,
+      "confidence": "high"
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "flood_ha": 701,
+      "flood_ha_low": 495,
+      "flood_ha_high": 701,
+      "possible_ha": 43,
+      "permanent_ha": 1014,
+      "change_ha": -85,
+      "confidence": "high"
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "flood_ha": 437,
+      "flood_ha_low": 195,
+      "flood_ha_high": 437,
+      "possible_ha": 38,
+      "permanent_ha": 842,
+      "change_ha": 437,
+      "confidence": "medium"
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "flood_ha": 91,
+      "flood_ha_low": 86,
+      "flood_ha_high": 91,
+      "possible_ha": 1,
+      "permanent_ha": 321,
+      "change_ha": 18,
+      "confidence": "high"
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "flood_ha": 273,
+      "flood_ha_low": 154,
+      "flood_ha_high": 273,
+      "possible_ha": 18,
+      "permanent_ha": 855,
+      "change_ha": -1057,
+      "confidence": "medium"
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 0,
+      "permanent_ha": 206,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 8,
+      "permanent_ha": 24,
+      "change_ha": 0,
+      "confidence": "none"
+     }
+    }
+   },
+   "2024-12-17": {
+    "date_myt": "2024-12-18",
+    "track": "T091",
+    "reference": "2024-11-23",
+    "threshold_db": -15.5,
+    "threshold_method": "otsu",
+    "capped": true,
+    "flood_ha": 1219,
+    "flood_ha_low": 622,
+    "flood_ha_high": 1219,
+    "possible_ha": 793,
+    "top_district": "Kota Bharu",
+    "water_median_db": -19.15,
+    "land_median_db": -6.36,
+    "districts": {
+     "3_1": {
+      "district": "Bachok",
+      "study": true,
+      "flood_ha": 87,
+      "flood_ha_low": 29,
+      "flood_ha_high": 87,
+      "possible_ha": 107,
+      "permanent_ha": 271,
+      "change_ha": -130,
+      "confidence": "medium"
+     },
+     "3_2": {
+      "district": "Kota Bharu",
+      "study": true,
+      "flood_ha": 410,
+      "flood_ha_low": 157,
+      "flood_ha_high": 410,
+      "possible_ha": 158,
+      "permanent_ha": 1683,
+      "change_ha": -282,
+      "confidence": "medium"
+     },
+     "3_3": {
+      "district": "Machang",
+      "study": true,
+      "flood_ha": 27,
+      "flood_ha_low": 12,
+      "flood_ha_high": 27,
+      "possible_ha": 13,
+      "permanent_ha": 673,
+      "change_ha": -75,
+      "confidence": "medium"
+     },
+     "3_4": {
+      "district": "Pasir Mas",
+      "study": true,
+      "flood_ha": 235,
+      "flood_ha_low": 153,
+      "flood_ha_high": 235,
+      "possible_ha": 276,
+      "permanent_ha": 1014,
+      "change_ha": -466,
+      "confidence": "medium"
+     },
+     "3_5": {
+      "district": "Pasir Puteh",
+      "study": true,
+      "flood_ha": 248,
+      "flood_ha_low": 110,
+      "flood_ha_high": 248,
+      "possible_ha": 146,
+      "permanent_ha": 842,
+      "change_ha": -189,
+      "confidence": "medium"
+     },
+     "3_6": {
+      "district": "Tanah Merah",
+      "study": true,
+      "flood_ha": 73,
+      "flood_ha_low": 70,
+      "flood_ha_high": 73,
+      "possible_ha": 8,
+      "permanent_ha": 322,
+      "change_ha": -18,
+      "confidence": "high"
+     },
+     "3_7": {
+      "district": "Tumpat",
+      "study": true,
+      "flood_ha": 139,
+      "flood_ha_low": 91,
+      "flood_ha_high": 139,
+      "possible_ha": 85,
+      "permanent_ha": 855,
+      "change_ha": -134,
+      "confidence": "medium"
+     },
+     "3_9": {
+      "district": "Kuala Krai",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 0,
+      "permanent_ha": 206,
+      "change_ha": 0,
+      "confidence": "none"
+     },
+     "3_10": {
+      "district": "Jeli",
+      "study": false,
+      "flood_ha": 0,
+      "flood_ha_low": 0,
+      "flood_ha_high": 0,
+      "possible_ha": 15,
+      "permanent_ha": 24,
+      "change_ha": 0,
+      "confidence": "none"
+     }
+    }
+   }
+  },
+  "districts": {}
+ },
+ "kedah": {
+  "dates": {
+   "2026-09-23": {
+    "track": "076_D_085",
+    "pct_field_water": 2.0,
+    "pct_low": 0.9,
+    "pct_high": 4.1,
+    "water_ha": 1774,
+    "paddy_ha_seen": 90713,
+    "hh_water_median_db": -12.94,
+    "hh_land_median_db": -7.68,
+    "hv_water_median_db": -20.97,
+    "hv_land_median_db": -17.5,
+    "date_myt": "2026-09-23",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 1.2,
+      "cropland_ha_seen": 26223
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 0.8,
+      "cropland_ha_seen": 31488
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 0.6,
+      "cropland_ha_seen": 1004
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 6.8,
+      "cropland_ha_seen": 11579
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 3.1,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 1.5,
+      "cropland_ha_seen": 14101
+     }
+    }
+   },
+   "2026-09-25": {
+    "track": "112_A_005",
+    "pct_field_water": 1.8,
+    "pct_low": 0.9,
+    "pct_high": 3.1,
+    "water_ha": 1751,
+    "paddy_ha_seen": 99215,
+    "hh_water_median_db": -13.76,
+    "hh_land_median_db": -7.6,
+    "hv_water_median_db": -20.25,
+    "hv_land_median_db": -17.19,
+    "date_myt": "2026-09-26",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 0.8,
+      "cropland_ha_seen": 28502
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 0.6,
+      "cropland_ha_seen": 27884
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 1.4,
+      "cropland_ha_seen": 1004
+     },
+     "2_10": {
+      "district": "Yan",
+      "study": false,
+      "pct_field_water": 0.6,
+      "cropland_ha_seen": 7370
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 4.7,
+      "cropland_ha_seen": 17094
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 3.1,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 2.5,
+      "cropland_ha_seen": 11100
+     }
+    }
+   },
+   "2026-10-05": {
+    "track": "076_D_085",
+    "pct_field_water": 7.5,
+    "pct_low": 5.1,
+    "pct_high": 12.0,
+    "water_ha": 7384,
+    "paddy_ha_seen": 98094,
+    "hh_water_median_db": -14.01,
+    "hh_land_median_db": -8.34,
+    "hv_water_median_db": -21.46,
+    "hv_land_median_db": -16.87,
+    "date_myt": "2026-10-05",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 5.1,
+      "cropland_ha_seen": 28634
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 8.7,
+      "cropland_ha_seen": 31488
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 11.3,
+      "cropland_ha_seen": 1004
+     },
+     "2_10": {
+      "district": "Yan",
+      "study": false,
+      "pct_field_water": 13.2,
+      "cropland_ha_seen": 855
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 6.6,
+      "cropland_ha_seen": 15655
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 9.0,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 9.4,
+      "cropland_ha_seen": 14101
+     }
+    }
+   },
+   "2026-10-07": {
+    "track": "112_A_005",
+    "pct_field_water": 6.1,
+    "pct_low": 4.0,
+    "pct_high": 8.8,
+    "water_ha": 6095,
+    "paddy_ha_seen": 99347,
+    "hh_water_median_db": -14.3,
+    "hh_land_median_db": -7.87,
+    "hv_water_median_db": -20.41,
+    "hv_land_median_db": -16.32,
+    "date_myt": "2026-10-08",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 4.5,
+      "cropland_ha_seen": 28524
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 5.9,
+      "cropland_ha_seen": 27943
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 12.0,
+      "cropland_ha_seen": 1004
+     },
+     "2_10": {
+      "district": "Yan",
+      "study": false,
+      "pct_field_water": 12.6,
+      "cropland_ha_seen": 7370
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 4.2,
+      "cropland_ha_seen": 17094
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 7.7,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 8.0,
+      "cropland_ha_seen": 11151
+     }
+    }
+   },
+   "2026-10-17": {
+    "track": "076_D_085",
+    "pct_field_water": 22.4,
+    "pct_low": 18.5,
+    "pct_high": 27.4,
+    "water_ha": 21324,
+    "paddy_ha_seen": 95263,
+    "hh_water_median_db": -15.49,
+    "hh_land_median_db": -8.21,
+    "hv_water_median_db": -22.14,
+    "hv_land_median_db": -16.56,
+    "date_myt": "2026-10-17",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 16.5,
+      "cropland_ha_seen": 27968
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 32.6,
+      "cropland_ha_seen": 31488
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 22.4,
+      "cropland_ha_seen": 1004
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 11.2,
+      "cropland_ha_seen": 14360
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 14.8,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 25.9,
+      "cropland_ha_seen": 14101
+     }
+    }
+   },
+   "2026-10-19": {
+    "track": "112_A_005",
+    "pct_field_water": 22.0,
+    "pct_low": 17.4,
+    "pct_high": 26.9,
+    "water_ha": 21840,
+    "paddy_ha_seen": 99197,
+    "hh_water_median_db": -14.94,
+    "hh_land_median_db": -8.32,
+    "hv_water_median_db": -20.97,
+    "hv_land_median_db": -16.35,
+    "date_myt": "2026-10-20",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 19.6,
+      "cropland_ha_seen": 28498
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 28.0,
+      "cropland_ha_seen": 27877
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 19.1,
+      "cropland_ha_seen": 1004
+     },
+     "2_10": {
+      "district": "Yan",
+      "study": false,
+      "pct_field_water": 37.2,
+      "cropland_ha_seen": 7370
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 9.6,
+      "cropland_ha_seen": 17094
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 14.7,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 26.5,
+      "cropland_ha_seen": 11094
+     }
+    }
+   },
+   "2026-10-31": {
+    "track": "112_A_005",
+    "pct_field_water": 44.8,
+    "pct_low": 39.0,
+    "pct_high": 50.5,
+    "water_ha": 44535,
+    "paddy_ha_seen": 99311,
+    "hh_water_median_db": -15.7,
+    "hh_land_median_db": -8.88,
+    "hv_water_median_db": -21.56,
+    "hv_land_median_db": -16.52,
+    "date_myt": "2026-11-01",
+    "districts": {
+     "2_3": {
+      "district": "Kota Setar",
+      "study": true,
+      "pct_field_water": 46.7,
+      "cropland_ha_seen": 28518
+     },
+     "2_5": {
+      "district": "Kubang Pasu",
+      "study": true,
+      "pct_field_water": 55.1,
+      "cropland_ha_seen": 27926
+     },
+     "2_8": {
+      "district": "Padang Terap",
+      "study": false,
+      "pct_field_water": 22.8,
+      "cropland_ha_seen": 1004
+     },
+     "2_10": {
+      "district": "Yan",
+      "study": false,
+      "pct_field_water": 53.3,
+      "cropland_ha_seen": 7370
+     },
+     "2_11": {
+      "district": "Pendang",
+      "study": true,
+      "pct_field_water": 20.9,
+      "cropland_ha_seen": 17094
+     },
+     "2_12": {
+      "district": "Pokok Sena",
+      "study": true,
+      "pct_field_water": 23.8,
+      "cropland_ha_seen": 6134
+     },
+     "9_1": {
+      "district": "Perlis",
+      "study": false,
+      "pct_field_water": 59.4,
+      "cropland_ha_seen": 11137
+     }
+    }
+   }
+  },
+  "first_flooded_ha": {
+   "1": 54029,
+   "2": 0,
+   "11": 2538,
+   "12": 7998,
+   "13": 20043,
+   "14": 21445
+  },
+  "stacks": {
+   "076_D_085": {
+    "HH": {
+     "threshold_db": -11.88,
+     "ashman_d": 3.5,
+     "method": "otsu",
+     "capped": false,
+     "n_pixels": 1058478
+    },
+    "HV": {
+     "threshold_db": -18.95,
+     "ashman_d": 3.2,
+     "method": "otsu",
+     "capped": false,
+     "n_pixels": 1058478
+    },
+    "dates": [
+     "2026-09-23",
+     "2026-10-05",
+     "2026-10-17"
+    ],
+    "threshold_from": "2026-10-17",
+    "bimodal": true
+   },
+   "112_A_005": {
+    "HH": {
+     "threshold_db": -12.42,
+     "ashman_d": 3.57,
+     "method": "otsu",
+     "capped": false,
+     "n_pixels": 1103455
+    },
+    "HV": {
+     "threshold_db": -18.63,
+     "ashman_d": 3.69,
+     "method": "otsu",
+     "capped": false,
+     "n_pixels": 1103455
+    },
+    "dates": [
+     "2026-09-25",
+     "2026-10-07",
+     "2026-10-19",
+     "2026-10-31"
+    ],
+    "threshold_from": "2026-10-31",
+    "bimodal": true
+   }
+  },
+  "districts": {
+   "2_3": {
+    "district": "Kota Setar",
+    "study": true,
+    "cropland_ha": 28634,
+    "first_flooded_ha": {
+     "11": 404,
+     "12": 1587,
+     "13": 4560,
+     "14": 7259
+    }
+   },
+   "2_5": {
+    "district": "Kubang Pasu",
+    "study": true,
+    "cropland_ha": 31488,
+    "first_flooded_ha": {
+     "11": 357,
+     "12": 3063,
+     "13": 8696,
+     "14": 6758
+    }
+   },
+   "2_8": {
+    "district": "Padang Terap",
+    "study": false,
+    "cropland_ha": 1004,
+    "first_flooded_ha": {
+     "11": 16,
+     "12": 142,
+     "13": 114,
+     "14": 36
+    }
+   },
+   "2_10": {
+    "district": "Yan",
+    "study": false,
+    "cropland_ha": 7370,
+    "first_flooded_ha": {
+     "11": 45,
+     "12": 920,
+     "13": 1812,
+     "14": 1285
+    }
+   },
+   "2_11": {
+    "district": "Pendang",
+    "study": true,
+    "cropland_ha": 17094,
+    "first_flooded_ha": {
+     "11": 1060,
+     "12": 506,
+     "13": 1292,
+     "14": 2032
+    }
+   },
+   "2_12": {
+    "district": "Pokok Sena",
+    "study": true,
+    "cropland_ha": 6134,
+    "first_flooded_ha": {
+     "11": 261,
+     "12": 470,
+     "13": 546,
+     "14": 546
+    }
+   },
+   "9_1": {
+    "district": "Perlis",
+    "study": false,
+    "cropland_ha": 14101,
+    "first_flooded_ha": {
+     "11": 369,
+     "12": 1278,
+     "13": 3009,
+     "14": 3503
+    }
+   }
+  }
+ },
+ "validation": {
+  "kelantan": {
+   "framing": "consistency (same radar), land only",
+   "per_date": {
+    "2024-11-17": {
+     "f1": 0.07,
+     "iou": 0.036,
+     "kappa": 0.069,
+     "oa": 0.99,
+     "precision": 0.535,
+     "recall": 0.038,
+     "n_pixels": 5970883,
+     "tp": 2195,
+     "fp": 1911,
+     "fn": 56198,
+     "tn": 5910579,
+     "date_gap_days": 0
+    },
+    "2024-11-23": {
+     "f1": 0.261,
+     "iou": 0.15,
+     "kappa": 0.254,
+     "oa": 0.982,
+     "precision": 0.605,
+     "recall": 0.166,
+     "n_pixels": 5975092,
+     "tp": 19320,
+     "fp": 12607,
+     "fn": 96956,
+     "tn": 5846209,
+     "date_gap_days": 0
+    },
+    "2024-11-29": {
+     "f1": 0.752,
+     "iou": 0.602,
+     "kappa": 0.737,
+     "oa": 0.973,
+     "precision": 0.791,
+     "recall": 0.716,
+     "n_pixels": 5970863,
+     "tp": 244169,
+     "fp": 64603,
+     "fn": 96692,
+     "tn": 5565399,
+     "date_gap_days": 0
+    },
+    "2024-12-05": {
+     "f1": 0.362,
+     "iou": 0.221,
+     "kappa": 0.354,
+     "oa": 0.981,
+     "precision": 0.647,
+     "recall": 0.251,
+     "n_pixels": 5975121,
+     "tp": 31845,
+     "fp": 17344,
+     "fn": 94992,
+     "tn": 5830940,
+     "date_gap_days": 0
+    },
+    "2024-12-11": {
+     "f1": 0.337,
+     "iou": 0.203,
+     "kappa": 0.331,
+     "oa": 0.987,
+     "precision": 0.494,
+     "recall": 0.255,
+     "n_pixels": 5970869,
+     "tp": 19114,
+     "fp": 19550,
+     "fn": 55723,
+     "tn": 5876482,
+     "date_gap_days": 0
+    },
+    "2024-12-17": {
+     "f1": 0.263,
+     "iou": 0.151,
+     "kappa": 0.257,
+     "oa": 0.985,
+     "precision": 0.532,
+     "recall": 0.175,
+     "n_pixels": 5975114,
+     "tp": 16045,
+     "fp": 14100,
+     "fn": 75817,
+     "tn": 5869152,
+     "date_gap_days": 0
+    }
+   },
+   "summary": {
+    "f1": {
+     "median": 0.3,
+     "min": 0.07,
+     "max": 0.752
+    },
+    "iou": {
+     "median": 0.177,
+     "min": 0.036,
+     "max": 0.602
+    },
+    "kappa": {
+     "median": 0.294,
+     "min": 0.069,
+     "max": 0.737
+    },
+    "oa": {
+     "median": 0.984,
+     "min": 0.973,
+     "max": 0.99
+    },
+    "date_gap_days": {
+     "median": 0.0,
+     "min": 0,
+     "max": 0
+    }
+   }
+  },
+  "kedah": {
+   "framing": "independent (different radar, nearest pass)",
+   "per_date": {
+    "2026-09-23": {
+     "f1": 0.03,
+     "iou": 0.015,
+     "kappa": 0.026,
+     "oa": 0.979,
+     "precision": 0.017,
+     "recall": 0.157,
+     "n_pixels": 1007924,
+     "tp": 327,
+     "fp": 19382,
+     "fn": 1750,
+     "tn": 986465,
+     "date_gap_days": 3,
+     "dswx_date": "2026-09-20"
+    },
+    "2026-09-25": {
+     "f1": 0.015,
+     "iou": 0.008,
+     "kappa": 0.014,
+     "oa": 0.982,
+     "precision": 0.008,
+     "recall": 0.173,
+     "n_pixels": 1102387,
+     "tp": 154,
+     "fp": 19305,
+     "fn": 738,
+     "tn": 1082190,
+     "date_gap_days": 1,
+     "dswx_date": "2026-09-26"
+    },
+    "2026-10-05": {
+     "f1": 0.054,
+     "iou": 0.028,
+     "kappa": 0.048,
+     "oa": 0.926,
+     "precision": 0.028,
+     "recall": 0.68,
+     "n_pixels": 1089932,
+     "tp": 2307,
+     "fp": 79736,
+     "fn": 1087,
+     "tn": 1006802,
+     "date_gap_days": 3,
+     "dswx_date": "2026-10-02"
+    },
+    "2026-10-07": {
+     "f1": 0.088,
+     "iou": 0.046,
+     "kappa": 0.082,
+     "oa": 0.941,
+     "precision": 0.047,
+     "recall": 0.713,
+     "n_pixels": 1028826,
+     "tp": 2946,
+     "fp": 59515,
+     "fn": 1186,
+     "tn": 965179,
+     "date_gap_days": 1,
+     "dswx_date": "2026-10-08"
+    },
+    "2026-10-17": {
+     "f1": 0.052,
+     "iou": 0.027,
+     "kappa": 0.038,
+     "oa": 0.781,
+     "precision": 0.027,
+     "recall": 0.827,
+     "n_pixels": 1058475,
+     "tp": 6337,
+     "fp": 230598,
+     "fn": 1322,
+     "tn": 820218,
+     "date_gap_days": 3,
+     "dswx_date": "2026-10-14"
+    },
+    "2026-10-19": {
+     "f1": 0.272,
+     "iou": 0.157,
+     "kappa": 0.222,
+     "oa": 0.812,
+     "precision": 0.159,
+     "recall": 0.931,
+     "n_pixels": 1102193,
+     "tp": 38621,
+     "fp": 204051,
+     "fn": 2850,
+     "tn": 856671,
+     "date_gap_days": 1,
+     "dswx_date": "2026-10-20"
+    },
+    "2026-10-31": {
+     "f1": 0.424,
+     "iou": 0.269,
+     "kappa": 0.282,
+     "oa": 0.669,
+     "precision": 0.271,
+     "recall": 0.965,
+     "n_pixels": 1103455,
+     "tp": 134243,
+     "fp": 360589,
+     "fn": 4876,
+     "tn": 603747,
+     "date_gap_days": 1,
+     "dswx_date": "2026-11-01"
+    }
+   },
+   "summary": {
+    "f1": {
+     "median": 0.054,
+     "min": 0.015,
+     "max": 0.424
+    },
+    "iou": {
+     "median": 0.028,
+     "min": 0.008,
+     "max": 0.269
+    },
+    "kappa": {
+     "median": 0.048,
+     "min": 0.014,
+     "max": 0.282
+    },
+    "oa": {
+     "median": 0.926,
+     "min": 0.669,
+     "max": 0.982
+    },
+    "date_gap_days": {
+     "median": 1.0,
+     "min": 1,
+     "max": 3
+    }
+   }
+  }
+ }
+}

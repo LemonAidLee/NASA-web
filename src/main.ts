@@ -22,6 +22,7 @@ import * as S from './state';
 import { createMap, fitArea } from './map/mainMap';
 import { initCompare } from './map/compare';
 import { loadDistricts } from './map/districts';
+import { loadStats } from './lib/stats';
 import { initTopBar } from './ui/topBar';
 import { initLeftCol } from './ui/leftCol';
 import { initTimeControl } from './ui/timeControl';
@@ -61,7 +62,7 @@ function toast(msg: string): void {
 
 async function boot(): Promise<void> {
   try {
-    await Promise.all([loadConfig(), loadDistricts()]);
+    await Promise.all([loadConfig(), loadDistricts(), loadStats()]);
   } catch (e) {
     $('#map').append(h('p', { class: 'map-error' }, t('err.data', { file: String((e as Error).message) })));
     return;

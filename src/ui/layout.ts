@@ -1,5 +1,6 @@
 // F12 layout: desktop columns vs mobile bottom sheet (peek holds the time control; half/full hold at most 4 tabs).
 import { area, imageryOnly, fmtDate } from '../config';
+import { areaHeadline } from '../lib/stats';
 import { t } from '../i18n';
 import { $, clear, h } from '../lib/dom';
 import * as S from '../state';
@@ -67,7 +68,7 @@ function applySheet(s: S.State): void {
 
 function peekLine(s: S.State): void {
   const a = area(s.area);
-  sheetPeekLine.textContent = imageryOnly(a) ? t('exp.badge') : t(a.panel.headline, { date: fmtDate(s.date) });
+  sheetPeekLine.textContent = imageryOnly(a) ? t('exp.badge') : areaHeadline(s.area, s.date, a.panel.headline, fmtDate, t);
 }
 
 export function initLayout(): void {

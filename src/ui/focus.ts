@@ -1,5 +1,5 @@
 // Focus areas + AI-analysis dashboard (expandable, closable).
-// The analysis text is an AI draft from sourced facts, clearly tagged; every radar number is a placeholder.
+// The analysis text is an AI draft from sourced facts, clearly tagged; radar numbers come from stats.json (pipeline).
 // Refined version (reports/AI integration in SAR prototype.md): AI writes text at build time, code fills every number
 // from the pipeline outputs, a person reviews it. No runtime model, no AI numbers, no safety advice.
 // Panel options (12 Nov): A inspect card on marker hover, B inspect screen when expanded, C segmented stat bars.
@@ -12,6 +12,7 @@ import { compareDefault } from '../map/compare';
 import { districtByCode } from '../map/districts';
 import { fitPadding, map, reduced } from '../map/mainMap';
 import { districtSvg, inspectCard, segBar, statRow, visited } from './kit';
+import { kedPass, kelPass, stats } from '../lib/stats';
 
 const launcher = h('nav', { class: 'focus-launcher', 'aria-label': t('focus.launcher') });
 const dash = h('section', { class: 'dash card', id: 'dash', 'aria-labelledby': 'dash-title', hidden: true });
@@ -102,17 +103,41 @@ function statsFor(f: FocusArea, s: S.State): Stat[] {
   const pend = t('seg.pending');
   const list = focusFor(s.area);
   const maxKm = Math.max(...list.map((x) => x.area_km2));
-  const radar: Stat[] = s.area === 'kelantan'
-    ? [
-        { label: t('focus.kpi.kel.ha', { date }), value: null, max: 1, shown: '— ha', basis: pend },
-        { label: t('focus.kpi.kel.change'), value: null, max: 1, shown: '—', basis: pend },
-        { label: t('focus.kpi.conf'), value: null, max: 1, shown: '—', basis: pend },
-      ]
-    : [
-        { label: t('focus.kpi.ked.pct', { date }), value: null, max: 1, shown: '—%', basis: pend },
-        { label: t('focus.kpi.ked.first'), value: null, max: 1, shown: '—', basis: pend },
-        { label: t('focus.kpi.ked.stage'), value: null, max: 1, shown: '—', basis: pend },
-      ];
+  let radar: Stat[];
+  if (s.area === 'kelantan') {
+    const p = kelPass(s.date);
+    const r = p?.districts[f.code];
+    const peak = Math.max(1, ...Object.values(stats?.kelantan.dates ?? {}).map((d) => d.districts[f.code]?.flood_ha ?? 0));
+    radar = r && p
+      ? [
+          { label: t('focus.kpi.kel.ha', { date: fmtDay(p.date_myt) }), value: r.flood_ha, max: peak, shown: `${fmtNum(r.flood_ha)} ha`, basis: t('focus.basis.peak', { ha: fmtNum(peak) }) },
+          { label: t('focus.kpi.kel.change'), value: r.change_ha === null ? null : Math.abs(r.change_ha), max: peak, shown: r.change_ha === null ? t('focus.kpi.firstpass') : `${r.change_ha >= 0 ? '+' : '−'}${fmtNum(Math.abs(r.change_ha))} ha`, basis: t('focus.basis.peak', { ha: fmtNum(peak) }) },
+          { label: t('focus.kpi.conf'), value: { high: 3, medium: 2, low: 1, none: 0 }[r.confidence], max: 3, shown: t(`conf.${r.confidence}`), basis: t('focus.basis.conf') },
+        ]
+      : [
+          { label: t('focus.kpi.kel.ha', { date }), value: null, max: 1, shown: '— ha', basis: pend },
+          { label: t('focus.kpi.kel.change'), value: null, max: 1, shown: '—', basis: pend },
+          { label: t('focus.kpi.conf'), value: null, max: 1, shown: '—', basis: pend },
+        ];
+  } else {
+    const p = kedPass(s.date);
+    const r = p?.districts[f.code];
+    const ff = stats?.kedah.districts[f.code];
+    const firstKey = ff ? (['11', '12', '13', '14'] as const).find((k) => (ff.first_flooded_ha[k] ?? 0) > 0) : undefined;
+    const peakKey = ff ? (['11', '12', '13', '14'] as const).reduce((a, k) => ((ff.first_flooded_ha[k] ?? 0) > (ff.first_flooded_ha[a] ?? 0) ? k : a), '11') : undefined;
+    const label: Record<string, string> = { '11': '23–25 Sep', '12': '5–7 Oct', '13': '17–19 Oct', '14': '31 Oct' };
+    radar = r && p
+      ? [
+          { label: t('focus.kpi.ked.pct', { date: fmtDay(p.date_myt) }), value: r.pct_field_water, max: 100, shown: `${r.pct_field_water}%`, basis: t('insp.basis.pct') },
+          { label: t('focus.kpi.ked.first'), value: null, max: 1, shown: firstKey ? label[firstKey] : '—', basis: t('focus.basis.first') },
+          { label: t('focus.kpi.ked.peak'), value: null, max: 1, shown: peakKey && ff && (ff.first_flooded_ha[peakKey] ?? 0) > 0 ? `${label[peakKey]} · ${fmtNum(ff.first_flooded_ha[peakKey])} ha` : '—', basis: t('focus.basis.first') },
+        ]
+      : [
+          { label: t('focus.kpi.ked.pct', { date }), value: null, max: 1, shown: '—%', basis: pend },
+          { label: t('focus.kpi.ked.first'), value: null, max: 1, shown: '—', basis: pend },
+          { label: t('focus.kpi.ked.stage'), value: null, max: 1, shown: '—', basis: pend },
+        ];
+  }
   return [
     ...radar,
     { label: t('focus.kpi.area'), value: f.area_km2, max: maxKm, shown: `${fmtNum(f.area_km2)} km²`, basis: t('insp.basis.area', { area: t(area(s.area).short), km: fmtNum(maxKm) }) },
@@ -122,13 +147,15 @@ function statsFor(f: FocusArea, s: S.State): Stat[] {
 
 /** C: stat tiles with segmented bars (docked dashboard). */
 function kpis(f: FocusArea, s: S.State): HTMLElement {
-  return h('div', { class: 'kpis' }, statsFor(f, s).map((st) =>
-    h('div', { class: `kpi${st.value === null ? ' is-pending' : ''}` },
+  return h('div', { class: 'kpis' }, statsFor(f, s).map((st) => {
+    const pending = st.shown.startsWith('—');
+    return h('div', { class: `kpi${pending ? ' is-pending' : ''}` },
       h('p', { class: 'kpi-label' }, st.label),
       h('p', { class: 'kpi-value num' }, st.shown),
-      segBar({ value: st.value, max: st.max, basis: st.basis }),
-      h('p', { class: 'kpi-note' }, st.value === null ? t('focus.kpi.pending') : t('focus.kpi.measured')),
-    )));
+      st.value !== null || pending ? segBar({ value: st.value, max: st.max, basis: st.basis }) : null,
+      h('p', { class: 'kpi-note' }, pending ? t('focus.kpi.pending') : t('focus.kpi.measured')),
+    );
+  }));
 }
 
 function timeline(f: FocusArea, s: S.State): HTMLElement {

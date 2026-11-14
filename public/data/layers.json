@@ -321,21 +321,15 @@
       "group": "group.flood",
       "name": "layer.kel_flood",
       "simple": true,
-      "kind": "class",
-      "status": "placeholder",
-      "url": "data/kelantan_{date}_class_3857.tif",
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kelantan_{date}_class.webp",
       "dates": "passes",
       "slot": "data",
       "on": true,
       "opacity": 0.9,
       "info": "info.kel_flood",
       "classes": [
-        {
-          "code": 0,
-          "name": "class.nodata",
-          "style": "hatch",
-          "confidence": "none"
-        },
         {
           "code": 2,
           "name": "kel.class.permanent",
@@ -374,7 +368,33 @@
         "#56B4E9"
       ],
       "abbr": "FL",
-      "collection": "opera_rtc"
+      "collection": "opera_rtc",
+      "corners": [
+        [
+          101.795799,
+          6.304448
+        ],
+        [
+          102.603205,
+          6.304448
+        ],
+        [
+          102.603205,
+          5.596016
+        ],
+        [
+          101.795799,
+          5.596016
+        ]
+      ],
+      "baked_dates": [
+        "2024-11-17",
+        "2024-11-23",
+        "2024-11-29",
+        "2024-12-05",
+        "2024-12-11",
+        "2024-12-17"
+      ]
     },
     {
       "id": "kel_vv",
@@ -384,9 +404,9 @@
       "group": "group.flood",
       "name": "layer.kel_vv",
       "simple": false,
-      "kind": "db",
-      "status": "placeholder",
-      "url": "data/kelantan_{date}_VV_3857.tif",
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kelantan_{date}_vv.webp",
       "dates": "passes",
       "slot": "data",
       "on": false,
@@ -403,7 +423,40 @@
         "#FFFFFF"
       ],
       "abbr": "VV",
-      "collection": "opera_rtc"
+      "collection": "opera_rtc",
+      "corners": [
+        [
+          101.795799,
+          6.304448
+        ],
+        [
+          102.603205,
+          6.304448
+        ],
+        [
+          102.603205,
+          5.596016
+        ],
+        [
+          101.795799,
+          5.596016
+        ]
+      ],
+      "encoding": {
+        "type": "grey",
+        "range": [
+          -25,
+          0
+        ]
+      },
+      "baked_dates": [
+        "2024-11-17",
+        "2024-11-23",
+        "2024-11-29",
+        "2024-12-05",
+        "2024-12-11",
+        "2024-12-17"
+      ]
     },
     {
       "id": "kel_dswx",
@@ -472,9 +525,9 @@
       "group": "group.paddy",
       "name": "layer.ked_first_flooded",
       "simple": true,
-      "kind": "class",
-      "status": "placeholder",
-      "url": "data/kedah_first_flooded_3857.tif",
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kedah_first_flooded.webp",
       "dates": "static",
       "slot": "data",
       "on": false,
@@ -484,12 +537,6 @@
       ],
       "info": "info.ked_first_flooded",
       "classes": [
-        {
-          "code": 0,
-          "name": "ked.class.nodata",
-          "style": "hatch",
-          "confidence": "none"
-        },
         {
           "code": 1,
           "name": "ked.class.notyet",
@@ -505,29 +552,54 @@
         {
           "code": 11,
           "name": "ked.class.flooded.t1",
-          "color": "#7FCFB6",
-          "confidence": "set-at-event"
+          "color": "#B5E5D3",
+          "confidence": "medium"
         },
         {
           "code": 12,
           "name": "ked.class.flooded.t2",
-          "color": "#009E73",
-          "confidence": "set-at-event"
+          "color": "#5CC4A0",
+          "confidence": "medium"
         },
         {
           "code": 13,
           "name": "ked.class.flooded.t3",
-          "color": "#005C43",
-          "confidence": "set-at-event"
+          "color": "#009E73",
+          "confidence": "medium"
+        },
+        {
+          "code": 14,
+          "name": "ked.class.flooded.t4",
+          "color": "#006B4E",
+          "confidence": "medium"
         }
       ],
       "swatch": [
-        "#7FCFB6",
+        "#B5E5D3",
+        "#5CC4A0",
         "#009E73",
-        "#005C43"
+        "#006B4E"
       ],
       "abbr": "FP",
-      "collection": "nisar_gcov"
+      "collection": "nisar_gcov",
+      "corners": [
+        [
+          100.198493,
+          6.501235
+        ],
+        [
+          100.601926,
+          6.501235
+        ],
+        [
+          100.601926,
+          5.898958
+        ],
+        [
+          100.198493,
+          5.898958
+        ]
+      ]
     },
     {
       "id": "ked_rgb",
@@ -537,11 +609,9 @@
       "group": "group.paddy",
       "name": "layer.ked_rgb",
       "simple": true,
-      "kind": "gibs",
+      "kind": "image",
       "status": "real",
-      "preview": true,
-      "stand_in_for": "rgb",
-      "url": "{gibs}/NISAR_L2_Geocoded_Polarimetric_Covariance/default/{date}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.png",
+      "url": "data/baked/kedah_{date}_rgb.webp",
       "dates": "passes",
       "maxzoom": 13,
       "slot": "data",
@@ -556,15 +626,55 @@
       ],
       "info": "info.ked_rgb",
       "legend": "nisar",
-      "attribution": "NISAR GCOV via NASA GIBS",
+      "attribution": "Our HH/HV composite from NISAR GCOV (NASA/JPL, via ASF DAAC)",
       "swatch": [
         "#22307A",
         "#3C9B4E",
         "#E7A6C8"
       ],
-      "wms_layer": "NISAR_L2_Geocoded_Polarimetric_Covariance",
       "abbr": "RGB",
-      "collection": "nisar_gcov"
+      "collection": "nisar_gcov",
+      "corners": [
+        [
+          100.198493,
+          6.501235
+        ],
+        [
+          100.601926,
+          6.501235
+        ],
+        [
+          100.601926,
+          5.898958
+        ],
+        [
+          100.198493,
+          5.898958
+        ]
+      ],
+      "stretch": {
+        "R_HH": [
+          -18.3,
+          -2.5
+        ],
+        "G_HV": [
+          -25.6,
+          -9.3
+        ],
+        "B_HH_minus_HV": [
+          3.7,
+          12.2
+        ]
+      },
+      "baked_dates": [
+        "2026-09-23",
+        "2026-09-25",
+        "2026-10-05",
+        "2026-10-07",
+        "2026-10-17",
+        "2026-10-19",
+        "2026-10-31"
+      ]
     },
     {
       "id": "ked_hh",
@@ -574,9 +684,9 @@
       "group": "group.paddy",
       "name": "layer.ked_hh",
       "simple": false,
-      "kind": "db",
-      "status": "placeholder",
-      "url": "data/kedah_{date}_HH_3857.tif",
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kedah_{date}_hh.webp",
       "dates": "passes",
       "slot": "data",
       "on": false,
@@ -593,7 +703,41 @@
         "#FFFFFF"
       ],
       "abbr": "HH",
-      "collection": "nisar_gcov"
+      "collection": "nisar_gcov",
+      "corners": [
+        [
+          100.198493,
+          6.501235
+        ],
+        [
+          100.601926,
+          6.501235
+        ],
+        [
+          100.601926,
+          5.898958
+        ],
+        [
+          100.198493,
+          5.898958
+        ]
+      ],
+      "encoding": {
+        "type": "grey",
+        "range": [
+          -25,
+          0
+        ]
+      },
+      "baked_dates": [
+        "2026-09-23",
+        "2026-09-25",
+        "2026-10-05",
+        "2026-10-07",
+        "2026-10-17",
+        "2026-10-19",
+        "2026-10-31"
+      ]
     },
     {
       "id": "ked_hv",
@@ -603,9 +747,9 @@
       "group": "group.paddy",
       "name": "layer.ked_hv",
       "simple": false,
-      "kind": "db",
-      "status": "placeholder",
-      "url": "data/kedah_{date}_HV_3857.tif",
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kedah_{date}_hv.webp",
       "dates": "passes",
       "slot": "data",
       "on": false,
@@ -622,7 +766,41 @@
         "#FFFFFF"
       ],
       "abbr": "HV",
-      "collection": "nisar_gcov"
+      "collection": "nisar_gcov",
+      "corners": [
+        [
+          100.198493,
+          6.501235
+        ],
+        [
+          100.601926,
+          6.501235
+        ],
+        [
+          100.601926,
+          5.898958
+        ],
+        [
+          100.198493,
+          5.898958
+        ]
+      ],
+      "encoding": {
+        "type": "grey",
+        "range": [
+          -32,
+          -8
+        ]
+      },
+      "baked_dates": [
+        "2026-09-23",
+        "2026-09-25",
+        "2026-10-05",
+        "2026-10-07",
+        "2026-10-17",
+        "2026-10-19",
+        "2026-10-31"
+      ]
     },
     {
       "id": "ked_dswx",
@@ -662,9 +840,9 @@
       "name": "layer.ked_disagree",
       "simple": false,
       "expert_only": true,
-      "kind": "class",
-      "status": "placeholder",
-      "url": "data/kedah_{date}_disagree_3857.tif",
+      "kind": "image",
+      "status": "real",
+      "url": "data/baked/kedah_{date}_disagree.webp",
       "dates": "passes",
       "slot": "data",
       "on": false,
@@ -675,7 +853,48 @@
         "#56B4E9"
       ],
       "abbr": "Δ",
-      "collection": "nisar_gcov"
+      "collection": "nisar_gcov",
+      "corners": [
+        [
+          100.198493,
+          6.501235
+        ],
+        [
+          100.601926,
+          6.501235
+        ],
+        [
+          100.601926,
+          5.898958
+        ],
+        [
+          100.198493,
+          5.898958
+        ]
+      ],
+      "classes": [
+        {
+          "code": 1,
+          "name": "ked.dis.nisar",
+          "color": "#CC79A7",
+          "confidence": "low"
+        },
+        {
+          "code": 2,
+          "name": "ked.dis.dswx",
+          "color": "#56B4E9",
+          "confidence": "low"
+        }
+      ],
+      "baked_dates": [
+        "2026-09-23",
+        "2026-09-25",
+        "2026-10-05",
+        "2026-10-07",
+        "2026-10-17",
+        "2026-10-19",
+        "2026-10-31"
+      ]
     },
     {
       "id": "exp_nisar",

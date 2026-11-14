@@ -8,6 +8,7 @@ import { compareDefault } from '../map/compare';
 import { flyTo, map } from '../map/mainMap';
 import { acquisitionDays, earthdataSearchUrl, vertexUrl, worldviewUrl, type Bbox } from '../lib/catalog';
 import { latestInfo } from '../map/latestNisar';
+import { areaHeadline } from '../lib/stats';
 
 export const titleCard = h('section', { class: 'card title-card', id: 'titlecard' });
 export const layersCard = h('section', { class: 'card layers-card', id: 'layers-card' });
@@ -67,7 +68,7 @@ function renderTitle(): void {
   } else {
     titleCard.append(
       h('div', { class: 'headline' },
-        h('p', {}, t(a.panel.headline, { date: fmtDate(s.date) })),
+        h('p', {}, areaHeadline(s.area, s.date, a.panel.headline, fmtDate, t)),
         h('button', { class: 'badge badge-link', onclick: () => S.set({ tab: 'sure', sheet: 'half' }) }, t('num.badge')),
       ),
       h('button', { class: 'pill pill-primary', onclick: () => S.set(s.compare === 'off' ? compareDefault() : { compare: 'off' }) },
@@ -401,8 +402,8 @@ function renderLegend(): void {
     legendCard.append(
       h('div', { class: 'legend-block' },
         h('h3', { class: 'legend-title' }, t(classLayer.name)),
-        h('ul', { class: 'legend-list' }, classLayer.classes.map((c) => classItem(c, true))),
-        h('p', { class: 'muted small' }, t('legend.pending')),
+        h('ul', { class: 'legend-list' }, classLayer.classes.filter((c) => c.style !== 'none' || classLayer.status === 'placeholder').map((c) => classItem(c, classLayer.status === 'placeholder'))),
+        classLayer.status === 'placeholder' ? h('p', { class: 'muted small' }, t('legend.pending')) : null,
       ),
     );
   }
@@ -435,7 +436,7 @@ function renderLegend(): void {
         h('h3', { class: 'legend-title' }, t(l.name)),
         h('div', { class: 'ramp', style: `background: linear-gradient(90deg, ${lc.db.low}, ${lc.db.high})` }),
         h('p', { class: 'small' }, t(s.area === 'kedah' ? 'legend.ked.db' : 'legend.db')),
-        h('p', { class: 'muted small' }, t('legend.pending')),
+        l.status === 'placeholder' ? h('p', { class: 'muted small' }, t('legend.pending')) : h('p', { class: 'muted small num' }, `${l.encoding?.range?.[0] ?? l.range?.[0]} dB → ${l.encoding?.range?.[1] ?? l.range?.[1]} dB`),
       ));
     }
   }
