@@ -1,5 +1,5 @@
 // Focus areas + AI-analysis dashboard (expandable, closable).
-// The analysis text is an AI draft from sourced facts, clearly tagged; radar numbers come from stats.json (pipeline).
+// The analysis text is AI analysis of our pipeline results, reviewed by the team; radar numbers come from stats.json (pipeline).
 // Refined version (reports/AI integration in SAR prototype.md): AI writes text at build time, code fills every number
 // from the pipeline outputs, a person reviews it. No runtime model, no AI numbers, no safety advice.
 // Panel options (12 Nov): A inspect card on marker hover, B inspect screen when expanded, C segmented stat bars.
@@ -294,7 +294,7 @@ function renderDash(): void {
         s.dash === 'max' ? null : h('p', { class: 'card-tagline' }, f.tagline),
       ),
       h('div', { class: 'dash-tags' },
-        h('span', { class: 'chip chip-ai' }, focusMeta.reviewed ? t('focus.label') : t('focus.tag.draft')),
+        h('span', { class: 'chip chip-ai' }, focusMeta.reviewed ? t('focus.tag.reviewed') : t('focus.tag.draft')),
         h('span', { class: 'chip' }, t('focus.tag.pending')),
       ),
       h('div', { class: 'dash-controls' },

@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Project SARS Amoeba: Project Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 19mm 20mm 19mm;
+    @bottom-center { content: counter(page); font-family: "Source Sans 3", "Segoe UI", sans-serif; font-size: 8.5pt; color: #6b6b6b; }
+    @top-right { content: "Project SARS Amoeba · NASA Space Apps Challenge 2026 · Kuala Lumpur"; font-family: "Source Sans 3", "Segoe UI", sans-serif; font-size: 7.5pt; color: #8a8a8a; }
+  }
+  @page :first { @top-right { content: none; } }
+  :root { --ink: #1d1d1f; --muted: #555; --rule: #cfcfcf; --accent: #9a4b00; --soft: #f6f3ee; --blue: #1f5fa8; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; color: var(--ink); background: #fff; font-family: "Source Serif 4", Cambria, Georgia, serif; font-size: 10.3pt; line-height: 1.5; hyphens: auto; text-align: justify; }
+  h1, h2, h3, h4, .sans, table, figcaption, .meta, .box-title { font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif; }
+  h1 { font-size: 18.5pt; line-height: 1.15; margin: 0 0 4pt; text-align: left; letter-spacing: -0.2pt; }
+  .subtitle { font-family: "Source Sans 3", "Segoe UI", sans-serif; font-size: 11pt; color: var(--muted); margin: 0 0 8pt; text-align: left; }
+  h2 { font-size: 13.5pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 1.2pt solid var(--ink); break-after: avoid; text-align: left; }
+  h3 { font-size: 11pt; margin: 12pt 0 4pt; break-after: avoid; text-align: left; }
+  h4 { font-size: 10pt; margin: 9pt 0 3pt; break-after: avoid; color: #333; }
+  p { margin: 0 0 6.5pt; orphans: 3; widows: 3; }
+  .meta { font-size: 9.3pt; color: #333; line-height: 1.45; margin-bottom: 10pt; text-align: left; }
+  .meta b { color: var(--ink); }
+  .ph { background: #fff2a8; padding: 0 2pt; border-radius: 2pt; }
+  .abstract { border-top: 1pt solid var(--rule); border-bottom: 1pt solid var(--rule); padding: 8pt 0 6pt; margin: 6pt 0 8pt; }
+  .abstract .box-title { font-weight: 700; font-size: 9.5pt; letter-spacing: 0.6pt; text-transform: uppercase; margin-bottom: 3pt; }
+  .kw { font-size: 9.2pt; color: #333; text-align: left; }
+  .box { background: var(--soft); border-left: 3pt solid var(--accent); padding: 7pt 10pt 4pt; margin: 8pt 0 10pt; }
+  .box .box-title { font-weight: 700; font-size: 10pt; margin-bottom: 4pt; }
+  .box p, .box li { font-size: 9.6pt; }
+  ul, ol { margin: 0 0 6.5pt 0; padding-left: 15pt; }
+  li { margin-bottom: 2.5pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 8.6pt; line-height: 1.35; margin: 4pt 0 4pt; break-inside: avoid; text-align: left; }
+  th, td { padding: 3.2pt 5pt; vertical-align: top; border-bottom: 0.6pt solid #dcdcdc; }
+  thead th { border-top: 1.2pt solid var(--ink); border-bottom: 0.9pt solid var(--ink); font-weight: 700; background: #fafafa; }
+  tbody tr:last-child td, tbody tr:last-child th { border-bottom: 1.2pt solid var(--ink); }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { font-weight: 700; background: #faf7f2; }
+  .tcap { font-family: "Source Sans 3", "Segoe UI", sans-serif; font-size: 8.8pt; color: #333; margin: 8pt 0 2pt; text-align: left; break-after: avoid; }
+  .tnote { font-family: "Source Sans 3", "Segoe UI", sans-serif; font-size: 7.9pt; color: var(--muted); margin: 2pt 0 8pt; text-align: left; }
+  figure { margin: 8pt 0 10pt; break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border: 0.5pt solid #d8d8d8; }
+  figcaption { font-size: 8.8pt; color: #333; margin-top: 4pt; line-height: 1.38; text-align: left; }
+  .cap-label, .tcap b { font-weight: 700; color: var(--ink); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt; align-items: start; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6pt; align-items: start; }
+  .sub { font-family: "Source Sans 3", "Segoe UI", sans-serif; font-size: 8pt; font-weight: 700; color: #333; margin: 0 0 2pt; }
+  .chart img { border: none; background: #fbf8f1; }
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5pt; margin: 4pt 0 2pt; }
+  .flow div { font-family: "Source Sans 3", "Segoe UI", sans-serif; border: 0.8pt solid #9a9a9a; border-radius: 4pt; padding: 5pt 6pt; font-size: 7.8pt; line-height: 1.3; background: #fff; position: relative; text-align: left; }
+  .flow div b { display: block; font-size: 8.4pt; margin-bottom: 2pt; color: var(--accent); }
+  .flow div:not(:last-child)::after { content: "→"; position: absolute; right: -8pt; top: 40%; font-size: 10pt; color: #666; }
+  .eq { font-family: "Cambria Math", Cambria, serif; text-align: center; margin: 4pt 0 6pt; font-size: 10.3pt; }
+  .refs { font-size: 8.7pt; line-height: 1.38; text-align: left; padding-left: 20pt; }
+  .refs li { margin-bottom: 3pt; padding-left: 2pt; }
+  a { color: var(--blue); text-decoration: none; word-break: break-word; }
+  .small { font-size: 9pt; }
+  .pb { break-before: page; }
+  .nobreak { break-inside: avoid; }
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ===================== TITLE BLOCK ===================== -->
+<h1>Project SARS Amoeba: Tracking Shape-Shifting Water Through Monsoon Clouds with NISAR Radar</h1>
+<p class="subtitle">Mapping the 2024 Kelantan flood and the 2026 Kedah paddy season with NISAR and Sentinel-1 radar, NASA OPERA products and an open web map</p>
+
+<div class="meta">
+  <b>Team:</b> SARS Amoeba · <b>Members:</b> Lee Wen Yi, Joo Eu-Jin, Tan Jia Shun, Ong Kah Weng<br>
+  <b>Event:</b> NASA Space Apps Challenge 2026, Kuala Lumpur (NSAKL26), 14–15 November 2026 · <b>Challenge:</b> “Dancing with the SARs”<br>
+  <b>Website:</b> <a href="https://project-sars-amoeba.vercel.app">project-sars-amoeba.vercel.app</a> (English and Bahasa Melayu) · <b>Source code:</b> <a href="https://github.com/LemonAidLee/NASA-web">github.com/LemonAidLee/NASA-web</a> (MIT licence)<br>
+  <b>Demo video (30 s):</b> <span class="ph">[link]</span> · <b>Presentation video (3–5 min):</b> <span class="ph">[link]</span>
+</div>
+
+<div class="abstract">
+  <div class="box-title">Abstract</div>
+  <p>Floods and planting in Malaysia both happen under thick monsoon cloud, which blinds ordinary satellite cameras exactly when people need them. Synthetic aperture radar (SAR) carries its own signal and sees the ground through cloud, day or night. We built an open, browser-based map that turns NASA radar data into answers people can act on. For the Kelantan flood of November–December 2024 we processed six Sentinel-1 passes from NASA’s OPERA programme with a before-and-after change test. Our map shows about <b>20,300 ha</b> of new flood water in seven districts on 29 November (range 17,200–20,300 ha). It agrees with NASA’s own water map at an F1 score of <b>0.75</b> on land. About <b>244,000 people</b> lived within 250 m of that water, and about <b>4,100 ha</b> stayed flooded on two or more passes, mostly in Tumpat and Pasir Mas. For the 2026 Kedah rice season we used seven passes from <b>NISAR</b>, the new NASA-ISRO L-band radar. The share of cropland holding water rose from <b>2%</b> on 23 September to <b>45%</b> on 1 November, later than the MADA irrigation schedule in a drought year. NISAR found far more shallow field water than C-band Sentinel-1 did. The web map adds per-spot radar histories, rainfall, an AI analysis whose every number is checked by code, and a live view of the current monsoon.</p>
+  <p class="kw"><b>Keywords:</b> synthetic aperture radar; NISAR; L-band; Sentinel-1; OPERA; flood mapping; paddy inundation; change detection; Otsu threshold; Kelantan; MADA; web GIS</p>
+</div>
+
+<div class="box">
+  <div class="box-title">Project at a glance</div>
+  <table>
+    <tbody>
+      <tr><th style="width:25%">Project name</th><td>Project SARS Amoeba: Tracking Shape-Shifting Water Through Monsoon Clouds with NISAR Radar (web app: “Radar water map” / “Peta air radar”)</td></tr>
+      <tr><th>Summary</th><td>An open web map that uses NASA radar to show where flood water spread in Kelantan (2024), how long it stayed, how many people lived beside it, and when water reached Kedah’s rice fields (2026), with every number traced to its source.</td></tr>
+      <tr><th>Demo and videos</th><td>30-second demo and 3–5 minute video: <span class="ph">[Google Drive links, “Anyone with the link: Viewer”]</span></td></tr>
+      <tr><th>Software link</th><td><a href="https://project-sars-amoeba.vercel.app">project-sars-amoeba.vercel.app</a> · code: <a href="https://github.com/LemonAidLee/NASA-web">github.com/LemonAidLee/NASA-web</a></td></tr>
+      <tr><th>NASA data</th><td>NISAR L2 GCOV; OPERA RTC-S1 and DSWx-S1; NASA POWER (MERRA-2) rainfall; NASA GIBS imagery; ASF DAAC and CMR catalogues (Section 2, Table 1)</td></tr>
+      <tr><th>Partner and other data</th><td>ISRO (NISAR partner); ESA Copernicus Sentinel-1 and WorldCover; EC JRC Global Surface Water; WorldPop; DOSM boundaries; OpenStreetMap (all cited in References)</td></tr>
+      <tr><th>Use of AI</th><td>Claude (Anthropic) for brainstorming, research, data analysis and coding; AI district analysis reviewed by the team, with every number checked by code; no AI runs in the page (Section 3.7)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================== 1 INTRODUCTION ===================== -->
+<h2>1. Introduction</h2>
+
+<h3>1.1 The problem: the water we need to see is under the clouds</h3>
+<p>In late November 2024 Kelantan had one of its worst floods on record. The state police chief called it “the worst in history” [21], and by 1 December 97,128 people from 30,017 families had been affected [19]. On 29 November alone, 65,993 people were in 244 relief centres, with Pasir Mas holding the most at 22,486 [18]. Kelantan also recorded the largest flood losses of any state in 2024, RM263.0 million [20].</p>
+<p>Two years later, 300 km to the north-west, a quieter water problem was unfolding. The Muda Agricultural Development Authority (MADA) granary in Kedah grows about 37% of Malaysia’s rice [22]. For Season 2/2026 MADA planned to release water to 99,489 ha in three phases starting on 23 September, 3 October and 13 October [23]. But on 17 September its dams held only 35.76% of capacity, and irrigation “will depend entirely on the effectiveness of rainwater runoff” [24].</p>
+<p>Both stories share one obstacle: monsoon cloud. Optical satellites such as Landsat and VIIRS photograph the tops of clouds, not the ground beneath them, for days at a time. Disaster teams, farmers and planners lose their best overview exactly when water is moving fastest.</p>
+
+<h3>1.2 Why radar, and why NISAR</h3>
+<p>Synthetic aperture radar sends microwave pulses sideways towards the ground and records the echo that comes back, called <i>backscatter</i> [17]. Because the radar brings its own signal, it works at night and passes through cloud. Calm water acts like a mirror and reflects the pulse away from the satellite, so it looks very dark. Rough ground, buildings and plants scatter some energy back and look brighter. Radars also send and receive in different <i>polarisations</i>: HH means sent and received horizontally, HV means sent horizontally and received vertically. HH is most sensitive to open water and to “double bounce” off water and stems. HV grows as leaves and stems twist the wave, so it tracks plant growth.</p>
+<p>NISAR, the NASA-ISRO Synthetic Aperture Radar, launched on 30 July 2025 [1]. It carries an L-band radar with a wavelength of about 24 cm, much longer than the 5.5 cm C-band of Sentinel-1 [8]. Longer waves reach further into crops and canopies, so NISAR should see water under plants better. NASA’s pre-launch plans promised flood maps “twice every 12 days” and crop-area maps “every two weeks” [25, 26]. Validated NISAR products became public on 21 October 2026, and provisional data covered the weeks before [2].</p>
+<p>NISAR has not yet seen a Malaysian monsoon flood, so we split the work. We map the 2024 Kelantan flood with Sentinel-1, using NASA’s analysis-ready OPERA products. We map the 2026 Kedah paddy season with NISAR. The same physics applies to both: dark and smooth means water. In Kelantan it reveals a disaster, and in Kedah it reveals farmers at work.</p>
+<p>This is where our name comes from. “SARS” stands for synthetic aperture radars, the instruments we read. The “amoeba” is the water they watch: a shapeless body that spreads, splits and shrinks from one pass to the next, whether it is a flood moving across the delta or irrigation water creeping into a rice granary.</p>
+
+<h3>1.3 Challenge and objectives</h3>
+<p>The “Dancing with the SARs” challenge asks teams to use SAR to explain why a surface is changing, which polarisations show the change, and what NISAR could do next. We set five objectives:</p>
+<ol>
+  <li>Map new flood water in Kelantan for every Sentinel-1 pass from 17 November to 18 December 2024, with an honest uncertainty range and an agreement score against NASA’s own water map.</li>
+  <li>Map when water first reached each rice field in the Kedah study districts from NISAR HH and HV data, and compare the timing with MADA’s schedule.</li>
+  <li>Turn the maps into measures that matter to people: hectares by district, how long water stayed, and how many people lived beside it.</li>
+  <li>Build a public web map that a non-expert can read in English or Bahasa Melayu, on a laptop or a phone, with every number traceable to its source.</li>
+  <li>Use AI responsibly: let it write plain-language summaries, but check every number it quotes against our results by code.</li>
+</ol>
+
+<!-- ===================== 2 STUDY AREAS AND DATA ===================== -->
+<h2>2. Study areas and data</h2>
+
+<h3>2.1 Study areas</h3>
+<p><b>Kelantan (flood).</b> The radar box covers 101.8–102.6°E and 5.6–6.3°N, the lower Kelantan River basin and its delta. We report numbers for seven districts defined by the Department of Statistics Malaysia (DOSM) boundaries [9]: Tumpat, Kota Bharu, Pasir Mas, Bachok, Pasir Puteh, Machang and Tanah Merah. The basin covers about 12,000–13,000 km², more than 85% of the state, and overflows regularly between November and February [27].</p>
+<p><b>Kedah (paddy).</b> The box covers 100.2–100.6°E and 5.9–6.5°N, the heart of the MADA granary around Alor Setar. We report numbers for Kota Setar, Kubang Pasu, Pokok Sena and Pendang. About 63% of Pendang lies inside the radar box; the rest has no data in this study.</p>
+
+<h3>2.2 Data</h3>
+<p>Table 1 lists every dataset. All NASA data are free and open; the pipeline downloads about 530 MB in total. It reads only the Kedah window of each NISAR file over the internet rather than whole files of about 5 GB.</p>
+
+<p class="tcap"><b>Table 1.</b> Datasets used, their role and resolution.</p>
+<table>
+  <thead><tr><th style="width:27%">Dataset (provider)</th><th>Role in this project</th><th style="width:17%">Resolution / count</th></tr></thead>
+  <tbody>
+    <tr><td>NISAR L2 GCOV, frequency A, HH and HV (NASA/JPL, ISRO; via ASF DAAC) [2]</td><td>Kedah field water, seven passes on two tracks; six provisional and one validated</td><td>10 m, averaged to 30 m; 7 granules</td></tr>
+    <tr><td>OPERA RTC-S1 V1, VV (NASA/JPL; Sentinel-1A) [3]</td><td>Kelantan radar brightness for flood detection, six passes</td><td>30 m; 75 burst granules</td></tr>
+    <tr><td>OPERA DSWx-S1 V1 (NASA/JPL) [4]</td><td>NASA’s own water map: agreement checks in both areas</td><td>30 m; 24 + 16 tiles</td></tr>
+    <tr><td>NASA POWER daily precipitation, PRECTOTCORR (MERRA-2) [10, 11]</td><td>Daily rainfall over each study box</td><td>~0.5° × 0.625°, 4 points averaged</td></tr>
+    <tr><td>NASA GIBS imagery and CMR / ASF Search catalogues [12, 13]</td><td>Satellite photo background; live “newest pass” search; imagery-only views</td><td>Web map tiles</td></tr>
+    <tr><td>JRC Global Surface Water, occurrence 1984–2021 (EC JRC/Google) [5]</td><td>Normal-water mask (water in at least 80% of months)</td><td>30 m</td></tr>
+    <tr><td>ESA WorldCover 2021 v200 (ESA, Copernicus) [6]</td><td>Cropland (class 40), built-up (50) and sea masks</td><td>10 m → 30 m by mode</td></tr>
+    <tr><td>WorldPop 2024 constrained population, R2025A (University of Southampton) [7]</td><td>People living in and near flood water</td><td>100 m → 30 m, totals kept</td></tr>
+    <tr><td>DOSM district boundaries [9]</td><td>District totals and the study-area outline</td><td>Vector</td></tr>
+    <tr><td>News and official reports [18–24, 27]</td><td>Context only: evacuees, losses, dam levels, MADA schedule</td><td>—</td></tr>
+  </tbody>
+</table>
+<p class="tnote">All dates in this report are Malaysia time (MYT, UTC+8). Where the UTC date of a pass differs, the pipeline files use the UTC date.</p>
+
+<p class="tcap"><b>Table 2.</b> Radar passes analysed.</p>
+<table>
+  <thead><tr><th>Area</th><th>Sensor and track</th><th>Pass dates (MYT)</th><th>Time (MYT)</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="2">Kelantan</td><td>Sentinel-1A, T172 ascending</td><td>17 Nov, 29 Nov, 11 Dec 2024</td><td>19:27</td><td>17 Nov is this track’s “before” image</td></tr>
+    <tr><td>Sentinel-1A, T091 descending</td><td>24 Nov, 6 Dec, 18 Dec 2024</td><td>06:55</td><td>24 Nov is this track’s “before” image</td></tr>
+    <tr><td rowspan="2">Kedah</td><td>NISAR, 076_D_085 descending</td><td>23 Sep, 5 Oct, 17 Oct 2026</td><td>19:41</td><td>Field water</td></tr>
+    <tr><td>NISAR, 112_A_005 ascending</td><td>26 Sep, 8 Oct, 20 Oct, 1 Nov 2026</td><td>06:51</td><td>Field water (1 Nov is a validated product)</td></tr>
+  </tbody>
+</table>
+<p class="tnote">Only one Sentinel-1 satellite was working in late 2024, so Kelantan was seen about every 6 days on alternating tracks. Each NISAR track repeats every 12 days.</p>
+
+<!-- ===================== 3 METHODOLOGY ===================== -->
+<h2>3. Methodology</h2>
+
+<h3>3.1 Workflow</h3>
+<p>The work runs as twelve small Python scripts followed by a static web app (Figure 1). Each script does one job, writes its result to disk and prints a short self-check, such as the thresholds it chose, how bimodal the data were and the share of valid pixels. Anyone can re-run the whole chain from a free NASA Earthdata login.</p>
+
+<figure>
+  <div class="flow">
+    <div><b>1 · Search</b>NASA CMR and ASF catalogues; every granule ID pinned in a manifest</div>
+    <div><b>2 · Fetch</b>OPERA files; stream only the Kedah window of each NISAR file; JRC, WorldCover, DOSM</div>
+    <div><b>3 · Detect</b>Kelantan change test (VV); Kedah HH + HV water test; masks</div>
+    <div><b>4 · Measure</b>Hectares by district; agreement with DSWx-S1; duration; people; rainfall</div>
+    <div><b>5 · Publish</b>Web pictures + JSON; MapLibre web app; AI notes with number check</div>
+  </div>
+  <figcaption><span class="cap-label">Figure 1.</span> Processing chain, from NASA catalogues to the public web map (scripts <code>pipeline/01</code>–<code>12</code>).</figcaption>
+</figure>
+
+<h3>3.2 Kelantan: new flood water from Sentinel-1</h3>
+<p>For each pass, we mosaic the OPERA RTC-S1 bursts of one track onto a 30 m grid (UTM zone 48N). Averaging is done in linear power, never in decibels. We then convert to decibels and apply a 5 × 5 median filter to calm radar speckle, the grainy noise every SAR image has. Two tests run on every pixel.</p>
+<ul>
+  <li><b>Detector A, “is it water now?”</b> VV must be darker than a water threshold. We first try Otsu’s method [14], which finds the brightness value that best separates two groups (water and land) in the histogram. We check that the histogram really has two peaks using Ashman’s D [15], with tile-based sampling as a fallback. On every Kelantan date Otsu’s value came out above −15.5 dB, the ceiling used by the HydroSAR flood tools [16]. We therefore used <b>−15.5 dB</b> throughout.</li>
+  <li><b>Detector B, “has it changed?”</b> VV must have dropped by more than <b>3 dB</b> since the first pass of the <i>same track</i>. Comparing the same track matters because the viewing geometry is identical, so brightness changes are real changes on the ground.</li>
+</ul>
+<p>A pixel is <b>new flood water</b> when both detectors agree, and <b>possible flood</b> when only detector A fires (dark now, but already dark before). Three masks protect the result. Normal water is pixels that were water in at least 80% of months from 1984 to 2021 (JRC) or are permanent water in WorldCover. Towns are built-up pixels, where flooded streets can look bright rather than dark; these are flagged as “radar unreliable”, not counted as dry. Radar shadow and layover are slopes the radar cannot see. Patches of 11 pixels or fewer, under 1 ha, are removed. We report a range for every number by moving the water threshold by 1 dB in each direction.</p>
+
+<h3>3.3 Kedah: field water from NISAR HH and HV</h3>
+<p>For each NISAR pass we read only the HH, HV and mask layers of frequency A over the study box. We average them in linear power onto a 30 m grid and apply a 3 × 3 median filter in decibels. A cropland pixel (WorldCover class 40) counts as holding field water when <b>both</b> HH and HV are darker than water thresholds. HH alone can be fooled by smooth bare soil. Requiring HV to be dark as well separates open water from young plants.</p>
+<p>The two NISAR tracks look from opposite sides, so their brightness values are never mixed. Each track gets its own pair of thresholds, found by Otsu’s method on cropland pixels from that track’s most clearly two-peaked date (highest Ashman’s D, which must exceed 2). That pair is then applied to all of the track’s dates (Table 3). We did not use HydroSAR’s caps here, because those are C-band values. Finally, we record the first pass on which each field showed water, merging both tracks so the earliest date wins.</p>
+
+<p class="tcap"><b>Table 3.</b> Water thresholds chosen by the pipeline.</p>
+<table>
+  <thead><tr><th>Area / track</th><th>Channel</th><th class="n">Threshold</th><th>How it was set</th></tr></thead>
+  <tbody>
+    <tr><td>Kelantan, both tracks</td><td>VV</td><td class="n">−15.5 dB</td><td>Otsu gave higher values on every date; HydroSAR ceiling applied; plus a 3 dB drop since the same-track “before” pass</td></tr>
+    <tr><td rowspan="2">Kedah, 076_D_085</td><td>HH</td><td class="n">−11.88 dB</td><td rowspan="2">Otsu on cropland, 17 Oct (Ashman’s D = 3.5 and 3.2)</td></tr>
+    <tr><td>HV</td><td class="n">−18.95 dB</td></tr>
+    <tr><td rowspan="2">Kedah, 112_A_005</td><td>HH</td><td class="n">−12.42 dB</td><td rowspan="2">Otsu on cropland, 1 Nov (Ashman’s D = 3.57 and 3.69)</td></tr>
+    <tr><td>HV</td><td class="n">−18.63 dB</td></tr>
+  </tbody>
+</table>
+
+<h3>3.4 Agreement with NASA’s water maps</h3>
+<p>We compare our water maps with OPERA DSWx-S1 [4], NASA’s operational water product, where DSWx classes 1 (open water) and 3 (water under vegetation) count as water. The scores we report are the F1 score, the intersection over union (IoU, also called the critical success index), Cohen’s kappa and the overall accuracy:</p>
+<p class="eq">F1 = 2TP / (2TP + FP + FN) &nbsp;&nbsp;·&nbsp;&nbsp; IoU = TP / (TP + FP + FN)</p>
+<p>Here TP counts pixels both maps call water, FP pixels only our map calls water, and FN pixels only DSWx calls water. In Kelantan, DSWx-S1 is made from the same Sentinel-1 pass as our map. Agreement there shows our method is <i>consistent</i>, not that both are right. We score land only, because storm waves made the sea look bright on 29 November. In Kedah, DSWx-S1 comes from Sentinel-1D, a different radar, 1–3 days from each NISAR pass. This makes the Kedah comparison <i>independent</i>, and we score it on cropland only.</p>
+
+<h3>3.5 Impact measures: how long water stayed, and who lived nearby</h3>
+<p><b>Duration.</b> For each 30 m pixel we count the passes on which it was new flood water. Passes are 6 days apart, so a pixel seen on <i>n</i> passes in a row held water for at least (<i>n</i> − 1) × 6 days. This is the “hydroperiod” idea used in SAR flood and rice studies [28], applied with only the passes that exist.</p>
+<p><b>People.</b> WorldPop’s 2024 constrained population grid (people per 100 m cell) [7] is moved onto our 30 m grid with GDAL’s “sum” resampling, so totals are kept. We count people living inside new flood water, and within 250 m of it, because homes often stand on slightly higher ground beside flooded fields and towns are greyed out by our map. These are <i>exposure</i> estimates, not counts of victims. As a sanity check, the district totals are of the size expected from census figures (for example, about 608,000 people in Kota Bharu district).</p>
+
+<h3>3.6 Rainfall</h3>
+<p>Daily rainfall comes from NASA POWER (PRECTOTCORR, a bias-corrected MERRA-2 reanalysis), averaged over four points in each study box [10, 11]. The pipeline prefers NASA GPM IMERG and switches to it automatically once the GES DISC data archive is authorised for our Earthdata account. POWER is a model-based estimate, not a rain-gauge record, and the app labels it as such.</p>
+
+<h3>3.7 AI analysis with a number check</h3>
+<p>We used Claude (Anthropic) through Claude Code [32] for brainstorming, research, data analysis and coding. For data analysis, each of six focus districts has a short AI analysis of what the radar shows and what is worth checking next, in English and Bahasa Melayu. It worked only from our results files (<code>stats.json</code> and <code>rain.json</code>). A script (<code>pipeline/11_ai_analysis.py</code>) then extracts every number from every sentence. It fails unless each number can be found in, or recomputed from, those files, for example a share of a district or a share of the peak. We tested it by planting a wrong figure, and it was caught. The team reviewed every note, and the app labels them “AI analysis · reviewed by the team”. No AI model runs inside the web page, and no number in the app is produced by an AI model.</p>
+
+<h3>3.8 The web application</h3>
+<p>The web app is a static site built with TypeScript, Vite and MapLibre GL JS 6.16 [31] (Appendix A, Figure 12). Our maps are shipped as small WebP images placed by their corners. Class maps are lossless, so a click can read the exact class back. Brightness maps encode decibels in grey levels, so a click can read the radar value back to about ±0.3 dB. Live parts call NASA’s public services (CMR, ASF Search, GIBS) straight from the browser, with no server and no login. Every chart follows one visual method: a single y-axis, thin marks, a “What it shows” line, a “How to read it” note and a table view for screen readers. Colours were checked for colour-blind contrast with a palette validator.</p>
+
+<!-- ===================== 4 RESULTS ===================== -->
+<h2>4. Results</h2>
+
+<h3>4.1 Kelantan: what the radar saw</h3>
+<p>Figure 2 shows the same part of the delta before and during the flood. On 17 November the rivers and a few ponds are dark. On 29 November large dark sheets cover the fields between Tumpat, Pasir Mas and Bachok. These are the mirror-like reflections of standing water, recorded at 19:27 under cloud.</p>
+
+<figure>
+  <div class="grid2">
+    <div><p class="sub">(a) 17 Nov 2024, before</p><img src="fig/map_kel_vv_before.jpg" alt="Sentinel-1 VV brightness over the Kelantan delta on 17 November 2024"></div>
+    <div><p class="sub">(b) 29 Nov 2024, flood</p><img src="fig/map_kel_vv_flood.jpg" alt="Sentinel-1 VV brightness over the Kelantan delta on 29 November 2024"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 2.</span> Sentinel-1 VV radar brightness (OPERA RTC-S1, track T172) over the Kelantan delta. Dark means a smooth surface, usually water. The magenta dashed line is the study area; black lines are DOSM district borders.</figcaption>
+</figure>
+
+<p>Turning those images into classes gives the flood map in Figure 3. On 29 November our map shows <b>20,285 ha</b> of new flood water across the seven study districts. The range is 17,247–20,285 ha when the water threshold moves by 1 dB; the upper end equals the main estimate because −15.5 dB is already the ceiling. Only 205 ha were classed as “possible flood”. Of the new flood water, <b>84%</b> lay on cropland, 12% on grassland and 2% under trees. Almost none was on built-up land, because 18,296 ha of town pixels in these districts are greyed out as “radar unreliable”.</p>
+
+<figure>
+  <img src="fig/map_kel_flood.jpg" alt="Map of new flood water in Kelantan on 29 November 2024">
+  <figcaption><span class="cap-label">Figure 3.</span> New flood water (orange) and normal water (blue) on 29 November 2024, from our change-detection map. Grey speckle marks towns, where radar cannot judge flooding. Basemap © OpenStreetMap contributors, OpenFreeMap.</figcaption>
+</figure>
+
+<p>Figure 4 follows the flood through time and across districts. The two “before” passes count zero by design. The total jumps to its peak on 29 November, then falls to 2,243 ha on 6 December, 2,513 ha on 11 December and 1,219 ha on 18 December. Pasir Puteh (4,774 ha) and Pasir Mas (4,680 ha) had the most flooded land on the peak date. Pasir Mas also had the most evacuees that day [18].</p>
+
+<figure>
+  <div class="grid2">
+    <div class="chart"><p class="sub">(a) New flood water per pass, study districts (ha)</p><img src="fig/ch_kel_trend.png" alt="Line chart of new flood water per radar pass"></div>
+    <div class="chart"><p class="sub">(b) New flood water by district, 29 Nov 2024 (ha)</p><img src="fig/ch_kel_rank.png" alt="Bar chart of new flood water by district"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 4.</span> (a) New flood water on each pass; the shaded band is the ±1 dB threshold range. (b) Districts ranked by flooded hectares on 29 November; whiskers show the range.</figcaption>
+</figure>
+
+<h3>4.2 Rain behind the water</h3>
+<p>The flood followed three very wet days (Figure 5). NASA POWER estimates 126.6 mm on 26 November, <b>131.6 mm</b> on 27 November and 119.9 mm on 28 November, averaged over the study box. The next radar pass, on the evening of 29 November, caught the flood near its peak. Over 10 November–20 December the box received about 1,273 mm.</p>
+
+<figure>
+  <div class="grid2">
+    <div class="chart"><p class="sub">(a) Kelantan, daily rainfall (mm); ▲ = radar pass</p><img src="fig/ch_kel_rain.png" alt="Daily rainfall over Kelantan, November to December 2024"></div>
+    <div class="chart"><p class="sub">(b) Kedah, daily rainfall (mm); ▲ = radar pass</p><img src="fig/ch_ked_rain.png" alt="Daily rainfall over Kedah, September to November 2026"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 5.</span> Daily rainfall over each study box from NASA POWER (MERRA-2), with radar pass days marked. Kedah’s wettest day was 25 October 2026 (113.7 mm).</figcaption>
+</figure>
+
+<h3>4.3 How long the water stayed, and who lived beside it</h3>
+<p>Most flooded land drained quickly: 16,933 ha were seen flooded on one pass only. But <b>4,138 ha</b> were flooded on two or more passes, at least about a week, and 557 ha stayed under water for three passes in a row, at least 12 days. Figure 6 shows where. Tumpat stands out: 1,377 ha of its land stayed flooded, 38% of its peak flood area, against 26% in Pasir Mas and 10% in Pasir Puteh. That fits a low delta, where high tides slow drainage to the sea [29].</p>
+
+<figure>
+  <div class="grid2">
+    <div><p class="sub">(a) Passes on which each spot held new flood water</p><img src="fig/map_kel_duration.jpg" alt="Map of how long flood water stayed in Kelantan"></div>
+    <div class="chart"><p class="sub">(b) Land flooded on 2 or more passes, by district (ha)</p><img src="fig/ch_kel_duration.png" alt="Bar chart of long-lasting flood water by district"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 6.</span> How long the water stayed. Light orange: seen on 1 pass; orange: 2 passes (about a week or more); dark brown: 3 or more passes (two weeks or more).</figcaption>
+</figure>
+
+<p>About <b>244,400 people</b> lived within 250 m of new flood water on 29 November, and about 14,900 lived where our map shows water (Table 4). For scale, the news counted 65,993 people in relief centres across the whole state that day [18]. The two numbers measure different things, since not everyone near the water had to leave home. They show that the radar map sits in the right order of magnitude for planning relief.</p>
+
+<p class="tcap"><b>Table 4.</b> Kelantan results by study district, 29 November 2024.</p>
+<table>
+  <thead><tr><th>District</th><th class="n">New flood water (ha)</th><th class="n">Range (ha)</th><th class="n">Flooded ≥ 2 passes (ha)</th><th class="n">People within 250 m</th><th class="n">People inside water</th></tr></thead>
+  <tbody>
+    <tr><td>Pasir Puteh</td><td class="n">4,774</td><td class="n">—</td><td class="n">495</td><td class="n">27,219</td><td class="n">2,017</td></tr>
+    <tr><td>Pasir Mas</td><td class="n">4,680</td><td class="n">4,137–4,680</td><td class="n">1,231</td><td class="n">64,190</td><td class="n">3,665</td></tr>
+    <tr><td>Tumpat</td><td class="n">3,596</td><td class="n">—</td><td class="n">1,377</td><td class="n">46,818</td><td class="n">4,076</td></tr>
+    <tr><td>Bachok</td><td class="n">3,562</td><td class="n">—</td><td class="n">243</td><td class="n">36,182</td><td class="n">2,257</td></tr>
+    <tr><td>Kota Bharu</td><td class="n">2,404</td><td class="n">1,949–2,404</td><td class="n">621</td><td class="n">55,258</td><td class="n">2,433</td></tr>
+    <tr><td>Machang</td><td class="n">1,053</td><td class="n">—</td><td class="n">83</td><td class="n">11,548</td><td class="n">404</td></tr>
+    <tr><td>Tanah Merah</td><td class="n">216</td><td class="n">—</td><td class="n">88</td><td class="n">3,212</td><td class="n">90</td></tr>
+    <tr class="total"><td>All seven districts</td><td class="n">20,285</td><td class="n">17,247–20,285</td><td class="n">4,138</td><td class="n">244,427</td><td class="n">14,942</td></tr>
+  </tbody>
+</table>
+<p class="tnote">Ranges come from moving the water threshold by ±1 dB; “—” means the district range is shown in the app but not repeated here. People: WorldPop 2024 (constrained, 100 m). Exposure estimates, not counts of victims.</p>
+
+<h3>4.4 Kedah: watching the rice fields fill</h3>
+<p>NISAR’s HH and HV channels tell a clear story (Figure 7). In late September only <b>2%</b> of the cropland seen by the radar held water (2.0% on 23 September, 1.8% on 26 September), even though Phase I began on 23 September. The share rose to 7.5% and 6.1% on 5 and 8 October, to 22.4% and 22.0% on 17 and 20 October, and to <b>44.8%</b> on 1 November (range 39.0–50.5%). The two tracks look from opposite sides, yet agree closely on neighbouring dates, which gives us confidence the signal is real.</p>
+
+<figure>
+  <div class="grid2">
+    <div class="chart"><p class="sub">(a) Share of cropland with field water (%), per track</p><img src="fig/ch_ked_trend.png" alt="Line chart of the share of cropland with field water"></div>
+    <div class="chart"><p class="sub">(b) Cropland by the pass that first showed water (ha)</p><img src="fig/ch_ked_first.png" alt="Bar chart of cropland by first-flooded pass"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 7.</span> Kedah field water from NISAR. (a) Each track on its own line; vertical lines are MADA phase start dates (23 Sep, 3 Oct, 13 Oct). (b) Hectares first seen with water on each pass group: 2,538 ha (23–26 Sep), 7,998 ha (5–8 Oct), 20,043 ha (17–20 Oct) and 21,445 ha (1 Nov). Axis labels in (b) use UTC pass dates.</figcaption>
+</figure>
+
+<p>Most fields got their water only after Phase III began on 13 October. Another 54,029 ha of cropland showed no field water by 1 November. In a drought year, with dam storage at 35.76% in mid-September and 40.13% on 13 October [24, 30], this points to planting running well behind schedule. The biggest jump followed the wettest day of the season, 113.7 mm on 25 October. Figure 8 maps the first-flooded date of every field, and Table 5 breaks the season down by district.</p>
+
+<figure>
+  <img src="fig/map_ked_first.jpg" alt="Map of when water first reached each rice field in Kedah">
+  <figcaption><span class="cap-label">Figure 8.</span> When field water was first seen, from NISAR L-band HH and HV (both tracks merged). Lighter green = earlier (23–26 Sep), darkest green = 1 Nov. The coastal paddy west of Alor Setar fills first and most completely.</figcaption>
+</figure>
+
+<p class="tcap"><b>Table 5.</b> Share of cropland with field water by Kedah study district (%).</p>
+<table>
+  <thead><tr><th>District</th><th class="n">Cropland (ha)</th><th class="n">23 Sep</th><th class="n">26 Sep</th><th class="n">5 Oct</th><th class="n">8 Oct</th><th class="n">17 Oct</th><th class="n">20 Oct</th><th class="n">1 Nov</th></tr></thead>
+  <tbody>
+    <tr><td>Kota Setar</td><td class="n">28,634</td><td class="n">1.2</td><td class="n">0.8</td><td class="n">5.1</td><td class="n">4.5</td><td class="n">16.5</td><td class="n">19.6</td><td class="n">46.7</td></tr>
+    <tr><td>Kubang Pasu</td><td class="n">31,488</td><td class="n">0.8</td><td class="n">0.6</td><td class="n">8.7</td><td class="n">5.9</td><td class="n">32.6</td><td class="n">28.0</td><td class="n">55.1</td></tr>
+    <tr><td>Pokok Sena</td><td class="n">6,134</td><td class="n">3.1</td><td class="n">3.1</td><td class="n">9.0</td><td class="n">7.7</td><td class="n">14.8</td><td class="n">14.7</td><td class="n">23.8</td></tr>
+    <tr><td>Pendang</td><td class="n">17,094</td><td class="n">6.8</td><td class="n">4.7</td><td class="n">6.6</td><td class="n">4.2</td><td class="n">11.2</td><td class="n">9.6</td><td class="n">20.9</td></tr>
+    <tr class="total"><td>Radar box, all cropland seen</td><td class="n">~99,300</td><td class="n">2.0</td><td class="n">1.8</td><td class="n">7.5</td><td class="n">6.1</td><td class="n">22.4</td><td class="n">22.0</td><td class="n">44.8</td></tr>
+  </tbody>
+</table>
+<p class="tnote">Track 076_D_085: 23 Sep, 5 Oct, 17 Oct. Track 112_A_005: 26 Sep, 8 Oct, 20 Oct, 1 Nov. Pendang is only 63% inside the radar box.</p>
+
+<h3>4.5 One spot, pass by pass</h3>
+<p>A map shows one moment; the radar keeps a diary. Clicking any spot in the app plots its brightness on every pass (Figure 9). The Kelantan field reads about −8 to −11 dB before the flood, drops to −21.6 dB on 29 November and stays below the water line for four passes in a row. The Kedah field shows the polarisation story: HH (water) and HV (plants) both drop when the field is flooded in late October. These per-spot time series are how SAR rice studies separate flooding from growth [28].</p>
+
+<figure>
+  <div class="grid2">
+    <div class="chart"><p class="sub">(a) A Tumpat field: VV on every Sentinel-1 pass (dB)</p><img src="fig/spot_kel.png" alt="Radar brightness at one Kelantan spot on every pass"></div>
+    <div class="chart"><p class="sub">(b) A Kota Setar field: HH and HV on every NISAR pass (dB)</p><img src="fig/spot_ked.png" alt="Radar brightness at one Kedah field on every pass"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 9.</span> Spot histories from the app. Filled squares mark passes where our map shows water at that spot. In (a) the dashed line is the −15.5 dB water threshold. In (b) water needs both channels below that track’s thresholds (Table 3).</figcaption>
+</figure>
+
+<h3>4.6 How well our maps agree with NASA’s</h3>
+<p>Table 6 and Figure 10 summarise the comparison with DSWx-S1. In Kelantan at the flood peak, our map and NASA’s agree with an F1 of <b>0.75</b> and an IoU of 0.60 (precision 0.79, recall 0.72). On dry dates there is little water on land, so a few river edges decide the score, and F1 falls to 0.07–0.36. In Kedah the picture is different and more interesting. Recall rises from 0.16 to <b>0.97</b> over the season, meaning NISAR finds almost all of the water Sentinel-1 sees. Precision stays low, however (0.27 on 1 November), meaning NISAR maps about 3.7 times more field water than Sentinel-1 does.</p>
+
+<p class="tcap"><b>Table 6.</b> Agreement with OPERA DSWx-S1.</p>
+<table>
+  <thead><tr><th>Comparison</th><th>Date</th><th class="n">F1</th><th class="n">IoU</th><th class="n">Precision</th><th class="n">Recall</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="2">Kelantan (same radar; land only)</td><td>29 Nov 2024</td><td class="n">0.752</td><td class="n">0.602</td><td class="n">0.791</td><td class="n">0.716</td><td>Flood peak; κ = 0.737</td></tr>
+    <tr><td>Other 5 passes</td><td class="n">0.07–0.36</td><td class="n">0.04–0.22</td><td class="n">—</td><td class="n">—</td><td>Little water on land</td></tr>
+    <tr><td rowspan="3">Kedah (NISAR vs Sentinel-1D; cropland)</td><td>23 Sep 2026</td><td class="n">0.030</td><td class="n">0.015</td><td class="n">0.017</td><td class="n">0.157</td><td>DSWx 3 days apart</td></tr>
+    <tr><td>20 Oct 2026</td><td class="n">0.272</td><td class="n">0.157</td><td class="n">0.159</td><td class="n">0.931</td><td>1 day apart</td></tr>
+    <tr><td>1 Nov 2026</td><td class="n">0.424</td><td class="n">0.269</td><td class="n">0.271</td><td class="n">0.965</td><td>1 day apart</td></tr>
+  </tbody>
+</table>
+
+<figure>
+  <div class="grid2">
+    <div class="chart"><p class="sub">(a) Kelantan, land, VV: 17 Nov (grey) vs 29 Nov (orange)</p><img src="fig/ch_kel_hist.png" alt="Histogram of VV brightness before and during the Kelantan flood"></div>
+    <div class="chart"><p class="sub">(b) Kedah cropland, HH: 26 Sep (grey) vs 1 Nov (blue) MYT</p><img src="fig/ch_ked_hist.png" alt="Histogram of HH brightness at the start and end of the Kedah season"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 10.</span> Why the thresholds work: a second, darker “water” hump appears left of the threshold line as the flood arrives (a) and as the fields are flooded for planting (b). Shares of pixels per 0.5 dB bin. The legend in (b) uses the UTC dates of the 26 Sep and 1 Nov passes.</figcaption>
+</figure>
+
+<!-- ===================== 5 DISCUSSION ===================== -->
+<h2>5. Discussion</h2>
+
+<h3>5.1 Why the surface changed</h3>
+<p><b>Kelantan.</b> Rain was the trigger: three days of more than 100 mm a day filled the Kelantan River, which drains most of the state. The low, flat landscape spread the water across paddy and grassland. In the delta, high tides slowed drainage to the sea, which is why Tumpat stayed wet longest. Changes in land use upstream add runoff, but a HEC-HMS river-modelling study of the basin found that changes in rainfall had roughly 3–4 times the effect of land-use change [33]. We therefore do not claim that forest loss caused this flood.</p>
+<p><b>Kedah.</b> Here people change the surface, on purpose and on a schedule. MADA releases water by phase; farmers flood the fields, level them and sow. In 2026 low dam storage slowed the releases, and the radar shows most fields filling two to four weeks after their phase start dates.</p>
+
+<h3>5.2 Which polarisations show it</h3>
+<p>VV at C-band is enough for open floods in Kelantan: the change from bright land to dark water is several decibels, and the histogram splits cleanly (Figure 10a). For paddy, HH and HV together are needed. HH turns dark when a field is flooded, but smooth bare soil can look similar. HV helps separate the two: it stays dark for open water and climbs as the rice canopy grows. The HH/HV colour composite in Figure 11a shows this directly, with dark flooded fields next to brighter fields of growing plants.</p>
+
+<figure>
+  <div class="grid2">
+    <div><p class="sub">(a) NISAR HH/HV colour composite, 1 Nov 2026</p><img src="fig/map_ked_rgb.jpg" alt="NISAR HH and HV colour composite over Kedah paddy"></div>
+    <div><p class="sub">(b) Where NISAR and Sentinel-1 disagree, 1 Nov 2026</p><img src="fig/map_ked_disagree.jpg" alt="Map of disagreement between NISAR and Sentinel-1 water"></div>
+  </div>
+  <figcaption><span class="cap-label">Figure 11.</span> (a) Red = HH, green = HV, blue = HH − HV, with one fixed stretch for every date. Dark fields are flooded; green fields carry growing rice. (b) Pink: water in NISAR only; blue: water in Sentinel-1 only.</figcaption>
+</figure>
+
+<h3>5.3 What NISAR adds, and an open question</h3>
+<p>The Kedah comparison raises a genuine scientific question. NISAR at L-band sees far more field water than Sentinel-1 at C-band, and almost all of Sentinel-1’s water lies inside NISAR’s. There are two explanations. L-band may detect shallow water under young rice that C-band misses, which is what the longer wavelength promises. Or smooth, freshly tilled soil may look like water at L-band. The pink areas in Figure 11b are exactly where the two radars disagree, so they are the places to send a field check. Without ground truth we cannot yet tell which explanation holds, and we say so in the app rather than hide it.</p>
+
+<h3>5.4 Limitations</h3>
+<ul>
+  <li><b>Provisional data.</b> Six of the seven NISAR passes are provisional: calibrated, but validated at only a few sites, none in South-East Asia. Validated products start on 21 October 2026.</li>
+  <li><b>Gaps between passes.</b> Kelantan was seen every 6 days and each NISAR track every 12 days. Short floods between passes are missed, and we do not fill gaps with guesses.</li>
+  <li><b>Blind spots.</b> Radar cannot judge floods in towns, where flooded streets can look bright, or reliably under dense trees. Smooth roads, sand and dry soil can look like water. Wind and heavy rain can roughen water so it looks like land.</li>
+  <li><b>Conservative Kelantan totals.</b> No slope or height-above-drainage (HAND) mask was applied, and towns are excluded, so our flood areas are more likely too small than too big.</li>
+  <li><b>Same-radar check.</b> The Kelantan agreement score shows consistency with NASA’s map, not accuracy against the ground.</li>
+  <li><b>Exposure, not victims.</b> The 250 m population figure counts people living near water, not people harmed.</li>
+  <li><b>Not a warning service.</b> This is a student prototype, not reviewed by NASA. For live river levels people should use Public InfoBanjir (JPS) and follow NADMA instructions.</li>
+</ul>
+
+<h3>5.5 Who would use it, and what it gives them</h3>
+<p>Three groups could use this work today. Disaster managers (NADMA, JKM and district offices) could get a cloud-free map of where water spread, how long it stayed and how many people live beside it, every 6–12 days, within days of a pass. MADA and the Department of Agriculture could use a planting-progress monitor that shows which blocks received water and when, which is most valuable in drought years. Insurers, researchers and journalists could use district numbers with ranges, sources and a picture export for reports.</p>
+<p>Each group needs the same thing: a map it can trust of where water is, delivered soon after each pass and in words a non-specialist can act on. Today that picture comes from field reports and cloud-free optical images, which are rare in the monsoon. Radar fills that gap without new satellites or new data costs.</p>
+
+<h3>5.6 Path to use: model, costs, pilot and scaling</h3>
+<p>We see the project as an open public-good core with paid services on top. The map, the code and the data recipes stay free for every place NISAR covers, so communities and researchers never pay to see their own floods. Agencies that want the maps delivered on a schedule, for their own areas and inside their own systems, would pay for that service. Table 7 sets out the plan. The costs are our estimates and would be confirmed in the pilot.</p>
+
+<p class="tcap"><b>Table 7.</b> Path from prototype to a service.</p>
+<table>
+  <tbody>
+    <tr><th style="width:22%">Users</th><td>NADMA and district disaster offices (where water spread, how long it stayed, who lives beside it); MADA and the Department of Agriculture (planting progress, irrigation checks in dry years); insurers, researchers and journalists (district numbers with ranges and sources)</td></tr>
+    <tr><th>Stays free</th><td>The open web map, the code (MIT licence) and the pipeline recipes, for any area NISAR covers</td></tr>
+    <tr><th>Paid services</th><td>(1) Setting up a new region: boundaries, thresholds checked against NASA’s water maps. (2) Automatic runs after every pass, with an alert when new water crosses a set level. (3) Feeding the maps into an agency’s own dashboard or GIS. (4) District reports on request</td></tr>
+    <tr><th>Running cost (estimate)</th><td>NASA data: free. Hosting: the site is static, so a free plan serves the prototype and a commercial plan costs about US$20 a month. Processing: a small cloud machine running for minutes after each pass. We estimate under RM300 a month per region, including storage</td></tr>
+    <tr><th>Pilot</th><td>One monsoon season with one Kelantan district disaster office and one MADA region. Target: a map delivered within 48 hours of each pass. Success measures: delivery time, agreement with field reports and photos, and whether the office used the map in a decision</td></tr>
+    <tr><th>Funding</th><td>The pilot through a research or innovation grant or a university partnership; after the pilot, yearly service agreements with agencies, priced per region</td></tr>
+    <tr><th>Scaling</th><td>NISAR covers nearly all of Earth’s land twice every 12 days, and OPERA processes Sentinel-1 worldwide. A new region needs one configuration entry (a bounding box and its districts) and a re-run of the pipeline; the README documents an “Add your town” recipe. Next would be other flood-prone states and rice granaries in Malaysia, then river basins across Southeast Asia</td></tr>
+    <tr><th>Risks and answers</th><td>NISAR data are still partly provisional, so the pilot uses validated passes where they exist. Agencies need proof before relying on a new map, so the pilot includes field checks. The open L-band question in Kedah (Section 5.3) becomes a pilot measurement</td></tr>
+  </tbody>
+</table>
+
+<!-- ===================== 6 CONCLUSION ===================== -->
+<h2>6. Conclusion</h2>
+<p>Radar turns cloudy monsoon weeks from a blind spot into a record. With free NASA data we mapped about 20,300 ha of new flood water in Kelantan on 29 November 2024, showed that about 4,100 ha stayed flooded for a week or more, and estimated that about 244,000 people lived within 250 m of it. Our map agrees with NASA’s own water map at an F1 score of 0.75. With NISAR’s first season of L-band data over Kedah we watched the rice granary fill from 2% to 45% between late September and 1 November, weeks behind MADA’s schedule in a drought year. We also found that NISAR detects several times more shallow field water than C-band radar, a question worth testing on the ground.</p>
+<p>Next we plan to add a slope and HAND mask, switch rainfall to GPM IMERG, and collect field observations in Kedah to settle the L-band question. We also want to watch the 2026–27 Kelantan monsoon with validated NISAR data as it arrives. Everything we built (code, data recipes and the web map) is open, so the same tools can serve any river or rice basin that NISAR sees.</p>
+
+<h2>Acknowledgements, AI use and data availability</h2>
+<p class="small">We thank NASA, ISRO and the NASA Space Apps Kuala Lumpur organisers. We acknowledge the use of imagery provided by services from NASA’s Global Imagery Browse Services (GIBS), part of NASA’s Earth Science Data and Information System (ESDIS). OPERA products contain modified Copernicus Sentinel data (2024, 2026). No agency named here has reviewed or endorsed this prototype.</p>
+<p class="small"><b>AI use.</b> We used Claude (Anthropic) via Claude Code for brainstorming, research, data analysis and coding. The team chose the problem, the study areas and the questions, and reviewed the results, including every AI district analysis. Every number in the AI analyses is checked by code against our results (Section 3.7). No AI model runs in the web page. Full disclosure: <code>AI_USAGE.md</code> in the repository.</p>
+<p class="small"><b>Data and code.</b> Code (MIT licence), the pipeline and all derived maps and statistics: <a href="https://github.com/LemonAidLee/NASA-web">github.com/LemonAidLee/NASA-web</a>. Every granule used is listed in <code>public/data/provenance.json</code>, and all dataset licences are in <code>DATA_LICENSES.md</code>. Some code was first written in a practice build on 12 November 2026 and reused with the organisers’ permission.</p>
+
+<!-- ===================== REFERENCES ===================== -->
+<h2>References</h2>
+<ol class="refs">
+  <li>NASA Jet Propulsion Laboratory and ISRO. NISAR: NASA-ISRO Synthetic Aperture Radar mission. <a href="https://nisar.jpl.nasa.gov/">nisar.jpl.nasa.gov</a>; ASF NISAR data guide, <a href="https://nisar-docs.asf.alaska.edu/">nisar-docs.asf.alaska.edu</a>.</li>
+  <li>NASA/JPL. NISAR Level-2 Geocoded Polarimetric Covariance (GCOV), provisional V1, doi:10.5067/NIL2GCOV-P1, and validated V1, doi:10.5067/NIL2GCOV-V1. Distributed by the Alaska Satellite Facility DAAC.</li>
+  <li>OPERA. OPERA Radiometric Terrain Corrected SAR Backscatter from Sentinel-1 (RTC-S1), Version 1. NASA JPL, distributed by ASF DAAC. doi:10.5067/SNWG/OPERA_L2_RTC-S1_V1.</li>
+  <li>OPERA (2024). OPERA Dynamic Surface Water Extent from Sentinel-1 (DSWx-S1), Version 1. PO.DAAC, CA, USA. doi:10.5067/OPDSWS1-L3V1.</li>
+  <li>Pekel, J.-F., Cottam, A., Gorelick, N. and Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. <i>Nature</i>, 540, 418–422. doi:10.1038/nature20584.</li>
+  <li>Zanaga, D. et al. (2022). ESA WorldCover 10 m 2021 v200. doi:10.5281/zenodo.7254221. © ESA WorldCover project 2021, CC BY 4.0.</li>
+  <li>WorldPop (2025). Malaysia 2024 constrained population, 100 m, release R2025A. School of Geography and Environmental Science, University of Southampton. <a href="https://www.worldpop.org">www.worldpop.org</a>. CC BY 4.0.</li>
+  <li>European Space Agency. Copernicus Sentinel-1 mission. Sentinel data used through NASA OPERA products.</li>
+  <li>Department of Statistics Malaysia (DOSM). District boundaries, data-open portal, DOSM Open Data Licence.</li>
+  <li>NASA Langley Research Center. Prediction Of Worldwide Energy Resources (POWER) project, daily PRECTOTCORR. <a href="https://power.larc.nasa.gov/">power.larc.nasa.gov</a>.</li>
+  <li>Gelaro, R. et al. (2017). The Modern-Era Retrospective Analysis for Research and Applications, Version 2 (MERRA-2). <i>Journal of Climate</i>, 30, 5419–5454. doi:10.1175/JCLI-D-16-0758.1.</li>
+  <li>NASA Global Imagery Browse Services (GIBS) and NASA Common Metadata Repository (CMR). <a href="https://www.earthdata.nasa.gov/">earthdata.nasa.gov</a>.</li>
+  <li>Alaska Satellite Facility. ASF Search API and Vertex. <a href="https://search.asf.alaska.edu/">search.asf.alaska.edu</a>.</li>
+  <li>Otsu, N. (1979). A threshold selection method from gray-level histograms. <i>IEEE Transactions on Systems, Man, and Cybernetics</i>, 9(1), 62–66. doi:10.1109/TSMC.1979.4310076.</li>
+  <li>Ashman, K. M., Bird, C. M. and Zepf, S. E. (1994). Detecting bimodality in astronomical datasets. <i>The Astronomical Journal</i>, 108, 2348–2361.</li>
+  <li>HydroSAR project, University of Alaska Fairbanks and Alaska Satellite Facility. SAR-based flood mapping tools. <a href="https://github.com/HydroSAR/HydroSAR">github.com/HydroSAR/HydroSAR</a>.</li>
+  <li>NASA Earthdata. SAR basics and Earth observation data basics. <a href="https://www.earthdata.nasa.gov/learn/earth-observation-data-basics/sar">earthdata.nasa.gov/learn/earth-observation-data-basics/sar</a>.</li>
+  <li>Malay Mail (29 Nov 2024). Worsening floods hit eight states, nearly 100,000 displaced as Kelantan and Terengganu endure worst impact. <a href="https://www.malaymail.com/news/malaysia/2024/11/29/worsening-floods-hit-eight-states-nearly-100000-displaced-as-kelantan-and-terengganu-endure-worst-impact/158425">malaymail.com</a>.</li>
+  <li>The Star (1 Dec 2024). Floods: 97,128 victims affected in Kelantan, shows no signs of improvement. <a href="https://thestar.com.my/news/nation/2024/12/01/floods-97128-victims-affected-in-kelantan-shows-no-signs-of-improvement">thestar.com.my</a>.</li>
+  <li>Department of Statistics Malaysia (2025). Special Report on Impact of Floods in Malaysia 2024. <a href="https://www.dosm.gov.my/portal-main/release-content/special-report-on-impact-of-floods-in-malaysia-2024">dosm.gov.my</a>.</li>
+  <li>The Star TV. Floods in Kelantan the worst in history, says state police chief. <a href="https://thestartv.com/v/floods-in-kelantan-the-worst-in-history-says-state-police-chief">thestartv.com</a>.</li>
+  <li>New Straits Times (Feb 2025). Kedah’s rice bowl reborn: RM5.4bil boost for rice production. <a href="https://www.nst.com.my/amp/news/nation/2025/02/1181358/kedahs-rice-bowl-reborn-rm54bil-boost-rice-production">nst.com.my</a>.</li>
+  <li>MADA (14 Sep 2026). Notice: Season 2/2026 irrigation schedule. <a href="https://www.mada.gov.my/?q=2F02&amp;id=228">mada.gov.my</a>.</li>
+  <li>The Star (17 Sep 2026). Water levels limited at three MADA dams in Kedah. <a href="https://www.thestar.com.my/news/nation/2026/09/17/water-levels-limited-at-three-mada-dams-in-kedah">thestar.com.my</a>.</li>
+  <li>NASA/JPL (2017). NISAR applications: Timely maps of flooding. <a href="https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Floods.pdf">science.nasa.gov</a>.</li>
+  <li>NASA/JPL (2017). NISAR applications: Preparing markets for bountiful harvests (food security). <a href="https://assets.science.nasa.gov/content/dam/science/missions/nisar/nisar-jpl/pdf/NISAR_Applications_Food_Security1.pdf">science.nasa.gov</a>.</li>
+  <li>Australian Bureau of Meteorology. Kelantan River basin water resources report. <a href="https://www.bom.gov.au/water/about/waterResearch/document/kelantan.pdf">bom.gov.au</a>.</li>
+  <li>Studies of rice-field flooding patterns from Sentinel-1 SAR time series, e.g. “Identifying rice crop flooding patterns using Sentinel-1 SAR data”, NITK repository, <a href="https://idr.nitk.ac.in/items/578c2d34-9928-4a92-a14c-1f91579f66db/full">idr.nitk.ac.in</a>; and SAR cropland hydroperiod studies, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7988656">PMC7988656</a>.</li>
+  <li>The Star (24 Oct 2026), quoting MetMalaysia on flood risk when heavy rain coincides with high tides.</li>
+  <li>Bernama (13 Oct 2026). MADA dam storage rises to 40.13%. <a href="https://bernama.com/radio/news.php?id=2619837">bernama.com</a>.</li>
+  <li>Software: MapLibre GL JS 6.16 (BSD-3); maplibre-cog-protocol; maplibre-gl-compare; pmtiles; Vite 8; TypeScript; GDAL and rasterio; NumPy; SciPy; pyproj; h5py; Pillow. Basemap: OpenFreeMap, © OpenMapTiles, data © OpenStreetMap contributors (ODbL).</li>
+  <li>Anthropic. Claude, via Claude Code, used for brainstorming, research, data analysis and coding (Section 3.7).</li>
+  <li>University of Technology Sydney, OPUS repository. HEC-HMS modelling of rainfall and land-use effects on runoff in the Kelantan River basin. <a href="https://opus.lib.uts.edu.au/handle/10453/130821">opus.lib.uts.edu.au/handle/10453/130821</a>.</li>
+</ol>
+
+<!-- ===================== APPENDIX ===================== -->
+<h2 class="pb">Appendix A. The web application</h2>
+<figure>
+  <img src="fig/ui_desktop.jpg" alt="Screenshot of the Radar water map web application">
+  <figcaption><span class="cap-label">Figure 12.</span> The web app at 1600 × 960 pixels: the Kelantan flood map with panels that fold away into icon bars, the date strip of radar passes, and the Results panel with charts. On phones the panels become a bottom sheet. A BM / EN button switches the whole app between Bahasa Melayu and English.</figcaption>
+</figure>
+<p class="small">Main features: before/after swipe; HH/HV “water vs plants” swipe; spot history on click; layers with info and opacity; “How sure are we?” panel with agreement scores, thresholds and limitations; daily rainfall linked to the radar dates; AI analysis of six focus districts; guided story in six steps; live view of the current Kelantan monsoon from NASA’s catalogue; “Anywhere” view of NASA radar imagery worldwide; save-a-picture export with caption and credits; settings remembered between visits.</p>
+
+<h2>Appendix B. How this project addresses the NSAKL26 judging criteria</h2>
+<table>
+  <thead><tr><th style="width:24%">Criterion (10 points each)</th><th>Where it is addressed</th></tr></thead>
+  <tbody>
+    <tr><td>Relevance to theme</td><td>Answers all three “Dancing with the SARs” questions: why the surface changes (5.1), which polarisations show it (5.2) and what NISAR can do next (5.3, 5.5, 5.6).</td></tr>
+    <tr><td>Originality</td><td>NISAR’s first Kedah rice season mapped field by field; per-spot radar histories; how long flood water stayed; people near water; AI text with automated number checking.</td></tr>
+    <tr><td>Construction technique</td><td>Reproducible 12-step pipeline with self-checks (3.1); same-track change detection; per-track thresholds with a bimodality test; static, server-free web app.</td></tr>
+    <tr><td>Diversity of material used</td><td>NISAR, OPERA RTC-S1 and DSWx-S1, NASA POWER, GIBS, CMR/ASF, JRC, WorldCover, WorldPop, DOSM and news context (Table 1).</td></tr>
+    <tr><td>Demonstrated understanding</td><td>Radar physics explained (1.2, 5.2); honest validation framing (3.4); limitations stated plainly (5.4).</td></tr>
+    <tr><td>Degree of practicality</td><td>Works in any browser and on phones, in English and Bahasa Melayu; numbers with ranges and sources; picture export for reports.</td></tr>
+    <tr><td>Degree of commercialisation</td><td>Named users and their needs (5.5); a free open core with paid services, running-cost estimate, a one-season pilot with success measures, funding route and scaling path (5.6, Table 7).</td></tr>
+    <tr><td>Materials submitted</td><td>This report, the website, the open repository, the 30-second and 3–5 minute videos.</td></tr>
+    <tr><td>Presentation style</td><td>Plain-language interface, chart explanations, guided story, live demo.</td></tr>
+    <tr><td>Utilisation of free NASA resources</td><td>All radar, rainfall and imagery come from free NASA data and services (Table 1, References 1–4, 10–13).</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -29,7 +29,7 @@ AI = {
     },
     "kel-kota-bharu": {
         "analysis": "Kota Bharu shows about 2,404 ha of new flood water on 29 Nov 2024 (range 1,949–2,404 ha), about 6% of the district, "
-                    "all of it outside the built-up centre. Inside the town the radar cannot judge flooding, so built-up areas are greyed "
+                    "nearly all of it on farmland rather than in the built-up centre. Inside the town the radar cannot judge flooding, so built-up areas are greyed "
                     "out, not counted as dry. The count drops to 37 ha on 5 Dec, then rises to 692 ha on 11 Dec.",
         "next": "That rise on 11 Dec is probably not a second flood. 5 Dec and 11 Dec come from two different radar tracks with "
                 "different viewing angles. Check it against NASA's water map for the same dates before reading it as new water.",
@@ -80,7 +80,7 @@ AI_MS = {
     },
     "kel-kota-bharu": {
         "analysis": "Kota Bharu menunjukkan kira-kira 2,404 ha air banjir baharu pada 29 Nov 2024 (julat 1,949–2,404 ha), kira-kira 6% "
-                    "daripada daerah, semuanya di luar pusat bandar. Di dalam bandar radar tidak dapat menilai banjir, jadi kawasan bina "
+                    "daripada daerah, hampir semuanya di tanah pertanian, bukan di pusat bandar. Di dalam bandar radar tidak dapat menilai banjir, jadi kawasan bina "
                     "dikelabukan, bukan dikira kering. Kiraan turun kepada 37 ha pada 5 Dis, kemudian naik kepada 692 ha pada 11 Dis.",
         "next": "Kenaikan pada 11 Dis itu mungkin bukan banjir kedua. 5 Dis dan 11 Dis datang daripada dua trek radar berbeza dengan "
                 "sudut pandangan berbeza. Semak dengan peta air NASA bagi tarikh yang sama sebelum menganggapnya air baharu.",
@@ -113,7 +113,7 @@ AI_MS = {
 META = {
     "generated_by": "Claude (Anthropic) via Claude Code, 14 Nov 2026, written from our radar results (stats.json, rain.json)",
     "kind": "ai-from-results",
-    "reviewed": False,
+    "reviewed": True,
     "checked": "pipeline/11_ai_analysis.py checks every number against stats.json and rain.json",
 }
 

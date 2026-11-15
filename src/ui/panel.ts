@@ -628,7 +628,7 @@ function about(s: S.State): (HTMLElement | null)[] {
         h('p', { class: 'muted small' }, t('about.granules.note')),
         h('ul', { class: 'granules' }, provenance.granules.map((g) => h('li', {}, h('span', { class: 'muted' }, `${g.product}: `), h('code', {}, g.id))))),
     ),
-    card(t('about.ai.title'), t('about.prior'), h('p', {}, t('about.ai.body'))),
+    card(t('about.ai.title'), t('about.ai.tagline'), h('p', {}, t('about.ai.body'))),
     card(t('about.glossary.title'), t('legend.tagline'),
       h('ul', { class: 'credits' }, ['gloss.sar', 'gloss.backscatter', 'gloss.hhhv', 'gloss.band', 'gloss.pass', 'gloss.track'].map((k) => h('li', {}, t(k))))),
   ];

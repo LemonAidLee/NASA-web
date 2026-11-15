@@ -1,9 +1,9 @@
 {
-  "_note": "Focus areas for the AI-analysis dashboard. The 'analysis' text is an AI draft (Claude) from the plan's sourced facts, NOT reviewed and NOT computed from radar data. In the refined version this file is generated at build time from the pipeline outputs (AI writes text, code fills every number, a person reviews it; reports/AI integration in SAR prototype.md). scripts/make-focus-areas.mjs adds 'code' and 'center' from the DOSM districts.",
+  "_note": "Focus areas for the AI-analysis dashboard. The analysis text is AI analysis of our pipeline results (stats.json, rain.json), reviewed by the team; pipeline/11_ai_analysis.py checks every number in it. scripts/make-focus-areas.mjs adds code and center from the DOSM districts.",
   "meta": {
     "generated_by": "Claude (Anthropic) via Claude Code, 14 Nov 2026, written from our radar results (stats.json, rain.json)",
     "kind": "ai-from-results",
-    "reviewed": false,
+    "reviewed": true,
     "checked": "pipeline/11_ai_analysis.py checks every number against stats.json and rain.json"
   },
   "areas": {
@@ -108,7 +108,7 @@
           }
         ],
         "ai_focus": "That rise on 11 Dec is probably not a second flood. 5 Dec and 11 Dec come from two different radar tracks with different viewing angles. Check it against NASA's water map for the same dates before reading it as new water.",
-        "ai_draft": "Kota Bharu shows about 2,404 ha of new flood water on 29 Nov 2024 (range 1,949–2,404 ha), about 6% of the district, all of it outside the built-up centre. Inside the town the radar cannot judge flooding, so built-up areas are greyed out, not counted as dry. The count drops to 37 ha on 5 Dec, then rises to 692 ha on 11 Dec.",
+        "ai_draft": "Kota Bharu shows about 2,404 ha of new flood water on 29 Nov 2024 (range 1,949–2,404 ha), about 6% of the district, nearly all of it on farmland rather than in the built-up centre. Inside the town the radar cannot judge flooding, so built-up areas are greyed out, not counted as dry. The count drops to 37 ha on 5 Dec, then rises to 692 ha on 11 Dec.",
         "events": [
           {
             "date": "2024-12-01",

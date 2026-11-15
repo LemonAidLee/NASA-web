@@ -61,6 +61,8 @@ export function createMap(container: HTMLElement): MLMap | null {
     console.error(err);
     return null;
   }
+  // Dev server only (stripped from production builds): lets the video recorder drive the camera frame by frame.
+  if (import.meta.env.DEV) (window as unknown as { __map: MLMap }).__map = map;
   map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
   map.addControl(new NavigationControl({ showCompass: false }), 'bottom-right');
   map.addControl(new ScaleControl({ unit: 'metric', maxWidth: 90 }), 'bottom-left');
