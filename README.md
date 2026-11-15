@@ -20,6 +20,14 @@ What the map does beyond showing pictures:
 
 It is a student prototype. It is not a warning service and has not been reviewed by NASA. For live river levels see [Public InfoBanjir (JPS)](https://publicinfobanjir.water.gov.my/); follow [NADMA](https://www.nadma.gov.my/) for evacuation.
 
+## Project materials
+
+- **Live map:** https://project-sars-amoeba.vercel.app
+- **30-second demo:** https://www.youtube.com/watch?v=WaQ0PtXYlBY
+- **Full project video (4 min):** https://www.youtube.com/watch?v=c9DjtSZXVVE
+- **Project report (PDF):** [docs/report/Project_SARS_Amoeba_Report.pdf](docs/report/Project_SARS_Amoeba_Report.pdf)
+- **Team SARS Amoeba:** Lee Wen Yi, Joo Eu-Jin, Tan Jia Shun, Ong Kah Weng
+
 ## Headline results (from our pipeline, 14 Nov 2026)
 
 | | Result | Range |

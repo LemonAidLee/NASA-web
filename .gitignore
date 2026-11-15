@@ -3,3 +3,4 @@ dist/
 .impeccable/
 /data/
 __pycache__/
+*.lnk
