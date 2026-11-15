@@ -79,10 +79,6 @@ Downloads and intermediate rasters go to `data/` (git-ignored). Each script prin
 
 For imagery only, "Anywhere" and the "Newest NISAR picture" layer already work for any place NISAR covers.
 
-## Prior preparation
-
-Part of this code was first written in a practice build on 12 Nov 2026, before the event, from the team's written plan, and is reused here. The repository history starts on 14 Nov 2026. The team also explored NISAR data access on 2 Nov 2026 (streaming a small window of one Kedah scene). Everything in `pipeline/` and every number in the app were made on 14 Nov 2026.
-
 ## Data and credits
 
 See [DATA_LICENSES.md](DATA_LICENSES.md). AI use is disclosed in [AI_USAGE.md](AI_USAGE.md).
