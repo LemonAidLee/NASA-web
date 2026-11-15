@@ -32,7 +32,7 @@ export function toggleMode(): void {
 }
 
 export function openSure(): void {
-  S.set({ tab: 'sure', sheet: 'half' });
+  S.set({ tab: 'sure', panelOpen: true, sheet: 'half' });
   if (S.get().step !== null) document.body.classList.add('story-show-panel');
   window.setTimeout(() => document.getElementById('sure-card')?.focus(), 50);
 }

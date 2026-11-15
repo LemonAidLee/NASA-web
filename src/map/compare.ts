@@ -3,7 +3,7 @@
 import Compare from '@maplibre/maplibre-gl-compare';
 import '@maplibre/maplibre-gl-compare/dist/maplibre-gl-compare.css';
 import { Map as MLMap, AttributionControl } from 'maplibre-gl';
-import { area, imageryOnly, fmtDate, primaryPasses, type Pass } from '../config';
+import { area, imageryOnly, fmtDate, layersFor, primaryPasses, type Pass } from '../config';
 import { t } from '../i18n';
 import { $, clear, h } from '../lib/dom';
 import { basemapStyle } from '../lib/theme';
@@ -54,10 +54,16 @@ function isRough(s: S.State): boolean {
 function syncSides(): void {
   const s = S.get();
   const [da, db] = sideDates(s);
-  // In "Water vs plants" mode only context layers stay on; HH and HV themselves are placeholders until the event.
-  const allow = s.compare === 'pol' ? (l: { group: string; base?: boolean }) => l.group === 'group.context' || !!l.base : undefined;
-  if (mapA?.getStyle()) syncRasters(mapA, ctxFrom(s, { date: da, allow }));
-  if (mapB?.getStyle()) syncRasters(mapB, ctxFrom(s, { date: db, allow }));
+  // In "Water vs plants" mode the left side shows HH and the right side HV for the same pass; context layers stay as set.
+  const pol = (id: string): S.State['layers'] => {
+    const out = { ...s.layers };
+    for (const l of layersFor(s.area)) if (l.group !== 'group.context' && !l.base) out[l.id] = { ...out[l.id], on: l.id === id };
+    return out;
+  };
+  const extraA = s.compare === 'pol' ? { layers: pol('ked_hh') } : {};
+  const extraB = s.compare === 'pol' ? { layers: pol('ked_hv') } : {};
+  if (mapA?.getStyle()) syncRasters(mapA, ctxFrom(s, { date: da, ...extraA }));
+  if (mapB?.getStyle()) syncRasters(mapB, ctxFrom(s, { date: db, ...extraB }));
 }
 
 function dateSelect(id: string, label: string, value: string, onChange: (v: string) => void): HTMLElement {
@@ -112,7 +118,7 @@ function sideLabel(which: 'a' | 'b'): HTMLElement {
   if (s.compare === 'pol') {
     const simple = s.mode === 'simple';
     const key = which === 'a' ? (simple ? 'ked.pol.left.simple' : 'ked.pol.left') : simple ? 'ked.pol.right.simple' : 'ked.pol.right';
-    return h('div', { class: `cmp-label cmp-label-${which}` }, h('strong', {}, t(key)), h('span', {}, fmtDate(s.date)), h('em', {}, t('ked.pol.pending')));
+    return h('div', { class: `cmp-label cmp-label-${which}` }, h('strong', {}, t(key)), h('span', {}, fmtDate(s.date)));
   }
   const d = which === 'a' ? s.cmpA : s.cmpB;
   const word = d <= (which === 'a' ? s.cmpB : s.cmpA) ? t('compare.before') : t('compare.after');
