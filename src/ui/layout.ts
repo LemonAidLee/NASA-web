@@ -13,7 +13,12 @@ import { applyWindow } from './windows';
 
 const mq = window.matchMedia('(max-width: 767px)');
 const sheetHead = h('div', { class: 'sheet-head' });
-const sheetPeekLine = h('p', { class: 'peek-line' });
+const sheetPeekLine = h('p', {
+  class: 'peek-line', role: 'button', tabindex: '0',
+  // Tapping the one-line summary opens the panel (people tap the text, not the small handle).
+  onclick: () => { if (S.get().sheet === 'peek') S.set({ sheet: 'half' }); },
+  onkeydown: (ev: Event) => { const e = ev as KeyboardEvent; if ((e.key === 'Enter' || e.key === ' ') && S.get().sheet === 'peek') { e.preventDefault(); S.set({ sheet: 'half' }); } },
+});
 const sheetBody = h('div', { class: 'sheet-body' });
 
 function cycleSheet(): void {

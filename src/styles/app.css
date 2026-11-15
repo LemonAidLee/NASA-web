@@ -1085,12 +1085,17 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
   font-size: var(--fs-hud) !important;
 }
 .maplibregl-ctrl-attrib {
-  background: var(--bar-bg) !important;
-  color: var(--text-muted);
+  background: var(--surface) !important; /* solid: map labels showed through the see-through bar and read as overlapping text */
+  color: var(--text-secondary);
   font-size: 0.625rem;
 }
 .maplibregl-ctrl-attrib a { color: var(--text-secondary); }
+/* credits wrap onto several lines on phones; without this the lines overlap */
+.maplibregl-ctrl-attrib-inner { line-height: 1.45; color: var(--text-secondary) !important; } /* MapLibre's own CSS made it black on our dark bar */
+/* "1 of 6" stays on one line in the story card */
+.story-top .hud-label { white-space: nowrap; flex-shrink: 0; }
 [data-layout='desktop'] .maplibregl-ctrl-bottom-left { left: var(--left-occ); }
+[data-layout='desktop'] .maplibregl-ctrl-bottom-right { right: var(--right-occ); } /* credits were hidden behind the results panel */
 
 /* ---------- story (F8) ---------- */
 
@@ -1388,3 +1393,11 @@ details summary { cursor: pointer; color: var(--hud-label); font-size: var(--fs-
   .pill-sure .sure-short { display: inline; }
   #topbar .top-where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
+
+/* peek line opens the sheet on tap */
+#sheet[data-state='peek'] .peek-line { cursor: pointer; }
+#sheet[data-state='peek'] .peek-line::after { content: ' ▴'; color: var(--text-muted); }
+
+/* phone tab row: swipe to scroll, no desktop scrollbar */
+.tabbar .tabs { scrollbar-width: none; }
+.tabbar .tabs::-webkit-scrollbar { display: none; }

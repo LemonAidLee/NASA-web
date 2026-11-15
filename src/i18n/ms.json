@@ -151,6 +151,7 @@
   "time.pass.line": "{date}, {time} MYT · {sensor} {pass}",
   "time.age.this": "Gambar radar pada {date} (tarikh ini)",
   "time.age.near": "Memaparkan gambar radar terdekat: {date}, {n} hari {dir}",
+  "time.age.near.1": "Memaparkan gambar radar terdekat: {date}, 1 hari {dir}",
   "time.age.older": "gambar lebih lama",
   "time.dir.before": "lebih awal",
   "time.dir.after": "kemudian",

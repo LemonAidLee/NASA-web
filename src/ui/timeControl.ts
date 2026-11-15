@@ -69,7 +69,7 @@ function ageLine(s: S.State): HTMLElement | null {
   const n = Math.abs(r.age);
   const old = n > 6;
   return h('p', { class: `age${old ? ' age-old' : ''}` },
-    t('time.age.near', { date: fmtDay(r.myt), n, dir: t(r.age < 0 ? 'time.dir.before' : 'time.dir.after') }),
+    t(n === 1 ? 'time.age.near.1' : 'time.age.near', { date: fmtDay(r.myt), n, dir: t(r.age < 0 ? 'time.dir.before' : 'time.dir.after') }),
     old ? ` · ${t('time.age.older')}` : '');
 }
 

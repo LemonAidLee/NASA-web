@@ -152,6 +152,7 @@
   "time.pass.line": "{date}, {time} MYT · {sensor} {pass}",
   "time.age.this": "Radar picture from {date} (this date)",
   "time.age.near": "Showing the nearest radar picture: {date}, {n} days {dir}",
+  "time.age.near.1": "Showing the nearest radar picture: {date}, 1 day {dir}",
   "time.age.older": "older picture",
   "time.dir.before": "earlier",
   "time.dir.after": "later",

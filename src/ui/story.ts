@@ -41,7 +41,13 @@ function doAction(what: string): void {
 
 function finish(): void {
   storage.set('story-seen', '1');
-  S.set({ step: null, compare: 'off' });
+  const s = S.get();
+  if (s.base === 'sat') {
+    // Skipped from the cloud picture: go back to the normal radar view instead of leaving the user on clouds.
+    const layers = { ...s.layers };
+    for (const l of layersFor(s.area)) if (!l.base) layers[l.id] = { ...layers[l.id], on: l.on };
+    S.set({ step: null, compare: 'off', base: 'map', layers });
+  } else S.set({ step: null, compare: 'off' });
   showHintOnce();
 }
 

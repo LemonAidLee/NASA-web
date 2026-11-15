@@ -135,7 +135,7 @@ function openMenu(): void {
         document.dispatchEvent(new CustomEvent('toast', { detail: t('menu.copied') }));
       }),
       item(t('menu.credits'), () => S.set({ tab: 'about', sheet: 'half' })),
-      item(t('menu.shortcuts'), () => document.dispatchEvent(new CustomEvent('help'))),
+      window.matchMedia('(pointer: coarse)').matches ? null : item(t('menu.shortcuts'), () => document.dispatchEvent(new CustomEvent('help'))), // no keyboard on touch screens
       window.matchMedia('(max-width: 767px)').matches ? null : item(t('win.reset'), resetLayout),
       item(t('menu.resetview'), S.resetView),
     ),
